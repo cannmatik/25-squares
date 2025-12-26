@@ -34,3 +34,4 @@ model Progress {
   @@unique([userId, worldId, levelId])
   @@index([userId])
 }
+

@@ -107,7 +107,7 @@ function AuthModal({ onClose, onLogin }) {
     return (
         <Dialog open={true} onClose={onClose} maxWidth="xs" fullWidth>
             <DialogTitle sx={{ textAlign: 'center', color: 'primary.main', textShadow: '2px 2px 0 #001E1E' }}>
-                {mode === 'login' ? '🔐 LOGIN' : '✨ REGISTER'}
+                {mode === 'login' ? 'LOGIN' : 'REGISTER'}
             </DialogTitle>
             <DialogContent>
                 <form onSubmit={handleSubmit}>
@@ -168,8 +168,13 @@ function ResultModal({ stars, score, isNewBest, onRetry, onNext, onLevels, hasNe
     useEffect(() => {
         if (stars > 0) {
             for (let i = 1; i <= stars; i++) setTimeout(() => soundManager.playStar(i), i * 300)
+
+            // Auto Next Level after 2 seconds if won
+            setTimeout(() => {
+                if (hasNext) onNext()
+            }, 2500)
         }
-    }, [stars])
+    }, [stars, hasNext, onNext])
 
     return (
         <Dialog open={true} maxWidth="xs" fullWidth>
@@ -270,13 +275,35 @@ function GameGrid({ levelConfig, onComplete }) {
         setGameActive(false)
         const starsBreakdown = levelConfig?.stars || [10, 15, 20]
         let earnedStars = 0
-        if (moveCount >= starsBreakdown[2]) earnedStars = 3
-        else if (moveCount >= starsBreakdown[1]) earnedStars = 2
-        else if (moveCount >= starsBreakdown[0]) earnedStars = 1
+        if (levelConfig?.starCriteria === 'time') {
+            // Time-based scoring (for specialized levels like World 1 Lvl 23-25)
+            // Expects starThresholds: [maxTimeFor1Star, maxTimeFor2Stars, maxTimeFor3Stars] e.g. [120, 90, 60]
+            // We use (timeLimit - timeRemaining) as "elapsed time"
+            if (!timeRemaining) {
+                earnedStars = 0 // Should be caught by timeUp, but safety check
+            } else {
+                const elapsed = (levelConfig.timeLimit || 120) - timeRemaining
+                const thresholds = levelConfig.starThresholds || [120, 90, 60]
+
+                if (elapsed <= thresholds[2]) earnedStars = 3
+                else if (elapsed <= thresholds[1]) earnedStars = 2
+                else if (elapsed <= thresholds[0]) earnedStars = 1
+                else earnedStars = 0 // Took too long for even 1 star? (Usually just win if within limit)
+
+                // If they completed the level within limit (won=true), ensure at least 1 star if logic implies it
+                if (won && earnedStars === 0) earnedStars = 1
+            }
+        } else {
+            // Default Move-based scoring
+            if (moveCount >= starsBreakdown[2]) earnedStars = 3
+            else if (moveCount >= starsBreakdown[1]) earnedStars = 2
+            else if (moveCount >= starsBreakdown[0]) earnedStars = 1
+        }
 
         const finalStars = won ? 3 : earnedStars
         if (finalStars > 0) {
-            setStatus(message || `LEVEL COMPLETE! ${moveCount} MOVES`)
+            // Even if we ran out of moves, if we have stars, it's a win!
+            setStatus(`LEVEL COMPLETE! ${moveCount} MOVES`)
             setStatusType('won')
             soundManager.playWin()
         } else {
@@ -291,9 +318,32 @@ function GameGrid({ levelConfig, onComplete }) {
 
     const handleCellClick = (x, y) => {
         if (!gameActive || blockedSet.has(`${x},${y}`)) return
+
+        // Tutorial Strict Mode: Prevent deviation if a highlight is active
+        const tutorialStep = levelConfig?.tutorial?.find(t => t.move === moveCount)
+        if (tutorialStep && tutorialStep.highlight) {
+            if (x !== tutorialStep.highlight.x || y !== tutorialStep.highlight.y) {
+                // Shake or buzzer? Or just ignore for strictness.
+                return
+            }
+        }
+
         if (moveCount === 0) { if (!levelConfig?.fixedStart) startGame(x, y); return }
         if (!isValidMove(x, y)) {
-            // Silently ignore invalid moves as requested
+            // Rule 5: Max Mistakes
+            if (levelConfig?.maxMistakes) {
+                const newMistakes = mistakes + 1
+                setMistakes(newMistakes)
+                setStatus(`MISTAKE ${newMistakes}/${levelConfig.maxMistakes}`)
+                setStatusType('lost')
+                soundManager.playInvalid()
+
+                if (newMistakes >= levelConfig.maxMistakes) {
+                    setTimeout(() => endGame(false, 'TOO MANY MISTAKES!'), 500)
+                }
+            } else {
+                // Silently ignore invalid moves (default)
+            }
             return
         }
         const nextMoveNumber = moveCount + 1
@@ -326,9 +376,21 @@ function GameGrid({ levelConfig, onComplete }) {
         else {
             const hasMoves = MOVES.some(m => {
                 const nx = x + m.dx, ny = y + m.dy
+                // Tutorial Strictness Check
+                const tutorialStep = levelConfig?.tutorial?.find(t => t.move === moveCount)
+                if (tutorialStep) {
+                    if (tutorialStep.highlight.x !== nx || tutorialStep.highlight.y !== ny) {
+                        return // Ignore clicks not matching the tutorial
+                    }
+                }
+
                 return isValidPos(nx, ny) && !newVisited.has(`${nx},${ny}`)
             })
-            if (!hasMoves) setTimeout(() => endGame(false), 100)
+            if (!hasMoves) {
+                // Logic Fix: If no moves left, call endGame(false) which calculates stars.
+                // If stars > 0, it will be treated as a pass.
+                setTimeout(() => endGame(false, 'NO MOVES LEFT!'), 100)
+            }
         }
     }
 
@@ -340,6 +402,21 @@ function GameGrid({ levelConfig, onComplete }) {
     }
 
     const possibleSet = getPossibleMoves()
+
+    // Handle fixed start (and Pre-filled paths)
+    useEffect(() => {
+        if (gameActive) return
+        if (levelConfig?.fixedStart) {
+            if (Array.isArray(levelConfig.fixedStart)) {
+                const path = levelConfig.fixedStart
+                const last = path[path.length - 1]
+                startGame(last.x, last.y, path)
+            } else {
+                startGame(levelConfig.fixedStart.x, levelConfig.fixedStart.y)
+            }
+        }
+    }, [levelConfig, gameActive])
+
     let statusColor = 'text.primary'
     if (statusType === 'won') statusColor = 'success.main'
     if (statusType === 'lost') statusColor = 'error.main'
@@ -395,6 +472,32 @@ function GameGrid({ levelConfig, onComplete }) {
                     VISITED: {moveCount} / {25 - (levelConfig?.blockedSquares?.length || 0)}
                 </Typography>
             </Stack>
+
+            {/* Tutorial Overlay */}
+            {(() => {
+                const step = levelConfig?.tutorial?.find(t => t.move === moveCount)
+                if (step) {
+                    return (
+                        <Box sx={{
+                            position: 'absolute',
+                            top: '15%',
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            zIndex: 10,
+                            bgcolor: 'rgba(0,0,0,0.9)',
+                            border: '2px solid #FAEC3B',
+                            p: 2,
+                            borderRadius: 2,
+                            maxWidth: '90%',
+                            textAlign: 'center',
+                            boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                        }}>
+                            <Typography variant="body1" sx={{ color: '#FAEC3B', fontWeight: 'bold' }}>{step.text}</Typography>
+                            <PixelIcon name="arrowRight" size={24} className="rotate-90" />
+                        </Box>
+                    )
+                }
+            })()}
 
             {/* Rules Modal */}
             <Dialog open={showRules} onClose={() => setShowRules(false)} maxWidth="xs" fullWidth>
@@ -453,6 +556,12 @@ function GameGrid({ levelConfig, onComplete }) {
                                 cursor: (isBlocked || (!isPossible && moveCount > 0)) ? 'default' : 'pointer',
                                 touchAction: 'manipulation', // Better touch response
                                 '&:active': (!isVisited && !isBlocked) ? { transform: 'scale(0.95)' } : {},
+                                ...(levelConfig?.tutorial?.find(t => t.move === moveCount)?.highlight?.x === cell.x && levelConfig?.tutorial?.find(t => t.move === moveCount)?.highlight?.y === cell.y && {
+                                    animation: 'pulse 1s infinite',
+                                    zIndex: 5,
+                                    borderColor: '#FFF',
+                                    boxShadow: '0 0 15px #FAEC3B'
+                                })
                             }}
                         >
                             {isBlocked ? <PixelIcon name="lock" size={16} /> : isVisited ?
@@ -474,6 +583,9 @@ function GameGrid({ levelConfig, onComplete }) {
                 })}
             </Box>
 
+
+
+
             {!gameActive && (
                 <Button fullWidth variant="contained" color="primary" onClick={resetLevel} sx={{ mt: 2 }} startIcon={<PixelIcon name="refresh" />}>
                     TRY AGAIN
@@ -494,6 +606,7 @@ export default function Home() {
     const [progress, setProgress] = useState({})
     const [totalStars, setTotalStars] = useState(0)
     const [soundMuted, setSoundMuted] = useState(false)
+    const [mistakes, setMistakes] = useState(0)
     const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' })
 
     const showNotification = (message, severity = 'info') => {
@@ -538,26 +651,46 @@ export default function Home() {
         } catch (e) { console.error('Failed to fetch progress', e) }
     }
 
-    // Load user and initial progress
+    // Load user and initial progress (and fetch levels)
     useEffect(() => {
-        try {
-            const u = JSON.parse(localStorage.getItem('user'))
-            if (u) {
-                setUser(u)
-                fetchProgress(localStorage.getItem('token')) // Fetch from DB if user exists
-            } else {
-                // Fallback to local storage if no user
-                const p = JSON.parse(localStorage.getItem('gameProgress'))
-                if (p) {
-                    setProgress(p)
-                    let stars = 0
-                    Object.values(p).forEach(w => Object.values(w).forEach(l => stars += (l.stars || 0)))
-                    setTotalStars(stars)
+        const init = async () => {
+            try {
+                // Fetch dynamic levels
+                const lRes = await fetch('/api/levels?worldId=1')
+                if (lRes.ok) {
+                    const lData = await lRes.json()
+                    if (lData.levels && lData.levels.length > 0) {
+                        // Update the LEVELS object in memory (hacky but works for this structure)
+                        // Ideally we move state up, but for now:
+                        LEVELS[1] = lData.levels
+                        // Also update WORLDS count
+                        const w1 = WORLDS.find(w => w.id === 1)
+                        if (w1) w1.levels = lData.levels.length
+                    }
                 }
-            }
-            setSoundMuted(soundManager.isMuted())
-        } catch (e) { }
+            } catch (e) { console.error('Failed to load levels', e) }
+
+            try {
+                const u = JSON.parse(localStorage.getItem('user'))
+                if (u) {
+                    setUser(u)
+                    fetchProgress(localStorage.getItem('token'))
+                } else {
+                    const p = JSON.parse(localStorage.getItem('gameProgress'))
+                    if (p) {
+                        setProgress(p)
+                        let stars = 0
+                        Object.values(p).forEach(w => Object.values(w).forEach(l => stars += (l.stars || 0)))
+                        setTotalStars(stars)
+                    }
+                }
+                setSoundMuted(soundManager.isMuted())
+            } catch (e) { }
+        }
+        init()
     }, [])
+
+
 
     const toggleSound = () => { const m = soundManager.toggleMute(); setSoundMuted(m); if (!m) soundManager.playClick() }
     const logout = (silent = false) => {

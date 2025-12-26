@@ -1,0 +1,37 @@
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma/client-levels"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LEVELS_DATABASE_URL")
+}
+
+model Level {
+  id             String   @id @default(cuid())
+  worldId        Int
+  levelNumber    Int
+  gridSize       Int      @default(5)
+  // Store complex objects as JSON
+  fixedStart     Json?    // {x: 0, y: 0} or null
+  blockedSquares Json     // [{x,y}, {x,y}]
+  requiredMoves  Json     // [{moveNumber, x, y}]
+  stars          Json     // [10, 15, 25]
+  
+  timeLimit      Int?
+  ruleSet        Int      @default(7)
+  
+  fullPath       Json?    // Store the solution path for potential hints/verification
+  tutorial       Json?    // [{move: 0, text: "...", highlight: {x,y}}]
+  maxMistakes    Int?     // Rule 5: Limit bad moves
+  
+  starCriteria   String?  // 'moves' (default) or 'time'
+  starThresholds Json?    // [120, 90, 60] for time-based stars
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([worldId, levelNumber])
+}

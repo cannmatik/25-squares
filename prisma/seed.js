@@ -1,69 +1,73 @@
-// Seed script to create user with all levels unlocked
-// Run: npx dotenv -e .env -- node prisma/seed.js
 
-const { PrismaClient } = require('@prisma/client')
-const bcrypt = require('bcryptjs')
+const { PrismaClient } = require('@prisma/client-levels')
+const fs = require('fs')
+const path = require('path')
 
 const prisma = new PrismaClient()
 
 async function main() {
-    const email = 'cannmatik@gmail.com'
-    const username = 'HorseWater'
-    const password = 'Girgirgir1.'
+    const files = ['world1_levels.json', 'world2_levels.json', 'world3_levels.json']
 
-    // Check if user exists
-    const existingUser = await prisma.user.findUnique({ where: { email } })
+    for (const file of files) {
+        const filePath = path.join(__dirname, `../${file}`)
+        if (!fs.existsSync(filePath)) {
+            console.log(`Skipping ${file} (not found)`)
+            continue
+        }
 
-    if (existingUser) {
-        console.log('User already exists, updating progress...')
-        // Delete existing progress
-        await prisma.progress.deleteMany({ where: { userId: existingUser.id } })
-        await createFullProgress(existingUser.id)
-        console.log('Progress updated!')
-    } else {
-        // Create user
-        const hashedPassword = await bcrypt.hash(password, 10)
-        const user = await prisma.user.create({
-            data: { email, username, password: hashedPassword }
-        })
-        console.log('User created:', user.username)
-        await createFullProgress(user.id)
+        const data = JSON.parse(fs.readFileSync(filePath, 'utf8'))
+        // Determine world ID from filename (hacky but effective)
+        // world1 -> 1, world2 -> 2
+        const worldId = parseInt(file.replace('world', '').replace('_levels.json', ''))
+
+        console.log(`Seeding World ${worldId} (${data.length} levels)...`)
+
+        for (const level of data) {
+            await prisma.level.upsert({
+                where: {
+                    worldId_levelNumber: { worldId: worldId, levelNumber: level.id }
+                },
+                update: {
+                    gridSize: level.gridSize,
+                    fixedStart: level.fixedStart,
+                    blockedSquares: level.blockedSquares,
+                    requiredMoves: level.requiredMoves,
+                    stars: level.stars,
+                    ruleSet: level.ruleSet,
+                    timeLimit: level.timeLimit,
+                    fullPath: level.fullPath,
+                    tutorial: level.tutorial,
+                    maxMistakes: level.maxMistakes,
+                    starCriteria: level.starCriteria,
+                    starThresholds: level.starThresholds
+                },
+                create: {
+                    worldId: worldId,
+                    levelNumber: level.id,
+                    gridSize: level.gridSize,
+                    fixedStart: level.fixedStart,
+                    blockedSquares: level.blockedSquares,
+                    requiredMoves: level.requiredMoves,
+                    stars: level.stars,
+                    ruleSet: level.ruleSet,
+                    timeLimit: level.timeLimit,
+                    fullPath: level.fullPath,
+                    tutorial: level.tutorial,
+                    maxMistakes: level.maxMistakes,
+                    starCriteria: level.starCriteria,
+                    starThresholds: level.starThresholds
+                }
+            })
+        }
     }
-
-    console.log('Done!')
-}
-
-async function createFullProgress(userId) {
-    const progressData = []
-
-    // World 1: 25 levels
-    for (let i = 1; i <= 25; i++) {
-        progressData.push({
-            userId,
-            worldId: 1,
-            levelId: i,
-            stars: 3,
-            completed: true,
-            bestScore: 25
-        })
-    }
-
-    // World 2: 25 levels
-    for (let i = 1; i <= 25; i++) {
-        progressData.push({
-            userId,
-            worldId: 2,
-            levelId: i,
-            stars: 3,
-            completed: true,
-            bestScore: 25
-        })
-    }
-
-    await prisma.progress.createMany({ data: progressData })
-    console.log('Created progress for all 50 levels with 3 stars each')
+    console.log('Level seeding completed.')
 }
 
 main()
-    .catch(console.error)
-    .finally(() => prisma.$disconnect())
+    .catch((e) => {
+        console.error(e)
+        process.exit(1)
+    })
+    .finally(async () => {
+        await prisma.$disconnect()
+    })
