@@ -372,17 +372,22 @@ function GameGrid({ levelConfig, onComplete, onNextLevel }) {
 
         const newVisited = new Set([...visited, key])
         const totalPlayable = 25 - (levelConfig?.blockedSquares?.length || 0)
-        if (newVisited.size === totalPlayable) setTimeout(() => endGame(true), 100)
-        else {
+
+        // Check if all squares are visited (perfect completion)
+        if (newVisited.size === totalPlayable) {
+            setTimeout(() => endGame(true), 100)
+        } else {
+            // Check if there are any remaining moves
             const hasMoves = MOVES.some(m => {
                 const nx = x + m.dx, ny = y + m.dy
                 return isValidPos(nx, ny) && !newVisited.has(`${nx},${ny}`)
             })
+
+            // Only end game if no moves left - let player continue if moves exist!
             if (!hasMoves) {
-                // Logic Fix: If no moves left, call endGame(false) which calculates stars.
-                // If stars > 0, it will be treated as a pass.
                 setTimeout(() => endGame(false, 'NO MOVES LEFT!'), 100)
             }
+            // Otherwise, game continues - player can keep playing
         }
     }
 
@@ -465,30 +470,32 @@ function GameGrid({ levelConfig, onComplete, onNextLevel }) {
                 </Typography>
             </Stack>
 
-            {/* Tutorial Overlay */}
+            {/* Tutorial Overlay - Positioned above grid, not covering it */}
             {(() => {
                 const step = levelConfig?.tutorial?.find(t => t.move === moveCount)
                 if (step) {
                     return (
                         <Box sx={{
-                            position: 'absolute',
-                            top: '15%',
-                            left: '50%',
-                            transform: 'translateX(-50%)',
-                            zIndex: 10,
-                            bgcolor: 'rgba(0,0,0,0.9)',
+                            width: '100%',
+                            bgcolor: 'rgba(0,0,0,0.95)',
                             border: '2px solid #FAEC3B',
-                            p: 2,
-                            borderRadius: 2,
-                            maxWidth: '90%',
+                            p: { xs: 1.5, sm: 2 },
+                            borderRadius: 1,
                             textAlign: 'center',
-                            boxShadow: '0 4px 20px rgba(0,0,0,0.5)'
+                            mb: 1
                         }}>
-                            <Typography variant="body1" sx={{ color: '#FAEC3B', fontWeight: 'bold' }}>{step.text}</Typography>
-                            <PixelIcon name="arrowRight" size={24} className="rotate-90" />
+                            <Typography variant="body2" sx={{
+                                color: '#FAEC3B',
+                                fontWeight: 'bold',
+                                fontSize: { xs: '0.75rem', sm: '0.9rem' },
+                                lineHeight: 1.3
+                            }}>
+                                {step.text}
+                            </Typography>
                         </Box>
                     )
                 }
+                return null
             })()}
 
             {/* Rules Modal */}
