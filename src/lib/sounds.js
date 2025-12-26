@@ -158,14 +158,34 @@ class SoundManager {
         this.vibrate([50, 30, 50, 30, 100]);
     }
 
-    // Play star earned sound
+    // Play star earned sound - distinct based on star count
     async playStar(starNumber = 1) {
         const baseFreq = 800 + (starNumber * 100);
-        await this.playMelody([
-            { freq: baseFreq, type: 'sine', duration: 0.1, volume: 0.5 },
-            { freq: baseFreq * 1.5, type: 'sine', duration: 0.2, volume: 0.6 }
-        ], 60);
-        this.vibrate(30);
+
+        if (starNumber === 1) {
+            // Simple ding for 1 star
+            await this.playMelody([
+                { freq: baseFreq, type: 'sine', duration: 0.1, volume: 0.5 },
+                { freq: baseFreq * 1.5, type: 'sine', duration: 0.2, volume: 0.6 }
+            ], 60);
+        } else if (starNumber === 2) {
+            // More complex major chord for 2 stars
+            await this.playMelody([
+                { freq: baseFreq, type: 'sine', duration: 0.1, volume: 0.5 },
+                { freq: baseFreq * 1.25, type: 'sine', duration: 0.1, volume: 0.6 }, // Major 3rd
+                { freq: baseFreq * 1.5, type: 'sine', duration: 0.25, volume: 0.7 }
+            ], 80);
+        } else if (starNumber >= 3) {
+            // Full triumphant arpeggio for 3 stars
+            await this.playMelody([
+                { freq: baseFreq, type: 'triangle', duration: 0.1, volume: 0.6 },
+                { freq: baseFreq * 1.25, type: 'triangle', duration: 0.1, volume: 0.6 },
+                { freq: baseFreq * 1.5, type: 'triangle', duration: 0.1, volume: 0.7 },
+                { freq: baseFreq * 2, type: 'sine', duration: 0.4, volume: 0.8 } // Octave
+            ], 100);
+        }
+
+        this.vibrate(30 * starNumber); // Stronger vibration for more stars
     }
 
     // Play game over sound

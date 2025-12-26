@@ -40,8 +40,7 @@
 
 html,
 body {
-  height: 100%;
-  overflow: hidden;
+  min-height: 100%;
 }
 
 body {
@@ -55,6 +54,10 @@ body {
   background-image: none;
   font-size: 10px;
   /* Base font size */
+  overflow-y: auto;
+  /* Allow vertical scrolling */
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling */
 }
 
 /* Common Components */
@@ -68,6 +71,14 @@ body {
   /* Safe area handling */
   padding-top: max(16px, env(safe-area-inset-top));
   padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+@media (max-width: 600px) {
+  .app {
+    padding: 8px;
+    justify-content: flex-start;
+    /* Allow content to flow naturally on mobile */
+  }
 }
 
 .btn {

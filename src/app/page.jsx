@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import soundManager from '@/lib/sounds'
 import { WORLDS, LEVELS, RULE_DESCRIPTIONS, getLevelConfig } from '@/lib/levels'
-import { Box, Button, Dialog, DialogContent, DialogTitle, TextField, Typography, Stack, Grid, IconButton } from '@mui/material'
+import { Box, Button, Dialog, DialogContent, DialogTitle, TextField, Typography, Stack, Grid, IconButton, Snackbar, Alert } from '@mui/material'
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 
@@ -144,7 +144,7 @@ function AuthModal({ onClose, onLogin }) {
                                 {error}
                             </Typography>
                         )}
-                        <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
+                        <Stack direction={{ xs: 'column-reverse', sm: 'row' }} spacing={2} sx={{ mt: 2 }}>
                             <Button fullWidth variant="contained" color="secondary" onClick={onClose} startIcon={<PixelIcon name="cancel" />}>
                                 CANCEL
                             </Button>
@@ -409,21 +409,9 @@ function GameGrid({ levelConfig, onComplete }) {
 
                     // Pixel Art 3D Bevel Effect
                     // Light Top/Left, Dark Bottom/Right
-                    let boxShadow = 'inset 4px 4px 0px rgba(255,255,255,0.2), inset -4px -4px 0px rgba(0,0,0,0.5)'
-                    let border = 'none'
-
-                    if (isCurrent) {
-                        // Current: Bright Yellow Border Effect via box-shadow
-                        boxShadow = 'inset 4px 4px 0px #FAEC3B, inset -4px -4px 0px #FAEC3B, inset 8px 8px 0px rgba(255,255,255,0.2), inset -8px -8px 0px rgba(0,0,0,0.5)'
-                    } else if (isPossible) {
-                        // Possible: Yellow block look
-                        boxShadow = 'inset 4px 4px 0px rgba(255,255,255,0.4), inset -4px -4px 0px rgba(0,0,0,0.2)'
-                    } else if (isVisited) {
-                        // Visited: Recessed/Dark Look
-                        boxShadow = 'inset 4px 4px 0px rgba(0,0,0,0.5), inset -4px -4px 0px rgba(255,255,255,0.05)'
-                    } else if (isBlocked) {
-                        boxShadow = 'inset 4px 4px 0px rgba(255,255,255,0.3), inset -4px -4px 0px rgba(0,0,0,0.3)'
-                    }
+                    // Reverting to solid borders as requested
+                    let border = '2px solid #FAEC3B'
+                    if (isCurrent) border = '4px solid #FAEC3B'
 
                     return (
                         <Box key={cell.key}
@@ -432,16 +420,14 @@ function GameGrid({ levelConfig, onComplete }) {
                                 width: '100%',
                                 aspectRatio: '1/1', // Force square cells
                                 bgcolor: bg,
-                                borderRadius: 0, // Retro = sharp corners? User didn't specify, but implies strict retro. I'll keep 0.5 or 0.
+                                border: border, // Consistent yellow border
+                                borderRadius: 0,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 fontSize: { xs: '0.8rem', sm: '1rem' }, // Smaller font on mobile
                                 color: isPossible ? '#001E1E' : '#ECECEC',
                                 cursor: (isBlocked || (!isPossible && moveCount > 0)) ? 'default' : 'pointer',
                                 touchAction: 'manipulation', // Better touch response
                                 '&:active': (!isVisited && !isBlocked) ? { transform: 'scale(0.95)' } : {},
-                                // Pixel bevel effect
-                                boxShadow: boxShadow,
-                                position: 'relative',
                             }}
                         >
                             {isBlocked ? <PixelIcon name="lock" size={16} /> : isVisited ?
@@ -449,8 +435,6 @@ function GameGrid({ levelConfig, onComplete }) {
                                     {[...visited].indexOf(cell.key) >= blockedSet.size ? ([...visited].indexOf(cell.key) - blockedSet.size + 1) : ''}
                                 </Typography>
                                 : ''}
-                            {/* Inner pixel border for extra crunch (Optional, purely decorative) */}
-                            {isPossible && <Box sx={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, border: '2px dashed rgba(0,30,30,0.3)', pointerEvents: 'none' }} />}
                         </Box>
                     )
                 })}
@@ -476,6 +460,16 @@ export default function Home() {
     const [progress, setProgress] = useState({})
     const [totalStars, setTotalStars] = useState(0)
     const [soundMuted, setSoundMuted] = useState(false)
+    const [notification, setNotification] = useState({ open: false, message: '', severity: 'info' })
+
+    const showNotification = (message, severity = 'info') => {
+        setNotification({ open: true, message, severity })
+    }
+
+    const handleCloseNotification = (event, reason) => {
+        if (reason === 'clickaway') return
+        setNotification({ ...notification, open: false })
+    }
 
     // Fetch progress from API
     const fetchProgress = async (token) => {
@@ -484,6 +478,15 @@ export default function Home() {
             const res = await fetch('/api/progress', {
                 headers: { 'Authorization': `Bearer ${token}` }
             })
+
+            if (res.status === 401 || res.status === 403) {
+                // Token invalid or expired - logout user
+                console.warn('Session expired, logging out')
+                logout(true) // Silent logout
+                showNotification('Session expired. Please login again.', 'warning')
+                return
+            }
+
             if (res.ok) {
                 const data = await res.json()
                 // Convert array to map: { worldId: { levelId: { stars, bestScore } } }
@@ -495,6 +498,8 @@ export default function Home() {
                 setProgress(newProgress)
                 setTotalStars(data.totalStars || 0)
                 localStorage.setItem('gameProgress', JSON.stringify(newProgress)) // Sync local
+            } else {
+                console.error('Failed to fetch progress:', res.statusText)
             }
         } catch (e) { console.error('Failed to fetch progress', e) }
     }
@@ -521,7 +526,15 @@ export default function Home() {
     }, [])
 
     const toggleSound = () => { const m = soundManager.toggleMute(); setSoundMuted(m); if (!m) soundManager.playClick() }
-    const logout = () => { soundManager.playClick(); localStorage.removeItem('token'); localStorage.removeItem('user'); setUser(null); setScreen('menu'); setProgress({}); setTotalStars(0); }
+    const logout = (silent = false) => {
+        if (!silent) soundManager.playClick();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        setUser(null);
+        setScreen('menu');
+        setProgress({});
+        setTotalStars(0);
+    }
 
     if (screen === 'menu') return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', width: '100%', p: 2 }}>
@@ -620,7 +633,7 @@ export default function Home() {
         const world = WORLDS.find(w => w.id === currentWorld)
         const worldStars = (progress[currentWorld] && Object.values(progress[currentWorld]).reduce((a, b) => a + (b.stars || 0), 0)) || 0
         return (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', width: '100%', p: 2 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minHeight: '100vh', width: '100%', p: { xs: 1, sm: 2 } }}>
                 <Stack direction="row" alignItems="center" spacing={2} sx={{ width: '100%', maxWidth: '400px', mb: 2 }}>
                     <Button variant="contained" color="secondary" onClick={() => { soundManager.playNav(); setScreen('worlds') }} startIcon={<PixelIcon name="arrowLeft" />}>
                         BACK
@@ -635,8 +648,8 @@ export default function Home() {
 
                 <Box sx={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(5, 1fr)',
-                    gap: 1.5,
+                    gridTemplateColumns: { xs: 'repeat(3, 1fr)', sm: 'repeat(5, 1fr)' }, // 3 cols on mobile, 5 on desktop
+                    gap: { xs: 1, sm: 1.5 },
                     width: '100%',
                     maxWidth: '400px'
                 }}>
@@ -671,7 +684,7 @@ export default function Home() {
     }
 
     if (screen === 'game') return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', minHeight: '100vh', width: '100%', p: 2 }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', minHeight: '100vh', width: '100%', p: { xs: 1, sm: 2 } }}>
             <GameGrid
                 levelConfig={currentWorld === 0 ? null : getLevelConfig(currentWorld, currentLevel)}
                 onComplete={(score, stars) => {
@@ -689,5 +702,13 @@ export default function Home() {
         </Box>
     )
 
-    return null
+    return (
+        <>
+            <Snackbar open={notification.open} autoHideDuration={6000} onClose={handleCloseNotification} anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}>
+                <Alert onClose={handleCloseNotification} severity={notification.severity} sx={{ width: '100%', fontFamily: 'inherit' }} variant="filled">
+                    {notification.message}
+                </Alert>
+            </Snackbar>
+        </>
+    )
 }

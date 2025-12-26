@@ -27,8 +27,8 @@ export async function GET(request) {
         const totalStars = progress.reduce((sum, p) => sum + p.stars, 0)
         return NextResponse.json({ progress, totalStars })
     } catch (error) {
-        console.error('Get progress error:', error)
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+        console.error('Get progress error details:', error)
+        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
     }
 }
 
@@ -60,7 +60,7 @@ export async function POST(request) {
 
         return NextResponse.json({ success: true, progress })
     } catch (error) {
-        console.error('Save progress error:', error)
-        return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+        console.error('Save progress error details:', error) // Changed log message
+        return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
     }
 }
