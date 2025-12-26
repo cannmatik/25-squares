@@ -216,12 +216,8 @@ function GameGrid({ levelConfig, onComplete }) {
 
     const blockedSet = new Set((levelConfig?.blockedSquares || []).map(sq => `${sq.x},${sq.y}`))
 
-    useEffect(() => {
-        const newCells = []
-        for (let y = 0; y < GRID_SIZE; y++) {
-            for (let x = 0; x < GRID_SIZE; x++) newCells.push({ x, y, key: `${x},${y}` })
-        }
-        setCells(newCells)
+    const resetLevel = () => {
+        setCells(Array.from({ length: GRID_SIZE * GRID_SIZE }, (_, i) => ({ x: i % GRID_SIZE, y: Math.floor(i / GRID_SIZE), key: `${i % GRID_SIZE},${Math.floor(i / GRID_SIZE)}` })))
         setVisited(new Set(blockedSet))
         setCurrentPos(null)
         setMoveCount(0)
@@ -230,7 +226,17 @@ function GameGrid({ levelConfig, onComplete }) {
         setStatusType('neutral')
         setShowResult(false)
         if (levelConfig?.timeLimit) setTimeRemaining(levelConfig.timeLimit)
-        if (levelConfig?.fixedStart) setTimeout(() => startGame(levelConfig.fixedStart.x, levelConfig.fixedStart.y), 100)
+
+        // Handle fixed start
+        if (levelConfig?.fixedStart) {
+            setTimeout(() => {
+                startGame(levelConfig.fixedStart.x, levelConfig.fixedStart.y)
+            }, 100)
+        }
+    }
+
+    useEffect(() => {
+        resetLevel()
     }, [levelConfig])
 
     useEffect(() => {
@@ -287,10 +293,7 @@ function GameGrid({ levelConfig, onComplete }) {
         if (!gameActive || blockedSet.has(`${x},${y}`)) return
         if (moveCount === 0) { if (!levelConfig?.fixedStart) startGame(x, y); return }
         if (!isValidMove(x, y)) {
-            soundManager.playInvalid()
-            setStatus('INVALID MOVE!')
-            setStatusType('lost')
-            setTimeout(() => { if (gameActive) setStatus('CLICK A YELLOW SQUARE!'); setStatusType('neutral') }, 1000)
+            // Silently ignore invalid moves as requested
             return
         }
         const nextMoveNumber = moveCount + 1
@@ -419,9 +422,13 @@ function GameGrid({ levelConfig, onComplete }) {
                     const isBlocked = blockedSet.has(cell.key), isPossible = possibleSet.has(cell.key)
 
                     let bg = 'rgba(236,236,236,0.1)' // cell-bg
+                    // Check if this cell is a required move
+                    const reqMove = levelConfig?.requiredMoves?.find(r => r.x === cell.x && r.y === cell.y)
+
                     if (isBlocked) bg = '#D2003A'
                     else if (isCurrent) bg = 'rgba(236,236,236,0.2)'
                     else if (isVisited) bg = '#111111' // Darkest Gray
+                    else if (reqMove) bg = 'rgba(17, 17, 17, 0.5)' // Low opacity 'visited' look
                     else if (isPossible) bg = '#FAEC3B'
 
                     // Pixel Art 3D Bevel Effect
@@ -429,6 +436,7 @@ function GameGrid({ levelConfig, onComplete }) {
                     // Reverting to solid borders as requested
                     let border = '2px solid #FAEC3B'
                     if (isCurrent) border = '4px solid #FAEC3B'
+                    if (reqMove && !isVisited) border = '2px dashed #FAEC3B' // Dashed for required moves
 
                     return (
                         <Box key={cell.key}
@@ -456,7 +464,7 @@ function GameGrid({ levelConfig, onComplete }) {
                                 (() => {
                                     const req = levelConfig?.requiredMoves?.find(r => r.x === cell.x && r.y === cell.y)
                                     if (req) {
-                                        return <Typography sx={{ color: '#D2003A', fontWeight: '900', fontSize: '0.9rem', textShadow: '1px 1px 0 #fff' }}>{req.moveNumber}</Typography>
+                                        return <Typography sx={{ color: '#FFFFFF', fontWeight: '900', fontSize: '0.9rem', textShadow: '1px 1px 0 #000' }}>{req.moveNumber}</Typography>
                                     }
                                     return ''
                                 })()
@@ -467,12 +475,12 @@ function GameGrid({ levelConfig, onComplete }) {
             </Box>
 
             {!gameActive && (
-                <Button fullWidth variant="contained" color="primary" onClick={() => { setVisited(new Set(blockedSet)); setCurrentPos(null); setMoveCount(0); setGameActive(true); setStatus('CLICK ANY SQUARE!'); setShowResult(false); }} sx={{ mt: 2 }} startIcon={<PixelIcon name="refresh" />}>
+                <Button fullWidth variant="contained" color="primary" onClick={resetLevel} sx={{ mt: 2 }} startIcon={<PixelIcon name="refresh" />}>
                     TRY AGAIN
                 </Button>
             )}
 
-            {showResult && result && <ResultModal stars={result.stars} score={result.score} hasNext={true} onRetry={() => { setShowResult(false); setVisited(new Set(blockedSet)); setCurrentPos(null); setMoveCount(0); setGameActive(true); setStatus('CLICK ANY SQUARE!'); }} onNext={() => setShowResult(false)} onLevels={() => { setShowResult(false); onComplete(0, -1) }} />}
+            {showResult && result && <ResultModal stars={result.stars} score={result.score} hasNext={true} onRetry={resetLevel} onNext={() => setShowResult(false)} onLevels={() => { setShowResult(false); onComplete(0, -1) }} />}
         </Box>
     )
 }

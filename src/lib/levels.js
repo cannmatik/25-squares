@@ -41,10 +41,34 @@ export const LEVELS = {
         { id: 25, ruleSet: 6, stars: [22, 24, 25], fixedStart: { x: 0, y: 0 }, blockedSquares: [], timeLimit: 80 } // +20s
     ],
     2: [
-        // World 2: Advanced Mechanics - Required Moves & generated solvable paths
-        { id: 1, ruleSet: 7, stars: [15, 20, 25], fixedStart: { x: 2, y: 2 }, blockedSquares: [], timeLimit: null, requiredMoves: [{ moveNumber: 5, x: 0, y: 0 }] },
-        { id: 2, ruleSet: 7, stars: [15, 20, 25], fixedStart: { x: 0, y: 0 }, blockedSquares: [], timeLimit: null, requiredMoves: [{ moveNumber: 3, x: 3, y: 0 }, { moveNumber: 8, x: 1, y: 3 }] },
-        { id: 3, ruleSet: 7, stars: [15, 20, 25], fixedStart: { x: 4, y: 4 }, blockedSquares: [], timeLimit: 120, requiredMoves: [{ moveNumber: 4, x: 2, y: 2 }, { moveNumber: 10, x: 0, y: 4 }] },
+        // World 2: Advanced Mechanics - Guaranteed Solvable Paths
+        {
+            id: 1,
+            ruleSet: 7,
+            stars: [15, 20, 25],
+            fixedStart: { x: 0, y: 0 },
+            blockedSquares: [],
+            timeLimit: null,
+            requiredMoves: [{ moveNumber: 3, x: 3, y: 3 }, { moveNumber: 6, x: 4, y: 3 }]
+        },
+        {
+            id: 2,
+            ruleSet: 7,
+            stars: [15, 20, 25],
+            fixedStart: { x: 4, y: 4 },
+            blockedSquares: [],
+            timeLimit: null,
+            requiredMoves: [{ moveNumber: 3, x: 0, y: 0 }, { moveNumber: 5, x: 3, y: 3 }]
+        },
+        {
+            id: 3,
+            ruleSet: 7,
+            stars: [15, 20, 25],
+            fixedStart: { x: 2, y: 2 },
+            blockedSquares: [],
+            timeLimit: 120,
+            requiredMoves: [{ moveNumber: 2, x: 4, y: 0 }, { moveNumber: 5, x: 3, y: 1 }]
+        },
         { id: 4, ruleSet: 7, stars: [14, 18, 21], fixedStart: { x: 0, y: 0 }, blockedSquares: [{ x: 2, y: 2 }], timeLimit: null, requiredMoves: [{ moveNumber: 3, x: 3, y: 0 }] },
         { id: 5, ruleSet: 7, stars: [15, 18, 21], fixedStart: { x: 4, y: 4 }, blockedSquares: [{ x: 1, y: 1 }], timeLimit: null, requiredMoves: [{ moveNumber: 2, x: 2, y: 2 }] },
 
