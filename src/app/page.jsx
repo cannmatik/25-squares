@@ -205,7 +205,7 @@ function ResultModal({ stars, score, isNewBest, onRetry, onNext, onLevels, hasNe
     )
 }
 
-function GameGrid({ levelConfig, onComplete }) {
+function GameGrid({ levelConfig, onComplete, onNextLevel }) {
     const [cells, setCells] = useState([])
     const [visited, setVisited] = useState(new Set())
     const [currentPos, setCurrentPos] = useState(null)
@@ -592,7 +592,17 @@ function GameGrid({ levelConfig, onComplete }) {
                 </Button>
             )}
 
-            {showResult && result && <ResultModal stars={result.stars} score={result.score} hasNext={true} onRetry={resetLevel} onNext={() => setShowResult(false)} onLevels={() => { setShowResult(false); onComplete(0, -1) }} />}
+            {showResult && result && <ResultModal
+                stars={result.stars}
+                score={result.score}
+                hasNext={!!onNextLevel}
+                onRetry={resetLevel}
+                onNext={() => {
+                    setShowResult(false)
+                    if (onNextLevel) onNextLevel()
+                }}
+                onLevels={() => { setShowResult(false); onComplete(0, -1) }}
+            />}
         </Box>
     )
 }
@@ -854,6 +864,16 @@ export default function Home() {
         <Box sx={{ display: 'flex', justifyContent: 'center', minHeight: '100vh', width: '100%', p: { xs: 1, sm: 2 } }}>
             <GameGrid
                 levelConfig={currentWorld === 0 ? null : getLevelConfig(currentWorld, currentLevel)}
+                onNextLevel={() => {
+                    // Check if next level exists
+                    const world = WORLDS.find(w => w.id === currentWorld)
+                    if (world && currentLevel < world.levels) {
+                        setCurrentLevel(prev => prev + 1)
+                    } else {
+                        // Level finished or last level -> go to menu
+                        setScreen('levels')
+                    }
+                }}
                 onComplete={(score, stars) => {
                     if (stars === -1) { setScreen(currentWorld === 0 ? 'menu' : 'levels'); return }
                     if (currentWorld !== 0) {

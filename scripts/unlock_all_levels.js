@@ -15,35 +15,29 @@ async function main() {
         return
     }
 
-    console.log(`Unlocking all 75 levels for ${user.username} (${user.id})...`)
+    console.log(`Resetting and unlocking all levels for ${user.username} (${user.id})...`)
 
-    // 3 Worlds, 25 Levels each
+    // 1. Delete existing progress
+    const deleted = await prisma.progress.deleteMany({
+        where: { userId: user.id }
+    })
+    console.log(`Deleted ${deleted.count} existing progress records.`)
+
+    // 2. Unlock all 75 levels
     const worlds = [1, 2, 3]
     const operations = []
 
     for (const w of worlds) {
         for (let l = 1; l <= 25; l++) {
             operations.push(
-                prisma.progress.upsert({
-                    where: {
-                        userId_worldId_levelId: {
-                            userId: user.id,
-                            worldId: w,
-                            levelId: l
-                        }
-                    },
-                    update: {
-                        stars: 3,
-                        completed: true,
-                        bestScore: 25 // Assuming perfect score
-                    },
-                    create: {
+                prisma.progress.create({
+                    data: {
                         userId: user.id,
                         worldId: w,
                         levelId: l,
                         stars: 3,
                         completed: true,
-                        bestScore: 25
+                        bestScore: 25 // Assuming perfect score
                     }
                 })
             )
@@ -51,7 +45,7 @@ async function main() {
     }
 
     await prisma.$transaction(operations)
-    console.log(`Successfully unlocked ${operations.length} levels!`)
+    console.log(`Successfully unlocked ${operations.length} new levels!`)
 }
 
 main()
