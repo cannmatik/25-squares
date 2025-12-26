@@ -293,12 +293,29 @@ function GameGrid({ levelConfig, onComplete }) {
             setTimeout(() => { if (gameActive) setStatus('CLICK A YELLOW SQUARE!'); setStatusType('neutral') }, 1000)
             return
         }
+        const nextMoveNumber = moveCount + 1
+        // Check Required Moves
+        if (levelConfig?.requiredMoves) {
+            const req = levelConfig.requiredMoves.find(r => r.moveNumber === nextMoveNumber)
+            if (req && (req.x !== x || req.y !== y)) {
+                soundManager.playInvalid()
+                setStatus(`MOVE ${nextMoveNumber} MUST BE HERE!`) // Hint is actually on the grid, but text feedback helps
+                setStatusType('lost')
+                // Fail immediately? Or just block? User said "fail if they don't press". 
+                // "4. hamle belirlenen kareye basamazsa kaybeder". 
+                // This implies if they click *another* valid square that isn't the required one, they lose.
+                // Since this function is only called on valid clicks (we already checked isValidMove or start), 
+                // if we are here, they clicked a valid square. If it's not the required one -> GAME OVER.
+                setTimeout(() => endGame(false, 'MISSED REQUIRED MOVE!'), 500)
+                return
+            }
+        }
+
         setCurrentPos({ x, y })
         const key = `${x},${y}`
         setVisited(prev => new Set([...prev, key]))
-        const newMoveCount = moveCount + 1
-        setMoveCount(newMoveCount)
-        soundManager.playMove(newMoveCount)
+        setMoveCount(nextMoveNumber)
+        soundManager.playMove(nextMoveNumber)
 
         const newVisited = new Set([...visited, key])
         const totalPlayable = 25 - (levelConfig?.blockedSquares?.length || 0)
@@ -434,7 +451,16 @@ function GameGrid({ levelConfig, onComplete }) {
                                 <Typography sx={{ color: isCurrent ? '#ECECEC' : '#ECECEC', fontWeight: 'bold', fontSize: 'inherit' }}>
                                     {[...visited].indexOf(cell.key) >= blockedSet.size ? ([...visited].indexOf(cell.key) - blockedSet.size + 1) : ''}
                                 </Typography>
-                                : ''}
+                                :
+                                // Show required move number if applicable
+                                (() => {
+                                    const req = levelConfig?.requiredMoves?.find(r => r.x === cell.x && r.y === cell.y)
+                                    if (req) {
+                                        return <Typography sx={{ color: '#D2003A', fontWeight: '900', fontSize: '0.9rem', textShadow: '1px 1px 0 #fff' }}>{req.moveNumber}</Typography>
+                                    }
+                                    return ''
+                                })()
+                            }
                         </Box>
                     )
                 })}
