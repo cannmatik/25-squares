@@ -1,42 +1,364 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Cell sizing (Responsive) */
+  --cell-size: min(15vw, 60px);
+  --gap-size: 6px;
+
+  /* Strict Color Palette */
+  --red: #D2003A;
+  --yellow: #FAEC3B;
+  --dark-purple: #3C003C;
+  --light-gray: #ECECEC;
+  --dark-teal: #001E1E;
+
+  /* Semantic Mappings */
+  --bg-color: var(--dark-purple);
+  --text-color: var(--light-gray);
+  --accent-color: var(--yellow);
+
+  --cell-bg: var(--dark-purple);
+  --cell-border: var(--light-gray);
+  --cell-text: var(--light-gray);
+
+  --visited-bg: var(--dark-teal);
+  --blocked-bg: var(--red);
+  --current-bg: #1a3a3a;
+
+  --btn-primary-bg: var(--yellow);
+  --btn-primary-text: var(--dark-teal);
+
+  --modal-bg: var(--dark-purple);
+  --modal-border: var(--yellow);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
+  height: 100%;
+  overflow: hidden;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Press Start 2P', cursive;
+  background: var(--bg-color);
+  color: var(--text-color);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  min-height: 100dvh;
+  /* Disable gradient background */
+  background-image: none;
+  font-size: 10px;
+  /* Base font size */
 }
 
-* {
-  box-sizing: border-box;
+/* Common Components */
+.app {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  /* Safe area handling */
+  padding-top: max(16px, env(safe-area-inset-top));
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.btn {
+  font-family: 'Press Start 2P', cursive;
+  padding: 16px 24px;
+  font-size: 0.9rem;
+  border: 3px solid;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.15s;
+  text-transform: uppercase;
+  min-height: 54px;
+  /* Better touch target */
+}
+
+.btn-primary {
+  background: var(--btn-primary-bg);
+  border-color: var(--dark-teal);
+  color: var(--btn-primary-text);
+  box-shadow: 4px 4px 0 var(--dark-teal);
+}
+
+.btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--dark-teal);
+}
+
+.btn-secondary {
+  background: transparent;
+  border-color: var(--light-gray);
+  color: var(--light-gray);
+}
+
+.btn-secondary:active {
+  background: rgba(236, 236, 236, 0.1);
+}
+
+.back-btn {
+  background: rgba(236, 236, 236, 0.15);
+  border: 2px solid var(--light-gray);
+  color: var(--light-gray);
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  /* No blur */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 100;
+}
+
+.modal {
+  background: var(--modal-bg);
+  border: 4px solid var(--modal-border);
+  padding: 24px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 8px 8px 0 var(--dark-teal);
+  text-align: center;
+}
+
+.modal h2 {
+  color: var(--yellow);
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+  text-shadow: 2px 2px 0 var(--dark-teal);
+}
+
+/* Form Elements */
+.form-group {
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.7rem;
+  margin-bottom: 8px;
+  color: var(--light-gray);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.8rem;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--light-gray);
+  border-radius: 4px;
+  color: var(--light-gray);
+  outline: none;
+}
+
+.form-group input:focus {
+  border-color: var(--yellow);
+}
+
+/* Game Components */
+.game-grid {
+  display: grid;
+  grid-template-columns: repeat(5, var(--cell-size));
+  grid-template-rows: repeat(5, var(--cell-size));
+  gap: var(--gap-size);
+  background: var(--dark-purple);
   padding: 0;
-  margin: 0;
+  border: none;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.cell {
+  width: var(--cell-size);
+  height: var(--cell-size);
+  background: var(--cell-bg);
+  border: 2px solid var(--cell-border);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  color: var(--light-gray);
+  cursor: pointer;
+  transition: transform 0.1s;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+.cell:active:not(.visited):not(.blocked) {
+  transform: scale(0.95);
+}
+
+.cell.visited {
+  background: var(--visited-bg);
+  cursor: default;
+  color: var(--light-gray);
+}
+
+.cell.current {
+  background: var(--current-bg);
+  box-shadow: 0 0 0 3px var(--yellow);
+  /* No smooth glow, strict pixel feel */
+  animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
+.cell.possible-move {
+  background: var(--yellow);
+  color: var(--dark-teal);
+  animation: none;
+  /* Removed smooth glow */
+}
+
+.cell.possible-move:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.cell.blocked {
+  background: var(--red);
+  cursor: not-allowed;
+  color: white;
+}
+
+/* Animations replacements - Pixel/Retro style */
+.confetti-container {
+  display: none;
+  /* Removed complex confetti for strict retro feel unless using pixel particles */
+}
+
+/* Menu Specifics */
+.game-title {
+  font-size: clamp(2rem, 8vw, 3rem);
+  color: var(--yellow);
+  text-shadow: 4px 4px 0 var(--dark-teal);
+  margin-bottom: 8px;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.tagline {
+  font-size: 0.8rem;
+  color: var(--light-gray);
+  opacity: 0.7;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.total-stars {
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--yellow);
+  color: var(--yellow);
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1rem;
+  margin-bottom: 24px;
+}
+
+/* World/Level Cards */
+.world-card {
+  background: rgba(0, 0, 0, 0.3);
+  border: 3px solid var(--light-gray);
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.15s;
+}
+
+.world-card:active:not(.locked) {
+  transform: translate(2px, 2px);
+  border-color: var(--yellow);
+}
+
+
+/* Align level card content */
+.level-card {
+  aspect-ratio: 1;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid var(--light-gray);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.level-card.completed {
+  border-color: var(--yellow);
+}
+
+/* Icons styling */
+.pixel-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Modal Button Layout */
+.modal-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.modal-buttons button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Centering Grid */
+.game-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.game-grid {
+  margin: 0 auto;
+  /* Center horizontally */
+}
+
+/* Responsive adjustments */
+@media (max-width: 380px) {
+  :root {
+    --cell-size: 50px;
   }
 }
