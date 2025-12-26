@@ -14,10 +14,25 @@ export async function GET(request) {
             orderBy: { levelNumber: 'asc' }
         })
 
-        // Transform for frontend if needed, or send as is
-        // Frontend expects "stars" as array, etc. DB stores as Json which Prisma auto-parses.
+        // Transform for frontend compatibility
+        // Frontend expects "id" field, but DB uses "levelNumber"
+        const transformedLevels = levels.map(level => ({
+            id: level.levelNumber,
+            gridSize: level.gridSize,
+            fixedStart: level.fixedStart,
+            blockedSquares: level.blockedSquares,
+            requiredMoves: level.requiredMoves,
+            stars: level.stars,
+            ruleSet: level.ruleSet,
+            timeLimit: level.timeLimit,
+            fullPath: level.fullPath,
+            tutorial: level.tutorial,
+            maxMistakes: level.maxMistakes,
+            starCriteria: level.starCriteria,
+            starThresholds: level.starThresholds
+        }))
 
-        return NextResponse.json({ levels })
+        return NextResponse.json({ levels: transformedLevels })
     } catch (error) {
         console.error('Failed to fetch levels:', error)
         return NextResponse.json({ error: 'Failed to fetch levels' }, { status: 500 })

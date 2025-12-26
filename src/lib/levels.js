@@ -1,4 +1,5 @@
-import world1 from '../../world1_levels.json'
+// Guarantee Level 1 Tutorial
+import world1Data from '../../world1_levels.json'
 import world2 from '../../world2_levels.json'
 import world3 from '../../world3_levels.json'
 
@@ -9,8 +10,9 @@ export const WORLDS = [
     { id: 3, name: "World 3", requiredStars: 60, levels: 25 }
 ]
 
+// Ensure we use the latest JSON data
 export const LEVELS = {
-    1: world1,
+    1: world1Data,
     2: world2,
     3: world3
 }

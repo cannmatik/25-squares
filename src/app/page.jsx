@@ -376,14 +376,6 @@ function GameGrid({ levelConfig, onComplete, onNextLevel }) {
         else {
             const hasMoves = MOVES.some(m => {
                 const nx = x + m.dx, ny = y + m.dy
-                // Tutorial Strictness Check
-                const tutorialStep = levelConfig?.tutorial?.find(t => t.move === moveCount)
-                if (tutorialStep) {
-                    if (tutorialStep.highlight.x !== nx || tutorialStep.highlight.y !== ny) {
-                        return // Ignore clicks not matching the tutorial
-                    }
-                }
-
                 return isValidPos(nx, ny) && !newVisited.has(`${nx},${ny}`)
             })
             if (!hasMoves) {
