@@ -119,7 +119,7 @@ export async function GET(request) {
                         {/* World/Level Info - "World 3 Level 13" format */}
                         <div style={{ display: 'flex', alignItems: 'center', marginBottom: 20 }}>
                             <div style={{ display: 'flex', fontSize: 36, color: '#FFF' }}>
-                                World {world} Level {level}
+                                {searchParams.get('mode') === 'freeplay' ? 'FREE PLAY' : `World ${world} Level ${level}`}
                             </div>
                         </div>
 

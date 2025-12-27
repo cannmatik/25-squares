@@ -1,0 +1,16 @@
+Debug: Comp=1, Future=0, Min=1
+Result: CONTINUE. 1 + 0 >= 1
+Debug: Comp=1, Future=0, Min=1
+Result: CONTINUE. 1 + 0 >= 1
+Debug: Comp=0, Future=0, Min=1
+Result: GAME OVER (Too many missed). 0 + 0 < 1
+--- Scenario 1: W3 L19 (Hit 1st, Miss 2nd) ---
+Checkpoint HIT at move 7
+Move 7 (Hit 2,4): CHECKPOINT_HIT, GameOver=false
+FAILED: Strict Mode (minMoves=undefined)
+Move 12 (Miss 1,0): GAME_OVER_MISSED_STRICT, GameOver=true
+--- Scenario 1: W3 L19 (Hit 1st, Miss 2nd) ---
+Checkpoint HIT at move 7
+Move 7 (Hit 2,4): CHECKPOINT_HIT, GameOver=false
+MISSED but Continue: Completed(1) + Future(0) >= Min(1)
+Move 12 (Miss 1,0): CHECKPOINT_MISSED_CONTINUE, GameOver=false

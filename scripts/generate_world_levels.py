@@ -25,6 +25,72 @@ def is_valid(x, y, visited, blocked):
     return 0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE and \
            (x, y) not in visited and (x, y) not in blocked
 
+def calculate_constraints(world_id, level_id, path_len, required_moves):
+    """
+    Calculates minMoves, minCheckpoints, and stars based on user difficulty rules.
+    Rules:
+    - Worlds 1-5: minMoves ~ 10-15 (path_len - 10)
+    - Worlds 6+: minMoves ~ 22+ (path_len - 2 or similar)
+    - Checkpoints: If > 1, require N-1 (unless last level 25 => N)
+    - Stars: 1st star = minMoves
+    """
+    # 1. Min Moves - Gradual difficulty curve
+    if world_id <= 2:
+        # Very Relaxed: Target 10-12
+        min_moves = max(10, path_len - 13)
+    elif world_id <= 5:
+        # Relaxed: Target 12-15
+        min_moves = max(12, path_len - 10)
+    elif world_id <= 10:
+        # Moderate: Target 15-17
+        min_moves = max(15, path_len - 8)
+    elif world_id <= 15:
+        # Moderate-Hard: Target 17-19
+        min_moves = max(17, path_len - 6)
+    elif world_id <= 20:
+        # Hard: Target 18-20
+        min_moves = max(18, path_len - 5)
+    else:
+        # Very Hard (21-25): Target 20-22
+        min_moves = max(20, path_len - 4)
+
+    # 2. Min Checkpoints
+    req_count = len(required_moves)
+    min_checkpoints = req_count
+
+    # "Checkpoints > 1 implies N-1, unless level 25"
+    if req_count > 1:
+        if level_id == 25:
+            min_checkpoints = req_count
+        else:
+            min_checkpoints = req_count - 1
+            
+    if min_checkpoints < 1 and req_count > 0: min_checkpoints = 1
+    if req_count == 0: min_checkpoints = 0
+    
+    # 3. Stars
+    # Star 1 = minMoves (Pass condition)
+    # Star 3 = path_len (Perfect)
+    # Star 2 = Middle
+    s1 = min_moves
+    s3 = path_len
+    s2 = (s1 + s3) // 2
+    
+    # Ensure distinct
+    if s2 <= s1: s2 = s1 + 1
+    if s2 >= s3: s2 = s3 - 1
+    if s2 <= s1: s2 = s1 + 1 # Re-check if squeezed
+    
+    # Cap stars at path_len
+    s1 = min(s1, path_len)
+    s2 = min(s2, path_len)
+    s3 = path_len
+    
+    # Safety: minMoves must be >= 1
+    if min_moves < 1: min_moves = 1
+    
+    return min_moves, min_checkpoints, [s1, s2, s3]
+
 def solve_blocked_path(start_x, start_y, blocked_set, path, target_length):
     """
     Backtracking to find a path of length `target_length` avoiding `blocked_set`.
@@ -75,15 +141,21 @@ def generate_blocked_level(level_id, blocked_count, base_rule_set=2):
         full_path = solve_blocked_path(sx, sy, blocked, path, target_len)
         
         if full_path:
+            # Calculate minMoves dynamically - will be overridden by caller if needed
+            target_len = len(full_path)
+            min_moves = max(10, target_len - 13)  # Conservative default for early worlds
+            
             return {
                 "id": level_id,
                 "gridSize": 5,
                 "fixedStart": None, # Starting from user click, but solvable
                 "blockedSquares": [{'x': x, 'y': y} for x, y in blocked],
                 "requiredMoves": [],
-                "stars": [target_len - 5, target_len - 3, target_len - 1] if blocked_count > 0 else [10, 12, 15], # Adjust stars for blocked
+                "stars": [min_moves, (min_moves + target_len) // 2, target_len],
                 "ruleSet": base_rule_set,
                 "timeLimit": 120,
+                "minMoves": min_moves,
+                "minCheckpoints": 0,  # No checkpoints for World 1-2
                 "fullPath": full_path
             }
             
@@ -166,9 +238,11 @@ def generate_world1(all_paths):
                 "fixedStart": None, # Tutorial highlights first move anyway
                 "blockedSquares": [blocked_sq],
                 "requiredMoves": required_moves,
-                "stars": [10, 15, 24], # Max stars for 24 moves
+                "stars": [10, 15, len(playable_path)], # Dynamic max stars
                 "ruleSet": 1, # Basic + Tutorial
                 "timeLimit": 300, # Plenty of time
+                "minMoves": 23, # Move 24 is finish, blocked at 25th step
+                "minCheckpoints": 1, # Tutorial has one checkpoint
                 "fullPath": playable_path,
                 "tutorial": tutorial_steps
             })
@@ -177,16 +251,13 @@ def generate_world1(all_paths):
         # Level 2-7 generic logic...
         path = random.choice(all_paths)
         fixed_start = None
-        stars = [8, 10, 12]
+        p_len = len(path)
         
         if i >= 3:
             fixed_start = path[0] # The path defines the start
-            # Daha kolay star gereksinimleri
-            if i==3: stars = [10, 12, 15]
-            if i==4: stars = [10, 13, 16]
-            if i==5: stars = [12, 15, 18]
-            if i==6: stars = [14, 17, 20]
-            if i==7: stars = [15, 18, 22]
+            
+        params = calculate_constraints(1, i, len(path), [])
+        # params = (min_moves, min_checkpoints, stars)
             
         levels.append({
             "id": i,
@@ -194,9 +265,11 @@ def generate_world1(all_paths):
             "fixedStart": fixed_start,
             "blockedSquares": [],
             "requiredMoves": [],
-            "stars": stars,
+            "stars": params[2],
             "ruleSet": 1,
             "timeLimit": 120,
+            "minMoves": params[0],
+            "minCheckpoints": 0,  # No checkpoints for World 1-2 (except tutorial)
             "fullPath": path,
             "tutorial": None
         })
@@ -240,6 +313,7 @@ def generate_world1(all_paths):
     for i in range(23, 26):
         path = random.choice(all_paths)
         fixed_start = path[0] if i >= 24 else None # Table says fixed start X for 24,25
+        path_len = len(path)
         
         levels.append({
             "id": i,
@@ -247,11 +321,13 @@ def generate_world1(all_paths):
             "fixedStart": fixed_start,
             "blockedSquares": [],
             "requiredMoves": [],
-            "stars": [10, 15, 24], # Placeholder, but real condition is time
+            "stars": [10, 15, path_len], # Time-based, but still need stars for display
             "ruleSet": 6,          # Time Condition
             "timeLimit": 120,      # Display limit
             "starCriteria": "time",
             "starThresholds": [120, 90, 60], # <2m, <1.5m, <1m
+            "minMoves": max(10, path_len - 13),  # Still have minMoves for pass
+            "minCheckpoints": 0,  # No checkpoints
             "fullPath": path
         })
         
@@ -263,71 +339,42 @@ def generate_world2(all_paths):
     levels = []
     
     # 25 Levels
+    # 25 Levels - World 2: More Blocked Squares focus (No Checkpoints yet)
     for i in range(1, 26):
         path = random.choice(all_paths)
-        blocked_squares = []
-        required_moves = []
-        stars = [15, 20, 25]
-        rule_set = 3 # Rule 3: Some moves revealed/required
         
-        # Yeni Predefined Kare Kuralları:
-        # - Tek kare: moveNumber <= 9
-        # - Birden fazla kare: ilki <= 9, aralarındaki fark 3-4 hamle
+        # Increasing blocked squares
+        blocked_count = 1
+        if i >= 10: blocked_count = 2
+        if i >= 20: blocked_count = 3
         
-        if i <= 10:
-            # Tek predefined kare: Move 2-8 arası (kolay hesaplanabilir)
-            target_move_idx = 1 + ((i - 1) % 7)  # Move 2-8 (0-indexed: 1-7)
-            
-            target = path[target_move_idx]
-            required_moves.append({
-                "moveNumber": target_move_idx + 1,  # 1-based for UI
-                "x": target['x'],
-                "y": target['y']
-            })
-            
-        elif i <= 20:
-            # İki predefined kare: İlki Move 3-5, ikincisi +3-4 hamle sonra
-            m1 = 2 + ((i - 11) % 3)  # Move 3-5 (0-indexed: 2-4)
-            gap = 3 + ((i - 11) % 2)  # 3 veya 4 hamle fark
-            m2 = m1 + gap  # Move 6-9 arası
-            
-            required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-            required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
-                
-        else:
-            # Üç predefined kare: Move 3, +3 hamle, +3 hamle (Move 3, 6, 9)
-            m1 = 2  # Move 3
-            m2 = 5  # Move 6
-            m3 = 8  # Move 9
-            
-            required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-            required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
-            required_moves.append({"moveNumber": m3 + 1, "x": path[m3]['x'], "y": path[m3]['y']})
-
-        levels.append({
-            "id": i,
-            "gridSize": 5,
-            "fixedStart": None, # Let them find the start that allows hitting the checkpoint? Or fix start?
-                                # User said "ilk 3 ü kendi oynayacak", implying start is free or they choose path.
-                                # But if start is free, can they reach coordinates? 
-                                # 25-squares usually has variable start. 
-                                # BUT if we require reaching (x,y) at step 4, the start MUST be compatible.
-                                # To be safe/easy, let's fix the start OR just ensure the path exists.
-                                # If we leave fixedStart: None, user clicks anywhere. 
-                                # If they pick wrong start, they might not reach required square at move 4.
-                                # "4. hamlenin yeri belli" -> This implies a constraint. 
-                                # Use Fixed Start to guarantee solvability for now?
-                                # User said "ilk 3 ü kendi oynayacak", so they make moves. 
-                                # If we give Fixed Start, it's easier. If not, it's a puzzle.
-                                # Let's set Fixed Start = None so they have to find the correct start.
-            "fixedStart": None, 
-            "blockedSquares": blocked_squares,
-            "requiredMoves": required_moves,
-            "stars": stars,
-            "ruleSet": rule_set,
-            "timeLimit": 120,
-            "fullPath": path
-        })
+        # Generate with blocked logic
+        lvl = generate_blocked_level(i, blocked_count)
+        if not lvl: 
+            # Fallback to current path if blocked gen fails (rare)
+            lvl = {
+                 "id": i,
+                 "gridSize": 5,
+                 "fixedStart": None,
+                 "blockedSquares": [],
+                 "requiredMoves": [],
+                 "stars": [10, 15, 20],
+                 "ruleSet": 1,
+                 "timeLimit": 120,
+                 "fullPath": path
+            }
+        
+        # Ensure minMoves is set via new logic
+        # Note: World 2 has blocked squares so 'fullPath' length is target
+        
+        # Calculate constraints for World 2
+        params = calculate_constraints(2, i, len(lvl["fullPath"]), lvl["requiredMoves"])
+        
+        lvl["minMoves"] = params[0]
+        lvl["minCheckpoints"] = 0  # No checkpoints in World 1-2
+        lvl["stars"] = params[2]
+        
+        levels.append(lvl)
             
     return levels
 
@@ -428,6 +475,10 @@ def generate_world3(all_paths):
             objective_parts.append(f"Max {max_mistakes} mistakes allowed")
         objective = ". ".join(objective_parts) + "."
         
+        # Calculate constraints for World 3
+        # Override stars and minMoves from previous logic
+        params = calculate_constraints(3, i, path_len, required_moves)
+        
         levels.append({
             "id": i,
             "gridSize": 5,
@@ -435,10 +486,12 @@ def generate_world3(all_paths):
             "blockedSquares": blocked_squares,
             "requiredMoves": required_moves,
             "objective": objective,
-            "stars": stars,
+            "stars": params[2],
             "ruleSet": 5,
             "maxMistakes": max_mistakes,
             "timeLimit": time_limit,
+            "minMoves": params[0],
+            "minCheckpoints": params[1],
             "fullPath": current_path
         })
         
@@ -606,6 +659,9 @@ def generate_procedural_world(world_id, all_paths):
             objective_parts.append(f"Complete in {time_limit}s")
         objective = ". ".join(objective_parts) + "."
         
+        # Calculate constraints based on World ID
+        params = calculate_constraints(world_id, i, path_len, required_moves)
+        
         levels.append({
             "id": i,
             "gridSize": 5,
@@ -613,12 +669,12 @@ def generate_procedural_world(world_id, all_paths):
             "blockedSquares": blocked_squares,
             "requiredMoves": required_moves,
             "objective": objective,
-            "stars": stars,
+            "stars": params[2],
             "ruleSet": 7,
             "maxMistakes": max_mistakes,
             "timeLimit": time_limit,
-            "minMoves": min_moves,
-            "minCheckpoints": min_checkpoints,
+            "minMoves": params[0],
+            "minCheckpoints": params[1],
             "fullPath": current_path
         })
         

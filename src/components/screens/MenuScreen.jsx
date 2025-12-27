@@ -3,6 +3,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import LogoutIcon from '@mui/icons-material/Logout'
 import LoginIcon from '@mui/icons-material/Login'
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
+import AllInclusiveIcon from '@mui/icons-material/AllInclusive'
 import InfoIcon from '@mui/icons-material/Info'
 import { useColorMode } from '@/app/providers'
 import { useState, useEffect } from 'react'
@@ -126,6 +127,38 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
                     FREE PLAY
                 </Button>
 
+                <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => { soundManager.playStart(); onPlay(true, true) }} // isFree=true, isInfinite=true
+                    startIcon={<AllInclusiveIcon />}
+                    sx={{
+                        height: { xs: 52, sm: 60 },
+                        fontSize: { xs: '1rem', sm: '1.2rem' },
+                        bgcolor: '#D2003A', // 25 Squares Red
+                        color: '#FFF',
+                        borderRadius: 0,
+                        boxShadow: '4px 4px 0 #000',
+                        fontWeight: 'bold',
+                        position: 'relative',
+                        '&:active': { transform: 'translate(2px, 2px)', boxShadow: '2px 2px 0 #000' },
+                        '&:hover': { bgcolor: '#B71C1C' }
+                    }}
+                >
+                    INFINITE PLAY
+                    {user?.infiniteLevel > 0 && (
+                        <Box sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 2,
+                            fontSize: '0.6rem',
+                            color: 'rgba(255,255,255,0.8)'
+                        }}>
+                            MAX: {user.infiniteLevel}
+                        </Box>
+                    )}
+                </Button>
+
                 {user ? (
                     <>
                         <Button
@@ -173,14 +206,16 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
             </Box>
 
             {/* Delete Account Modal (Reusing AuthModal) */}
-            {showDeleteModal && user && (
-                <AuthModal
-                    onClose={() => setShowDeleteModal(false)}
-                    onLogout={onLogout}
-                    initialMode="delete_confirm"
-                    userEmail={user.email}
-                />
-            )}
+            {
+                showDeleteModal && user && (
+                    <AuthModal
+                        onClose={() => setShowDeleteModal(false)}
+                        onLogout={onLogout}
+                        initialMode="delete_confirm"
+                        userEmail={user.email}
+                    />
+                )
+            }
 
             {/* Tiny Credits */}
             <Box
@@ -238,7 +273,7 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
                     </Button>
                 </DialogActions>
             </Dialog>
-        </Box>
+        </Box >
     )
 }
 

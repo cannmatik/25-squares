@@ -8,18 +8,17 @@ async function main() {
 
     const worlds = []
     for (let i = 1; i <= 25; i++) {
-        let requiredStars = 0
+        // Each world has 25 levels × 3 stars = 75 max per world
+        // Max possible stars from previous worlds = (i-1) * 75
+        // Percentage required scales from 45% (early) to 80% (late)
 
-        // Dynamic Difficulty Curve provided by user request
-        // "starts at ~40 and gets harder"
-        // Formula: Cumulative sum of increasing gaps
-        // Gap starts at 35 (W2) and increases by 1.5 for each subsequent world
+        let requiredStars = 0
         if (i > 1) {
-            let gap = 35
-            for (let j = 2; j <= i; j++) {
-                requiredStars += Math.floor(gap)
-                gap += 1.5
-            }
+            const maxPossible = (i - 1) * 75
+            // Scale from 45% at World 2 to 80% at World 25
+            // Linear interpolation: 0.45 + (worldNum - 2) * (0.80 - 0.45) / (25 - 2)
+            const percentage = 0.45 + (i - 2) * (0.35 / 23)
+            requiredStars = Math.floor(maxPossible * percentage)
         }
 
         worlds.push({

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import soundManager from '@/lib/sounds'
 import { WORLDS, getLevelConfig, RULE_DESCRIPTIONS } from '@/lib/levels'
+import { generateInfiniteLevel } from '@/lib/infiniteLevelGenerator'
 import { Snackbar, Alert, Box, Typography, IconButton, Stack, Dialog, DialogTitle, DialogContent, Button } from '@mui/material'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import PersonIcon from '@mui/icons-material/Person'
@@ -286,6 +287,28 @@ export default function Home() {
         }
     }
 
+    const saveInfiniteScore = async (levelNumber) => {
+        // Update local user state immediately for UI
+        if (user && levelNumber > user.infiniteLevel) {
+            const newUser = { ...user, infiniteLevel: levelNumber }
+            setUser(newUser)
+            localStorage.setItem('user', JSON.stringify(newUser))
+
+            if (isOnline) {
+                try {
+                    await fetch('/api/user/infinite', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        },
+                        body: JSON.stringify({ maxLevel: levelNumber })
+                    })
+                } catch (e) { console.error(e) }
+            }
+        }
+    }
+
     const handleLevelComplete = (score, stars, hintsUsed, undosUsed) => {
         if (stars > 0) {
             saveProgress(currentWorld, currentLevel, score, stars, hintsUsed || 0, undosUsed || 0)
@@ -309,6 +332,10 @@ export default function Home() {
     if (screen === 'game') {
         if (currentLevel === 'free') {
             activeLevelConfig = null // Triggers "FREE PLAY" in GameGrid
+        } else if (currentLevel === 'infinite') {
+            // Generate dynamic level
+            const runLvl = parseInt(localStorage.getItem('infiniteRunLevel') || '1')
+            activeLevelConfig = generateInfiniteLevel(runLvl)
         } else {
             const dbWorld = levelsCache[currentWorld]
             // Safe access in case levelsCache is array of objects or just list
@@ -398,8 +425,16 @@ export default function Home() {
             {screen === 'menu' && (
                 <MenuScreen
                     user={user}
-                    onPlay={(isFree) => {
-                        if (isFree) {
+                    onPlay={(isFree, isInfinite) => {
+                        if (isInfinite) {
+                            setCurrentLevel('infinite') // Marker for infinite mode
+                            // Initial infinite level is 1 (or user.infiniteLevel + 1 to continue? User said "max score kaydedelim", implies restart?)
+                            // Standard roguelike: restart from 1. Max score is record.
+                            // But we need a separate state for "current infinite run level".
+                            // Let's use `currentLevel` as 'infinite' str, and a new state `infiniteRunLevel`.
+                            localStorage.setItem('infiniteRunLevel', '1')
+                            setScreen('game')
+                        } else if (isFree) {
                             setCurrentLevel('free')
                             setScreen('game')
                         } else {
@@ -458,6 +493,31 @@ export default function Home() {
                             return { isLastLevel: false }
                         }
 
+                        if (currentLevel === 'infinite') {
+                            // Infinite Mode Progression
+                            const currentRunLvl = parseInt(localStorage.getItem('infiniteRunLevel') || '1')
+                            const nextLvl = currentRunLvl + 1
+                            localStorage.setItem('infiniteRunLevel', nextLvl.toString())
+
+                            // Force re-render with new config
+                            // Since currentLevel state doesn't change ('infinite'), we need to force update 
+                            // or ideally, GameGrid should react to config change.
+                            // But `activeLevelConfig` is derived from render. 
+                            // Triggering a re-render by setting state is needed? 
+                            // Actually, just returning here might not be enough if state doesn't change.
+                            // Hack: toggle screen briefly or use a timestamp in state? 
+                            // Better: Set `activeLevelConfig` dependency in GameGrid.
+                            // Re-setting `currentLevel` to 'infinite' does nothing.
+                            // Let's use a dummy state update or just rely on GameGrid's internal reset if config changes?
+                            // Issue: Config changes on NEXT render.
+                            // We need to trigger a re-render of THIS component.
+                            setCurrentLevel('infinite') // This might strict equal and skip.
+                            // Let's toggle a 'seed' state if needed, or simply setLevel to 'infinite-loading' then back?
+                            // Actually, let's just force update.
+                            setShowLevelInfo(prev => !prev) // Dummy update to force render
+                            return { isLastLevel: false }
+                        }
+
                         // Find the next level from database
                         const dbWorld = levelsCache[currentWorld]
                         if (dbWorld && Array.isArray(dbWorld)) {
@@ -499,7 +559,7 @@ export default function Home() {
                     }}
                     worldId={currentWorld}
                     isLastLevel={(() => {
-                        if (currentLevel === 'free') return false
+                        if (currentLevel === 'free' || currentLevel === 'infinite') return false
                         const dbWorld = levelsCache[currentWorld]
                         if (dbWorld && Array.isArray(dbWorld)) {
                             const sortedLevels = [...dbWorld].sort((a, b) => a.id - b.id)

@@ -13,6 +13,8 @@ import LightbulbIcon from '@mui/icons-material/Lightbulb'
 import InventoryIcon from '@mui/icons-material/Inventory'
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import PersonIcon from '@mui/icons-material/Person'
+import DisabledByDefaultIcon from '@mui/icons-material/DisabledByDefault'
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined'
 import soundManager from '@/lib/sounds'
 import { RULE_DESCRIPTIONS } from '@/lib/levels'
 import ResultModal from '../modals/ResultModal'
@@ -165,7 +167,12 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
     // Sound effect for earning stars
     useEffect(() => {
         if (!levelConfig?.stars) return
-        const currentStars = levelConfig.stars.reduce((acc, threshold) => moveCount >= threshold ? acc + 1 : acc, 0)
+        let currentStars = levelConfig.stars.reduce((acc, threshold) => moveCount >= threshold ? acc + 1 : acc, 0)
+
+        // Enforce checkpoint condition for any stars to show
+        if (levelConfig.minCheckpoints > 0 && completedCheckpoints < levelConfig.minCheckpoints) {
+            currentStars = 0
+        }
 
         if (currentStars > earnedStars) {
             soundManager.playStar(currentStars)
@@ -415,15 +422,25 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
     }
 
     const handleShare = async () => {
+        const isFreePlay = !levelConfig || !levelConfig.id
         const w = worldId || (levelConfig?.worldId || 1)
         const l = levelConfig?.id || 1
         const s = result?.stars || 0
         const sc = result?.score || moveCount
 
-        const url = `${window.location.origin}/share?world=${w}&level=${l}&score=${sc}&stars=${s}`
+        let url = `${window.location.origin}/share?world=${w}&level=${l}&score=${sc}&stars=${s}`
+        let ogApiUrl = `/api/og?world=${w}&level=${l}&score=${sc}&stars=${s}`
+
+        if (isFreePlay) {
+            url = `${window.location.origin}/share?mode=freeplay&score=${sc}`
+            ogApiUrl = `/api/og?mode=freeplay&score=${sc}`
+        }
+
         const shareData = {
             title: '25 SQUARES',
-            text: `I completed World ${w} Level ${l} with ${sc} moves!`,
+            text: isFreePlay
+                ? `I scored ${sc} moves in Free Play!`
+                : `I completed World ${w} Level ${l} with ${sc} moves!`,
             url: url
         }
 
@@ -431,7 +448,6 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         setStatusType('loading')
 
         // Optimistically ping the OG API to warm it up (fire and forget)
-        const ogApiUrl = `/api/og?world=${w}&level=${l}&score=${sc}&stars=${s}`
         fetch(ogApiUrl, { mode: 'no-cors' }).catch(() => { })
 
         if (navigator.share) {
@@ -468,7 +484,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         const isFlexibleWin = !won && message && message.includes('CHECKPOINTS!')
 
         if (levelConfig?.starCriteria === 'time') {
-            // Time-based scoring
+            // Time-based scoring (for time-limited levels)
             if (!timeRemaining) {
                 earnedStars = 0
             } else {
@@ -483,13 +499,46 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                 if ((won || isFlexibleWin) && earnedStars === 0) earnedStars = 1
             }
         } else {
-            // Default Move-based scoring
-            if (activeMoveCount >= starsBreakdown[2]) earnedStars = 3
-            else if (activeMoveCount >= starsBreakdown[1]) earnedStars = 2
-            else if (activeMoveCount >= starsBreakdown[0]) earnedStars = 1
+            // Composite scoring: moves + checkpoints
+            const minMovesReq = levelConfig?.minMoves || 1
+            const minCPReq = levelConfig?.minCheckpoints || 0
+            const totalCP = levelConfig?.requiredMoves?.length || 0
+
+            // Check if base requirements are met
+            const movesOK = activeMoveCount >= minMovesReq
+            const checkpointsOK = completedCheckpoints >= minCPReq
+
+            if (!movesOK || !checkpointsOK) {
+                // Failed minimum requirements = 0 stars
+                earnedStars = 0
+            } else {
+                // Calculate star based on performance
+                // Move score: how close to perfect (starsBreakdown[2] = 3-star threshold)
+                let moveScore = 0
+                if (activeMoveCount >= starsBreakdown[2]) moveScore = 3
+                else if (activeMoveCount >= starsBreakdown[1]) moveScore = 2
+                else if (activeMoveCount >= starsBreakdown[0]) moveScore = 1
+
+                // Checkpoint bonus: extra stars for hitting MORE than minimum
+                let cpBonus = 0
+                if (totalCP > 0 && minCPReq > 0) {
+                    const extraCP = completedCheckpoints - minCPReq
+                    if (extraCP > 0) cpBonus = Math.min(1, extraCP) // Max +1 star bonus
+                }
+
+                // Time penalty (if timed level but not time-based scoring)
+                let timePenalty = 0
+                if (levelConfig?.timeLimit && timeRemaining !== null) {
+                    const timePercent = timeRemaining / levelConfig.timeLimit
+                    if (timePercent < 0.1) timePenalty = 1 // Cutting it close = -1
+                }
+
+                // Final calculation
+                earnedStars = Math.max(1, Math.min(3, moveScore + cpBonus - timePenalty))
+            }
         }
 
-        // Perfect completion (all 25) = 3 stars, flexible win uses move-based stars
+        // Perfect completion (all squares) = 3 stars
         const finalStars = won ? 3 : (isFlexibleWin ? Math.max(earnedStars, 1) : earnedStars)
 
         if (finalStars > 0) {
@@ -506,7 +555,19 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                 soundManager.playWin()
             }
         } else {
-            setStatus(message || `GAME OVER! ${activeMoveCount} MOVES`)
+            // Check if infinite mode - if lost, it's GAME OVER for the run
+            if (levelConfig?.levelNumber) { // Infinite levels have levelNumber
+                // We still show the status message
+            }
+
+            let failMsg = message || `GAME OVER! ${activeMoveCount} MOVES`;
+            if (levelConfig?.minCheckpoints && completedCheckpoints < levelConfig.minCheckpoints) {
+                failMsg = `FAILED: NEED ${levelConfig.minCheckpoints} CHECKPOINTS!`;
+            } else if (levelConfig?.minMoves && activeMoveCount < levelConfig.minMoves) {
+                failMsg = `FAILED: NEED ${levelConfig.minMoves} MOVES!`;
+            }
+
+            setStatus(failMsg)
             setStatusType('lost')
             soundManager.playGameOver()
         }
@@ -559,7 +620,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                     // Checkpoint completed!
                     setCompletedCheckpoints(prev => prev + 1)
                     setStatus(`CHECKPOINT ${completedCheckpoints + 1}/${levelConfig.requiredMoves.length}!`)
-                } else if (hasMultipleCheckpoints && levelConfig.minMoves) {
+                } else if (hasMultipleCheckpoints) {
                     // Check if winning is still mathematically possible
                     const minReq = levelConfig.minCheckpoints || 1
 
@@ -697,49 +758,81 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                 activeSection={activeSection}
                 setActiveSection={setActiveSection}
                 customTitleClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'rules' ? null : 'rules') }}
+
                 secondaryInfo={
-                    (levelConfig?.stars || timeRemaining !== null) ? (
-                        <>
-                            {/* Stars */}
-                            {levelConfig?.stars && (
-                                <Box display="flex" alignItems="center" gap={0.5}>
-                                    {[0, 1, 2].map((i) => {
-                                        const isFilled = moveCount >= levelConfig.stars[i]
-                                        return isFilled
-                                            ? <StarIcon key={i} sx={{ fontSize: { xs: 18, sm: 20 }, color: '#FAEC3B' }} />
-                                            : <StarBorderIcon key={i} sx={{ fontSize: { xs: 18, sm: 20 }, color: 'text.secondary', opacity: 0.3 }} />
-                                    })}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 1.5, sm: 3 }, width: '100%', justifyContent: 'center' }}>
+                        {/* Stars Indicator - Show only for regular levels (has levelConfig but NOT levelNumber) */}
+                        {levelConfig && !levelConfig.levelNumber && (
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                {[1, 2, 3].map((s) => (
+                                    <StarIcon
+                                        key={s}
+                                        sx={{
+                                            fontSize: { xs: 14, sm: 16 },
+                                            color: earnedStars >= s ? '#FAEC3B' : 'action.disabled',
+                                            opacity: earnedStars >= s ? 1 : 0.3
+                                        }}
+                                    />
+                                ))}
+                            </Box>
+                        )}
+
+                        {/* Objectives Summary */}
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                            {/* Free Play indicator - when no levelConfig */}
+                            {!levelConfig && (
+                                <>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, bgcolor: 'primary.main', px: 1, py: 0.25, borderRadius: 1 }}>
+                                        <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#fff' }}>
+                                            FREE PLAY
+                                        </Typography>
+                                    </Box>
+                                    <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 'bold', color: 'text.primary' }}>
+                                        {moveCount} moves
+                                    </Typography>
+                                </>
+                            )}
+                            {/* Level indicator for Infinite Play */}
+                            {levelConfig?.levelNumber && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, bgcolor: 'error.main', px: 1, py: 0.25, borderRadius: 1 }}>
+                                    <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 'bold', color: '#fff' }}>
+                                        LVL {levelConfig.levelNumber}
+                                    </Typography>
                                 </Box>
                             )}
-                            {/* Score */}
-                            <Typography variant="caption" sx={{
-                                color: 'text.primary',
-                                fontSize: { xs: '0.75rem', sm: '0.85rem' },
-                                fontWeight: 'bold'
+                            {levelConfig?.minMoves && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+                                    <CheckBoxOutlinedIcon sx={{ fontSize: 14, color: moveCount >= levelConfig.minMoves ? 'success.main' : 'text.secondary' }} />
+                                    <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 'bold', color: moveCount >= levelConfig.minMoves ? 'success.main' : 'text.secondary' }}>
+                                        {moveCount}/{levelConfig.minMoves}
+                                    </Typography>
+                                </Box>
+                            )}
+                            {((levelConfig?.minCheckpoints > 0) || (levelConfig?.requiredMoves?.length > 0)) && (
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
+                                    <DisabledByDefaultIcon sx={{ fontSize: 14, color: completedCheckpoints >= (levelConfig.minCheckpoints || levelConfig.requiredMoves?.length) ? 'success.main' : 'text.secondary' }} />
+                                    <Typography variant="caption" sx={{ fontSize: '0.65rem', fontWeight: 'bold', color: completedCheckpoints >= (levelConfig.minCheckpoints || levelConfig.requiredMoves?.length) ? 'success.main' : 'text.secondary' }}>
+                                        {completedCheckpoints}/{levelConfig.minCheckpoints || levelConfig.requiredMoves?.length || 0}
+                                    </Typography>
+                                </Box>
+                            )}
+                        </Box>
+
+                        {/* Timer (if exists) */}
+                        {timeRemaining !== null && (
+                            <Box sx={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 0.5,
+                                color: timeRemaining <= 10 ? 'error.main' : 'text.primary'
                             }}>
-                                Score: {moveCount}
-                            </Typography>
-                            {timeRemaining !== null && (
-                                <Box sx={{
-                                    bgcolor: timeRemaining <= 10 ? 'error.main' : 'action.hover',
-                                    borderRadius: 1,
-                                    px: 1,
-                                    py: 0.25,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: 0.5,
-                                    color: timeRemaining <= 10 ? '#FFF' : 'text.primary',
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    fontSize: { xs: '0.75rem', sm: '0.85rem' },
-                                    fontWeight: 'bold'
-                                }}>
-                                    <AccessTimeIcon sx={{ fontSize: { xs: 14, sm: 16 } }} />
+                                <AccessTimeIcon sx={{ fontSize: 14 }} />
+                                <Typography variant="caption" sx={{ fontSize: '0.7rem', fontWeight: 'bold' }}>
                                     {String(Math.floor(timeRemaining / 60)).padStart(2, '0')}:{String(timeRemaining % 60).padStart(2, '0')}
-                                </Box>
-                            )}
-                        </>
-                    ) : null
+                                </Typography>
+                            </Box>
+                        )}
+                    </Box>
                 }
             >
                 {/* RULES SECTION */}
@@ -750,54 +843,70 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                         </Typography>
                         <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
                             {levelConfig?.stars && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    {levelConfig.stars.map((threshold, i) => (
-                                        <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
-                                            <StarIcon sx={{ fontSize: 12, color: '#FAEC3B' }} />
-                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>{threshold}+</Typography>
-                                        </Box>
-                                    ))}
+                                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0.5, alignItems: 'flex-start', p: 1, bgcolor: 'action.hover', borderRadius: 1, width: '100%' }}>
+                                    <Typography variant="caption" sx={{ fontWeight: 'bold', mb: 0.5 }}>STAR REQUIREMENTS:</Typography>
+                                    {levelConfig.starCriteria === 'time' && levelConfig.starThresholds ? (
+                                        // Time-based stars
+                                        levelConfig.starThresholds.map((seconds, i) => (
+                                            <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Box sx={{ display: 'flex' }}>
+                                                    {[...Array(3 - i)].map((_, j) => (
+                                                        <StarIcon key={j} sx={{ fontSize: 12, color: '#FAEC3B' }} />
+                                                    ))}
+                                                </Box>
+                                                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
+                                                    Complete in {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, '0')} or less
+                                                </Typography>
+                                            </Box>
+                                        )).reverse()
+                                    ) : (
+                                        // Move-based stars (default)
+                                        levelConfig.stars.map((threshold, i) => (
+                                            <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                                                <Box sx={{ display: 'flex' }}>
+                                                    {[...Array(i + 1)].map((_, j) => (
+                                                        <StarIcon key={j} sx={{ fontSize: 12, color: '#FAEC3B' }} />
+                                                    ))}
+                                                </Box>
+                                                <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
+                                                    {i === 0 ? `${threshold}+ moves` : i === 1 ? `${threshold}+ moves` : `${threshold} moves (perfect!)`}
+                                                    {i === 0 && levelConfig.minCheckpoints > 0 && ` + ${levelConfig.minCheckpoints} CP`}
+                                                </Typography>
+                                            </Box>
+                                        ))
+                                    )}
+                                    {/* Bonus info for timed levels with move-based scoring */}
+                                    {levelConfig.starCriteria !== 'time' && levelConfig.timeLimit && (
+                                        <Typography variant="caption" sx={{ color: 'warning.main', fontSize: '0.6rem', mt: 0.5 }}>
+                                            ⚠️ Finish with less than {Math.ceil(levelConfig.timeLimit * 0.1)}s remaining = -1 star
+                                        </Typography>
+                                    )}
                                 </Box>
                             )}
                             {levelConfig?.timeLimit && (
-                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <AccessTimeIcon sx={{ fontSize: 12, color: 'text.primary' }} />
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
-                                        {Math.floor(levelConfig.timeLimit / 60)}:{String(levelConfig.timeLimit % 60).padStart(2, '0')} Limit
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 1 }}>
+                                    <AccessTimeIcon sx={{ fontSize: 14, color: 'warning.main' }} />
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', fontWeight: 'bold' }}>
+                                        Time Limit: {Math.floor(levelConfig.timeLimit / 60)}:{String(levelConfig.timeLimit % 60).padStart(2, '0')}
                                     </Typography>
                                 </Box>
                             )}
                         </Stack>
                         <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.75rem', fontStyle: 'italic' }}>
                             {levelConfig?.minMoves ? (
-                                <>
-                                    Complete at least <strong>{levelConfig.minCheckpoints} checkpoints</strong> in <strong>{levelConfig.minMoves} moves</strong>!
-                                </>
+                                levelConfig.minCheckpoints > 0
+                                    ? 'Hit the checkpoints and complete the path!'
+                                    : 'Complete the path to the finish line!'
+                            ) : levelConfig?.levelNumber ? (
+                                levelConfig.requiredMoves?.length > 0
+                                    ? 'Reach all checkpoints to advance!'
+                                    : 'Survive as long as you can!'
                             ) : (
                                 RULE_DESCRIPTIONS[levelConfig?.ruleSet] || 'Visit all 25 squares!'
                             )}
                         </Typography>
 
-                        {/* Flexible Progress Indicator */}
-                        {levelConfig?.minMoves && (
-                            <Box sx={{ mt: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
-                                <Typography variant="caption" display="block" sx={{ fontWeight: 'bold', mb: 0.5 }}>PROGRESS</Typography>
-                                <Stack direction="row" spacing={2} justifyContent="center">
-                                    <Box>
-                                        <Typography variant="caption" color="text.secondary">MOVES</Typography>
-                                        <Typography variant="body2" fontWeight="bold" color={moveCount >= levelConfig.minMoves ? 'success.main' : 'text.primary'}>
-                                            {moveCount}/{levelConfig.minMoves}
-                                        </Typography>
-                                    </Box>
-                                    <Box>
-                                        <Typography variant="caption" color="text.secondary">CHECKPOINTS</Typography>
-                                        <Typography variant="body2" fontWeight="bold" color={completedCheckpoints >= levelConfig.minCheckpoints ? 'success.main' : 'text.primary'}>
-                                            {completedCheckpoints}/{levelConfig.requiredMoves?.length || 0} (Min: {levelConfig.minCheckpoints})
-                                        </Typography>
-                                    </Box>
-                                </Stack>
-                            </Box>
-                        )}
+
                     </Box>
                 )}
             </TopBar>}
@@ -808,15 +917,12 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                 if (step) {
                     return (
                         <Box sx={{
-                            position: 'absolute',
-                            top: 'auto',
-                            bottom: { xs: '60px', sm: '100px' }, // Positioned below grid where controls would be
-                            left: 0,
-                            right: 0,
+                            position: 'relative', // Changed from absolute to flow naturally
+                            mt: 2,
+                            mb: 2,
                             zIndex: 10,
                             display: 'flex',
                             justifyContent: 'center',
-                            pointerEvents: 'none', // Allow clicking through if needed
                             px: 2,
                             animation: 'fadeIn 0.3s ease-out'
                         }}>
@@ -827,8 +933,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                                 py: { xs: 0.75, sm: 1 },
                                 boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
                                 maxWidth: { xs: '280px', sm: '400px' },
-                                width: '100%',
-                                pointerEvents: 'auto'
+                                width: '100%'
                             }}>
                                 <Typography sx={{
                                     color: 'primary.contrastText',

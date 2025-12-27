@@ -1,6 +1,6 @@
 
 import { NextResponse } from 'next/server'
-import { prismaLevels } from '@/lib/levels-db'
+import prismaLevels from '@/lib/prisma-levels'
 
 export const dynamic = 'force-dynamic'
 

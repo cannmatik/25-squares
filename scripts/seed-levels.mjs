@@ -62,8 +62,8 @@ async function main() {
                 maxMistakes: maxMistakes || null,
                 starCriteria: starCriteria || null,
                 starThresholds: starThresholds || null,
-                minMoves: minMoves || null,
-                minCheckpoints: minCheckpoints || null
+                minMoves: minMoves !== undefined ? minMoves : null,
+                minCheckpoints: minCheckpoints !== undefined ? minCheckpoints : null
             }
 
             await prisma.level.upsert({
