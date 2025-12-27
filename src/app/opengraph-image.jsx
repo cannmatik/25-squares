@@ -31,78 +31,76 @@ export default async function Image() {
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    backgroundColor: '#1a1a2e', // Deep Navy
-                    backgroundImage: 'radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.05) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.05) 2%, transparent 0%)',
-                    backgroundSize: '100px 100px',
+                    backgroundColor: '#14141E',
                     fontFamily: '"Press Start 2P"',
-                    border: '24px solid #FAEC3B',
-                    position: 'relative',
                 }}
             >
-                {/* Decorative Background Elements */}
-                <div style={{ position: 'absolute', top: -100, right: -100, width: 400, height: 400, background: '#FAEC3B', opacity: 0.1, borderRadius: '50%', filter: 'blur(100px)' }} />
-                <div style={{ position: 'absolute', bottom: -100, left: -100, width: 400, height: 400, background: '#FAEC3B', opacity: 0.1, borderRadius: '50%', filter: 'blur(100px)' }} />
-
                 {/* Main Content */}
                 <div style={{
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    gap: 20
                 }}>
+                    {/* 25 Number - Smaller to match homepage proportions */}
                     <div
                         style={{
-                            fontSize: 90,
+                            fontSize: 120,
                             color: '#FAEC3B',
-                            textShadow: '6px 6px 0px #000',
-                            letterSpacing: '-4px',
-                            marginBottom: 20
+                            textShadow: '4px 5px 0px #d2003a, 6px 8px 0px rgba(0,0,0,0.5)',
+                            letterSpacing: '-6px',
+                            lineHeight: 1,
+                            display: 'flex',
                         }}
                     >
-                        25 SQUARES
+                        25
                     </div>
 
-                    <div style={{
-                        width: '200px',
-                        height: '4px',
-                        background: 'rgba(255,255,255,0.2)',
-                        borderRadius: '2px',
-                        marginBottom: 30
-                    }} />
-
+                    {/* SQUARES Text */}
                     <div
                         style={{
-                            fontSize: 32,
-                            color: '#FFF',
-                            opacity: 0.9,
-                            textShadow: '2px 2px 0px #000',
-                            textAlign: 'center'
+                            fontSize: 48,
+                            color: '#FAEC3B',
+                            textShadow: '3px 4px 0px #d2003a, 4px 6px 0px rgba(0,0,0,0.5)',
+                            letterSpacing: '4px',
+                            marginTop: 10,
+                            display: 'flex',
                         }}
                     >
-                        A CLASSIC PUZZLE CHALLENGE
+                        SQUARES
                     </div>
 
-                    {/* Decorative Grid Icon */}
+                    {/* Tagline */}
+                    <div
+                        style={{
+                            fontSize: 16,
+                            color: 'rgba(255,255,255,0.5)',
+                            marginTop: 40,
+                            letterSpacing: '3px',
+                            display: 'flex',
+                        }}
+                    >
+                        THE CLASSIC PUZZLE GAME
+                    </div>
+
+                    {/* 5x5 Mini Grid */}
                     <div style={{
                         display: 'flex',
-                        marginTop: 40,
-                        gap: 10,
-                        opacity: 0.5
+                        marginTop: 35,
+                        gap: 6,
                     }}>
                         {[...Array(5)].map((_, i) => (
                             <div key={i} style={{
-                                width: 20,
-                                height: 20,
-                                background: '#FAEC3B',
-                                boxShadow: '2px 2px 0 #000'
+                                width: 22,
+                                height: 22,
+                                background: i === 2 ? '#FAEC3B' : 'rgba(250, 236, 59, 0.2)',
+                                display: 'flex',
                             }} />
                         ))}
                     </div>
                 </div>
             </div>
         ),
-        // ImageResponse options
         {
             ...size,
             fonts: fontData ? [

@@ -26,7 +26,7 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
             height: '100dvh',
             width: '100%',
             p: { xs: 2, sm: 4 },
-            pt: { xs: 18, sm: 4 }, // Add top padding for mobile to clear TopBar
+            pt: { xs: 18, sm: 12 }, // Add top padding for both mobile and desktop to clear TopBar
             bgcolor: 'background.default',
             fontFamily: '"Press Start 2P", cursive',
             overflow: 'hidden',

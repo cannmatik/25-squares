@@ -387,7 +387,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         const url = `${window.location.origin}/share?world=${w}&level=${l}&score=${sc}&stars=${s}`
         const shareData = {
             title: '25 SQUARES',
-            text: `I complated Level ${l} with ${sc} moves!`,
+            text: `I completed World ${w} Level ${l} with ${sc} moves!`,
             url: url
         }
 
