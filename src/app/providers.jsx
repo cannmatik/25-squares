@@ -3,6 +3,7 @@
 import { createContext, useState, useMemo, useEffect, useContext } from 'react'
 import { ThemeProvider } from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v16-appRouter'
 import { getTheme } from '@/lib/theme'
 
 export const ColorModeContext = createContext({ toggleColorMode: () => { }, mode: 'dark' });
@@ -44,11 +45,13 @@ export default function Providers({ children }) {
     // Mui handles style injection.
 
     return (
-        <ColorModeContext.Provider value={colorMode}>
-            <ThemeProvider theme={theme}>
-                <CssBaseline />
-                {children}
-            </ThemeProvider>
-        </ColorModeContext.Provider>
+        <AppRouterCacheProvider>
+            <ColorModeContext.Provider value={colorMode}>
+                <ThemeProvider theme={theme}>
+                    <CssBaseline />
+                    {children}
+                </ThemeProvider>
+            </ColorModeContext.Provider>
+        </AppRouterCacheProvider>
     )
 }

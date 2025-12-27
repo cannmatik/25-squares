@@ -11,8 +11,12 @@ export async function GET(request) {
         const stars = parseInt(searchParams.get('stars') ?? '0')
 
         // Fetch Font & Logo
-        // We use a backup font or load generic if fetch fails, but 'Press Start 2P' is iconic for this app.
-        const fontData = await fetch(new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')).then((res) => res.arrayBuffer())
+        let fontData = null
+        try {
+            fontData = await fetch(new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')).then((res) => res.arrayBuffer())
+        } catch (e) {
+            console.error('Font fetch failed:', e)
+        }
 
         return new ImageResponse(
             (
@@ -117,13 +121,13 @@ export async function GET(request) {
             {
                 width: 1200,
                 height: 630,
-                fonts: [
+                fonts: fontData ? [
                     {
                         name: 'Press Start 2P',
                         data: fontData,
                         style: 'normal',
                     },
-                ],
+                ] : [],
             }
         )
     } catch (e) {

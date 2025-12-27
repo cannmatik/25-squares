@@ -13,9 +13,13 @@ export const contentType = 'image/png'
 
 // Image generation
 export default async function Image() {
-    // Fetch Font
     // Fetch Font (Using GitHub Raw for stability)
-    const fontData = await fetch(new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')).then((res) => res.arrayBuffer())
+    let fontData = null
+    try {
+        fontData = await fetch(new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')).then((res) => res.arrayBuffer())
+    } catch (e) {
+        console.error('Font fetch failed:', e)
+    }
 
     return new ImageResponse(
         (
@@ -101,13 +105,13 @@ export default async function Image() {
         // ImageResponse options
         {
             ...size,
-            fonts: [
+            fonts: fontData ? [
                 {
                     name: 'Press Start 2P',
                     data: fontData,
                     style: 'normal',
                 },
-            ],
+            ] : [],
         }
     )
 }

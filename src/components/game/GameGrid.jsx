@@ -382,7 +382,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         const w = worldId || (levelConfig?.worldId || 1)
         const l = levelConfig?.id || 1
         const s = result?.stars || 0
-        const sc = moveCount
+        const sc = result?.score || moveCount
 
         const url = `${window.location.origin}/share?world=${w}&level=${l}&score=${sc}&stars=${s}`
         const shareData = {
