@@ -17,12 +17,17 @@ function verifyToken(request) {
 export async function GET(request) {
     try {
         const decoded = verifyToken(request)
-        if (!decoded) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        if (!decoded) {
+            console.log('Progress API: Unauthorized')
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+        }
 
+        console.log('Progress API: Fetching for user', decoded.userId)
         const progress = await prisma.progress.findMany({
             where: { userId: decoded.userId },
             orderBy: [{ worldId: 'asc' }, { levelId: 'asc' }]
         })
+        console.log(`Progress API: Found ${progress.length} records`)
 
         const totalStars = progress.reduce((sum, p) => sum + p.stars, 0)
         return NextResponse.json({ progress, totalStars })
@@ -37,7 +42,7 @@ export async function POST(request) {
         const decoded = verifyToken(request)
         if (!decoded) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-        const { worldId, levelId, stars, bestScore } = await request.json()
+        const { worldId, levelId, stars, bestScore, hintsUsed, undosUsed } = await request.json()
 
         if (worldId === undefined || levelId === undefined) {
             return NextResponse.json({ error: 'worldId and levelId are required' }, { status: 400 })
@@ -58,9 +63,30 @@ export async function POST(request) {
             create: { userId: decoded.userId, worldId, levelId, stars: newStars, bestScore: newBestScore, completed: newStars > 0 }
         })
 
-        return NextResponse.json({ success: true, progress })
+        // Update user's hint/undo counts if provided
+        let updatedUser = null
+        if (hintsUsed > 0 || undosUsed > 0) {
+            // Get current user
+            const user = await prisma.user.findUnique({ where: { id: decoded.userId } })
+            if (user) {
+                updatedUser = await prisma.user.update({
+                    where: { id: decoded.userId },
+                    data: {
+                        hintCount: Math.max(0, user.hintCount - (hintsUsed || 0)),
+                        undoCount: Math.max(0, user.undoCount - (undosUsed || 0))
+                    }
+                })
+            }
+        }
+
+        return NextResponse.json({
+            success: true,
+            progress,
+            hintCount: updatedUser?.hintCount,
+            undoCount: updatedUser?.undoCount
+        })
     } catch (error) {
-        console.error('Save progress error details:', error) // Changed log message
+        console.error('Save progress error details:', error)
         return NextResponse.json({ error: 'Internal server error', details: error.message }, { status: 500 })
     }
 }

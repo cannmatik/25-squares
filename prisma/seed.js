@@ -9,7 +9,7 @@ async function main() {
     const files = ['world1_levels.json', 'world2_levels.json', 'world3_levels.json']
 
     for (const file of files) {
-        const filePath = path.join(__dirname, `../${file}`)
+        const filePath = path.join(__dirname, `../scripts/${file}`)
         if (!fs.existsSync(filePath)) {
             console.log(`Skipping ${file} (not found)`)
             continue

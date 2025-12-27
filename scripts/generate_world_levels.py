@@ -38,7 +38,7 @@ def solve_blocked_path(start_x, start_y, blocked_set, path, target_length):
     random_moves = list(MOVES)
     random.shuffle(random_moves)
     
-    for dx, dy in random_moves:
+    for dx, dy in random_moves: 
         nx, ny = current['x'] + dx, current['y'] + dy
         if is_valid(nx, ny, set((p['x'], p['y']) for p in path), blocked_set):
             path.append({'x': nx, 'y': ny})
@@ -176,17 +176,16 @@ def generate_world1(all_paths):
         # Level 2-7 generic logic...
         path = random.choice(all_paths)
         fixed_start = None
-        stars = [10, 12, 15]
+        stars = [8, 10, 12]
         
         if i >= 3:
             fixed_start = path[0] # The path defines the start
-            stars = [14 + (i-3)*2, 18 + (i-3)*1, 22 + (i-3)*0] # Approximate progression
-            # Let's stick to table:
-            if i==3: stars = [14, 18, 22]
-            if i==4: stars = [16, 20, 23]
-            if i==5: stars = [18, 21, 23]
-            if i==6: stars = [20, 22, 24]
-            if i==7: stars = [22, 23, 24]
+            # Daha kolay star gereksinimleri
+            if i==3: stars = [10, 12, 15]
+            if i==4: stars = [10, 13, 16]
+            if i==5: stars = [12, 15, 18]
+            if i==6: stars = [14, 17, 20]
+            if i==7: stars = [15, 18, 22]
             
         levels.append({
             "id": i,
@@ -206,7 +205,8 @@ def generate_world1(all_paths):
         # Table: "1 Kare kapansın"
         lvl = generate_blocked_level(i, 1)
         # Table says Fixed Start is empty for 8-13
-        lvl['stars'] = [14, 18, 22] if i <= 9 else ([16,20,23] if i <= 11 else [18,21,23])
+        # Daha kolay star gereksinimleri
+        lvl['stars'] = [10, 12, 15] if i <= 9 else ([12, 14, 17] if i <= 11 else [14, 16, 19])
         levels.append(lvl)
 
     # Levels 14-19: 2 Blocked Squares
@@ -216,9 +216,10 @@ def generate_world1(all_paths):
         if i >= 16:
             lvl['fixedStart'] = lvl['fullPath'][0]
         
-        lvl['stars'] = [14,18,22] # Default from table
-        if i >= 16: lvl['stars'] = [16,20,23]
-        if i >= 18: lvl['stars'] = [18,21,23]
+        # Daha kolay star gereksinimleri
+        lvl['stars'] = [10, 12, 15] # Default
+        if i >= 16: lvl['stars'] = [12, 14, 17]
+        if i >= 18: lvl['stars'] = [14, 16, 19]
             
         levels.append(lvl)
 
@@ -226,10 +227,10 @@ def generate_world1(all_paths):
     for i in range(20, 23):
         lvl = generate_blocked_level(i, 3)
         lvl['fixedStart'] = lvl['fullPath'][0] # Table says X
-        lvl['stars'] = [14+(i-20)*2, 16+(i-20)*1, 20+(i-20)*1] # Approx from table: 14,16,20 -> 16,17,20 -> 18,19,21
-        if i==20: lvl['stars'] = [14,16,20]
-        if i==21: lvl['stars'] = [16,17,20]
-        if i==22: lvl['stars'] = [18,19,21]
+        # Daha kolay star gereksinimleri
+        if i==20: lvl['stars'] = [10, 12, 16]
+        if i==21: lvl['stars'] = [12, 14, 17]
+        if i==22: lvl['stars'] = [14, 16, 18]
         levels.append(lvl)
 
     # Levels 23-25: Rule Set 1+6 (Time)
@@ -268,37 +269,39 @@ def generate_world2(all_paths):
         stars = [15, 20, 25]
         rule_set = 3 # Rule 3: Some moves revealed/required
         
-        # Difficulty Progression
+        # Yeni Predefined Kare Kuralları:
+        # - Tek kare: moveNumber <= 9
+        # - Birden fazla kare: ilki <= 9, aralarındaki fark 3-4 hamle
+        
         if i <= 10:
-            # Simple: Reach specific square at move 4 or 5
-            target_move_idx = 3 # Move 4 (0-indexed is 3)
-            if i > 5: target_move_idx = 4 # Move 5
+            # Tek predefined kare: Move 2-8 arası (kolay hesaplanabilir)
+            target_move_idx = 1 + ((i - 1) % 7)  # Move 2-8 (0-indexed: 1-7)
             
             target = path[target_move_idx]
             required_moves.append({
-                "moveNumber": target_move_idx + 1, # 1-based for UI
+                "moveNumber": target_move_idx + 1,  # 1-based for UI
                 "x": target['x'],
                 "y": target['y']
             })
             
         elif i <= 20:
-             # Medium: Two checkpoints or Blocked + Checkpoint
-            if i % 2 == 0:
-                # 2 Checkpoints (e.g. Move 5 and Move 15)
-                m1 = 4
-                m2 = 14
-                required_moves.append({"moveNumber": m1+1, "x": path[m1]['x'], "y": path[m1]['y']})
-                required_moves.append({"moveNumber": m2+1, "x": path[m2]['x'], "y": path[m2]['y']})
-            else:
-                # 1 Blocked + 1 Checkpoint (Need to find path compatible with block)
-                # Fallback to simple random path for now to ensure solvency
-                target = path[10]
-                required_moves.append({"moveNumber": 11, "x": target['x'], "y": target['y']})
+            # İki predefined kare: İlki Move 3-5, ikincisi +3-4 hamle sonra
+            m1 = 2 + ((i - 11) % 3)  # Move 3-5 (0-indexed: 2-4)
+            gap = 3 + ((i - 11) % 2)  # 3 veya 4 hamle fark
+            m2 = m1 + gap  # Move 6-9 arası
+            
+            required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+            required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
                 
         else:
-            # Hard: Late checkpoints
-            target = path[19] # Move 20
-            required_moves.append({"moveNumber": 20, "x": target['x'], "y": target['y']})
+            # Üç predefined kare: Move 3, +3 hamle, +3 hamle (Move 3, 6, 9)
+            m1 = 2  # Move 3
+            m2 = 5  # Move 6
+            m3 = 8  # Move 9
+            
+            required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+            required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
+            required_moves.append({"moveNumber": m3 + 1, "x": path[m3]['x'], "y": path[m3]['y']})
 
         levels.append({
             "id": i,
@@ -328,26 +331,58 @@ def generate_world2(all_paths):
     return levels
 
 def generate_world3(all_paths):
-    # World 3: Hardest. Max Mistakes (Rule 5) and Row Constraint (Rule 4)
+    # World 3: Hardest. Blocked Squares + Required Moves + Max Mistakes + Time
     print("Generating World 3...")
     levels = []
     
-    # Filter paths for Rule 4 (First row constraints - assume it means start at row > 0)
-    row_constrained_paths = [p for p in all_paths if p[0]['y'] > 0 and p[1]['y'] > 0 and p[2]['y'] > 0]
-    
     for i in range(1, 26):
-        path = random.choice(row_constrained_paths if row_constrained_paths else all_paths)
+        # Calculate difficulty parameters based on level
+        blocked_count = min(1 + (i // 7), 3)  # 1-3 blocked squares
+        required_count = 1 + (i // 10)  # 1-3 required moves
+        max_mistakes = 3 if i < 10 else (2 if i < 18 else 1)
+        time_limit = 120 if i < 10 else (90 if i < 18 else 60)
+        
+        # Pick a random 25-square path
+        path = random.choice(all_paths)
+        
+        # Create blocked squares from the end of the path (remove last N squares)
+        # This ensures the remaining path is still valid
+        blocked_squares = []
+        if blocked_count > 0 and len(path) == 25:
+            # Take last N squares as blocked
+            for j in range(blocked_count):
+                sq = path[-(j+1)]
+                blocked_squares.append({'x': sq['x'], 'y': sq['y']})
+            # Shorten path to exclude blocked squares
+            path = path[:25 - blocked_count]
+        
+        # Add required moves at strategic positions
+        required_moves = []
+        path_len = len(path)
+        
+        if required_count >= 1 and path_len > 5:
+            m1 = 4  # Move 5
+            required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+        if required_count >= 2 and path_len > 10:
+            m2 = 9  # Move 10
+            required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
+        if required_count >= 3 and path_len > 15:
+            m3 = 14  # Move 15
+            required_moves.append({"moveNumber": m3 + 1, "x": path[m3]['x'], "y": path[m3]['y']})
+        
+        # Star thresholds based on actual path length
+        stars = [path_len - 6, path_len - 3, path_len]
         
         levels.append({
             "id": i,
             "gridSize": 5,
             "fixedStart": path[0],
-            "blockedSquares": [],
-            "requiredMoves": [], # Could add checkpoints
-            "stars": [15, 20, 25],
-            "ruleSet": 5, # Max Mistakes
-            "maxMistakes": 3 if i < 10 else (2 if i < 20 else 1),
-            "timeLimit": 90,
+            "blockedSquares": blocked_squares,
+            "requiredMoves": required_moves,
+            "stars": stars,
+            "ruleSet": 5,  # Max Mistakes
+            "maxMistakes": max_mistakes,
+            "timeLimit": time_limit,
             "fullPath": path
         })
         

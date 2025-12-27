@@ -30,7 +30,7 @@ export async function POST(request) {
         return NextResponse.json({
             message: 'Login successful',
             token,
-            user: { id: user.id, email: user.email, username: user.username }
+            user: { id: user.id, email: user.email, username: user.username, hintCount: user.hintCount, undoCount: user.undoCount }
         })
     } catch (error) {
         console.error('Login error:', error)

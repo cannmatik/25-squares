@@ -30,11 +30,11 @@ const theme = createTheme({
         },
     },
     typography: {
-        fontFamily: '"Press Start 2P", cursive',
-        h1: { fontSize: '2rem', color: '#FAEC3B' },
-        h2: { fontSize: '1.5rem', color: '#FAEC3B' },
+        fontFamily: '"Montserrat", sans-serif',
+        h1: { fontSize: '2rem', color: '#FAEC3B', fontFamily: '"Press Start 2P", cursive' },
+        h2: { fontSize: '1.5rem', color: '#FAEC3B', fontFamily: '"Press Start 2P", cursive' },
         h3: { fontSize: '1.2rem', color: '#ECECEC' },
-        button: { textTransform: 'uppercase' }, // Keep retro uppercase
+        button: { textTransform: 'uppercase', fontWeight: 600 },
     },
     components: {
         MuiButton: {
