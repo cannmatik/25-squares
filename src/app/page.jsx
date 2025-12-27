@@ -403,14 +403,6 @@ export default function Home() {
                         setUser(null)
                         setProgress({})
                     }}
-                    muted={muted}
-                    onToggleSound={() => { setMuted(!muted); soundManager.toggleMute() }}
-                    bgmMuted={bgmMuted}
-                    onToggleBGM={() => {
-                        const isMuted = soundManager.toggleBGM();
-                        setBgmMuted(isMuted);
-                    }}
-                    isOnline={isOnline}
                 />
             )}
 
@@ -453,30 +445,58 @@ export default function Home() {
                     onNextLevel={() => {
                         if (currentLevel === 'free') {
                             // Just restart free play
-                            return
-                        }
-                        // Logic to find next level
-                        const nextId = currentLevel + 1
-                        // Check if next level exists in this world
-                        // Check DB cache first
-                        const dbWorld = levelsCache[currentWorld]
-                        let exists = false
-                        if (dbWorld) {
-                            exists = dbWorld.some(l => l.id === nextId)
-                        } else {
-                            // Fallback static
-                            const w = WORLDS.find(w => w.id === currentWorld)
-                            exists = w && w.levels.some(l => l.id === nextId)
+                            return { isLastLevel: false }
                         }
 
-                        if (exists) {
-                            setCurrentLevel(nextId)
+                        // Find the next level from database
+                        const dbWorld = levelsCache[currentWorld]
+                        if (dbWorld && Array.isArray(dbWorld)) {
+                            // Sort levels by ID to ensure correct order
+                            const sortedLevels = [...dbWorld].sort((a, b) => a.id - b.id)
+
+                            // Find current level index
+                            const currentIndex = sortedLevels.findIndex(l => l.id === currentLevel)
+
+                            if (currentIndex !== -1 && currentIndex < sortedLevels.length - 1) {
+                                // Next level exists
+                                const nextLevel = sortedLevels[currentIndex + 1]
+                                setCurrentLevel(nextLevel.id)
+                                return { isLastLevel: false }
+                            } else {
+                                // This is the last level in the world
+                                setScreen('worlds')
+                                return { isLastLevel: true }
+                            }
                         } else {
-                            // Next World?
-                            // For simplicity, Go back to levels
-                            setScreen('levels')
+                            // Fallback to static levels
+                            const w = WORLDS.find(w => w.id === currentWorld)
+                            if (w) {
+                                const sortedLevels = [...w.levels].sort((a, b) => a.id - b.id)
+                                const currentIndex = sortedLevels.findIndex(l => l.id === currentLevel)
+
+                                if (currentIndex !== -1 && currentIndex < sortedLevels.length - 1) {
+                                    setCurrentLevel(sortedLevels[currentIndex + 1].id)
+                                    return { isLastLevel: false }
+                                } else {
+                                    setScreen('worlds')
+                                    return { isLastLevel: true }
+                                }
+                            } else {
+                                setScreen('worlds')
+                                return { isLastLevel: true }
+                            }
                         }
                     }}
+                    isLastLevel={(() => {
+                        if (currentLevel === 'free') return false
+                        const dbWorld = levelsCache[currentWorld]
+                        if (dbWorld && Array.isArray(dbWorld)) {
+                            const sortedLevels = [...dbWorld].sort((a, b) => a.id - b.id)
+                            const currentIndex = sortedLevels.findIndex(l => l.id === currentLevel)
+                            return currentIndex === sortedLevels.length - 1
+                        }
+                        return false
+                    })()}
                 />
             )}
 

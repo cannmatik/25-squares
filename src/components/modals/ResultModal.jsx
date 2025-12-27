@@ -4,7 +4,7 @@ import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
 import soundManager from '@/lib/sounds'
 import Stars from '../ui/Stars'
 
-export default function ResultModal({ stars, score, isNewBest, onRetry, onNext, onLevels, hasNext, onUndo, canUndo }) {
+export default function ResultModal({ stars, score, isNewBest, onRetry, onNext, onLevels, hasNext, isLastLevel, onUndo, canUndo }) {
     useEffect(() => {
         if (stars > 0) {
             for (let i = 1; i <= stars; i++) setTimeout(() => soundManager.playStar(i), i * 300)
@@ -66,7 +66,7 @@ export default function ResultModal({ stars, score, isNewBest, onRetry, onNext, 
                                 onClick={() => { soundManager.playClick(); onNext() }}
                                 sx={{ height: 48, fontWeight: 'bold' }}
                             >
-                                NEXT LEVEL
+                                {isLastLevel ? 'WORLD COMPLETE!' : 'NEXT LEVEL'}
                             </Button>
                         )}
                         <Button

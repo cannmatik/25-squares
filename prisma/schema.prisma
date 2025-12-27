@@ -12,6 +12,9 @@ model User {
   email     String   @unique
   username  String   @unique
   password  String
+  emailVerified Boolean  @default(false)
+  verificationOtp String?
+  verificationOtpExpires DateTime?
   undoCount Int      @default(5)
   hintCount Int      @default(3)
   createdAt DateTime @default(now())

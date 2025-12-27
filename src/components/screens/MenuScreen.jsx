@@ -1,61 +1,29 @@
-import { Box, Typography, Button, Stack, Dialog, DialogTitle, DialogContent, DialogActions, Switch, Paper } from '@mui/material'
+import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material'
 import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import LogoutIcon from '@mui/icons-material/Logout'
 import LoginIcon from '@mui/icons-material/Login'
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports'
 import InfoIcon from '@mui/icons-material/Info'
-import MusicNoteIcon from '@mui/icons-material/MusicNote'
-import MusicOffIcon from '@mui/icons-material/MusicOff'
-import Brightness4Icon from '@mui/icons-material/Brightness4'
-import Brightness7Icon from '@mui/icons-material/Brightness7'
-import VolumeUpIcon from '@mui/icons-material/VolumeUp'
-import VolumeOffIcon from '@mui/icons-material/VolumeOff'
-import FullscreenIcon from '@mui/icons-material/Fullscreen'
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit'
 import { useColorMode } from '@/app/providers'
 import { useState, useEffect } from 'react'
 import soundManager from '@/lib/sounds'
+import TopBar from '@/components/TopBar'
 
-export default function MenuScreen({ user, onPlay, onAuth, onLogout, muted, onToggleSound, bgmMuted, onToggleBGM, isOnline }) {
+export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline }) {
     const [showCredits, setShowCredits] = useState(false)
-    const [isFullscreen, setIsFullscreen] = useState(false)
-    const [mounted, setMounted] = useState(false)
-    const { mode, toggleColorMode } = useColorMode()
+    const [activeSection, setActiveSection] = useState(null)
+    const { mode } = useColorMode()
     const isDark = mode === 'dark'
-
-    // Mount effect to prevent hydration mismatch for browser-only APIs
-    useEffect(() => {
-        setMounted(true)
-        const handleFsChange = () => setIsFullscreen(!!document.fullscreenElement)
-        document.addEventListener('fullscreenchange', handleFsChange)
-        return () => document.removeEventListener('fullscreenchange', handleFsChange)
-    }, [])
-
-    const toggleFullscreen = () => {
-        if (!document.fullscreenElement) {
-            document.documentElement.requestFullscreen().catch(e => {
-                console.warn("Fullscreen not supported or blocked", e)
-            })
-        } else {
-            document.exitFullscreen()
-        }
-    }
-
-    // Check if fullscreen is supported (client-side only logic)
-    const isFullscreenSupported = mounted &&
-        (document.documentElement.requestFullscreen ||
-            document.documentElement.webkitRequestFullscreen)
 
     return (
         <Box sx={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'space-between',
+            justifyContent: 'center',
             height: '100dvh',
             width: '100%',
             p: { xs: 2, sm: 4 },
-            py: { xs: 5, sm: 6 },
             bgcolor: 'background.default',
             fontFamily: '"Press Start 2P", cursive',
             overflow: 'hidden',
@@ -64,6 +32,14 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, muted, onTo
             left: 0
         }}>
 
+            {/* TopBar */}
+            <TopBar
+                title="25 SQUARES"
+                user={user}
+                activeSection={activeSection}
+                setActiveSection={setActiveSection}
+            />
+
             {/* Title Section */}
             <Box sx={{
                 width: '100%',
@@ -71,8 +47,9 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, muted, onTo
                 flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: { xs: 3, sm: 4 }, // Use gap for reliable spacing
+                gap: { xs: 3, sm: 4 },
                 textAlign: 'center',
+                mb: 6,
                 animation: 'titleFloat 3s ease-in-out infinite',
                 '@keyframes titleFloat': {
                     '0%, 100%': { transform: 'translateY(0)' },
@@ -189,112 +166,24 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, muted, onTo
                 )}
             </Box>
 
-            {/* Bottom Controls Panel */}
-            <Box sx={{ width: '100%', maxWidth: { xs: '280px', sm: '400px' } }}>
-                <Paper elevation={0} sx={{
-                    p: 2,
-                    bgcolor: isDark ? 'rgba(0,0,0,0.4)' : 'rgba(0,0,0,0.03)',
-                    border: '2px solid',
-                    borderColor: 'text.primary',
-                    borderRadius: 0,
-                    mb: 1
-                }}>
-                    <Stack spacing={2}>
-                        <Stack direction="row" spacing={1}>
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                onClick={() => { soundManager.playClick(); onToggleBGM() }}
-                                startIcon={mounted ? (bgmMuted ? <MusicOffIcon sx={{ fontSize: 14 }} /> : <MusicNoteIcon sx={{ color: isDark ? '#FAEC3B' : 'primary.main', fontSize: 14 }} />) : <MusicNoteIcon sx={{ fontSize: 14 }} />}
-                                sx={{
-                                    fontSize: '0.6rem',
-                                    p: 0,
-                                    height: 36,
-                                    borderColor: 'divider',
-                                    color: 'text.primary',
-                                    borderRadius: 0,
-                                    minWidth: 0
-                                }}
-                            >
-                                MUSIC
-                            </Button>
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                onClick={() => { soundManager.playClick(); onToggleSound() }}
-                                startIcon={mounted ? (muted ? <VolumeOffIcon sx={{ fontSize: 14 }} /> : <VolumeUpIcon sx={{ color: isDark ? '#FAEC3B' : 'primary.main', fontSize: 14 }} />) : <VolumeUpIcon sx={{ fontSize: 14 }} />}
-                                sx={{
-                                    fontSize: '0.6rem',
-                                    p: 0,
-                                    height: 36,
-                                    borderColor: 'divider',
-                                    color: 'text.primary',
-                                    borderRadius: 0,
-                                    minWidth: 0
-                                }}
-                            >
-                                SFX
-                            </Button>
-                            {/* Fullscreen Button - Now in the same row */}
-                            <Button
-                                fullWidth
-                                variant="outlined"
-                                onClick={() => { soundManager.playClick(); toggleFullscreen() }}
-                                startIcon={mounted ? (isFullscreen ? <FullscreenExitIcon sx={{ fontSize: 14 }} /> : <FullscreenIcon sx={{ fontSize: 14 }} />) : <FullscreenIcon sx={{ fontSize: 14 }} />}
-                                sx={{
-                                    fontSize: '0.6rem',
-                                    p: 0,
-                                    height: 36,
-                                    borderColor: 'divider',
-                                    color: 'text.primary',
-                                    borderRadius: 0,
-                                    minWidth: 0,
-                                    visibility: (mounted && isFullscreenSupported) ? 'visible' : 'hidden'
-                                }}
-                            >
-                                FULL
-                            </Button>
-                        </Stack>
-
-                        <Stack direction="row" alignItems="center" justifyContent="center" spacing={2} sx={{ px: 0.5 }}>
-                            <Box
-                                onClick={() => { soundManager.playClick(); toggleColorMode() }}
-                                sx={{ display: 'flex', alignItems: 'center', gap: 1, cursor: 'pointer' }}
-                            >
-                                {isDark ? <Brightness4Icon sx={{ color: '#FAEC3B', fontSize: 14 }} /> : <Brightness7Icon sx={{ fontSize: 14 }} />}
-                                <Typography sx={{ fontSize: '0.65rem', color: 'text.primary' }}>{isDark ? 'DEEP DARK' : 'PAPER LIGHT'}</Typography>
-                            </Box>
-
-                            <Switch
-                                size="small"
-                                checked={isDark}
-                                onChange={() => { soundManager.playClick(); toggleColorMode() }}
-                                sx={{
-                                    '& .MuiSwitch-switchBase.Mui-checked': { color: '#FAEC3B' },
-                                    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#FAEC3B' }
-                                }}
-                            />
-                        </Stack>
-                    </Stack>
-                </Paper>
-
-                {/* Tiny Credits */}
-                <Box
-                    onClick={() => { soundManager.playClick(); setShowCredits(true) }}
-                    sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 0.5,
-                        cursor: 'pointer',
-                        opacity: 0.5,
-                        transition: 'opacity 0.2s',
-                        '&:hover': { opacity: 1 }
-                    }}
-                >
-                    <InfoIcon sx={{ fontSize: 12 }} />
-                    <Typography sx={{ fontSize: '0.5rem' }}>CREDITS</Typography>
-                </Box>
+            {/* Tiny Credits */}
+            <Box
+                onClick={() => { soundManager.playClick(); setShowCredits(true) }}
+                sx={{
+                    position: 'absolute',
+                    bottom: 20,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 0.5,
+                    cursor: 'pointer',
+                    opacity: 0.5,
+                    transition: 'opacity 0.2s',
+                    '&:hover': { opacity: 1 }
+                }}
+            >
+                <InfoIcon sx={{ fontSize: 12 }} />
+                <Typography sx={{ fontSize: '0.5rem' }}>CREDITS</Typography>
             </Box>
 
             {/* Credits Dialog */}
