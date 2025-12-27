@@ -60,6 +60,20 @@ node update-levels.js
 - **Level 11-20:** İki predefined kare (ilki ≤ 9, fark 3-4 hamle)
 - **Level 21-25:** Üç predefined kare (Move 3, 6, 9)
 
-### World 3
-- Max mistakes kuralı
-- Row constraints
+### World 3 - Combined Mechanics
+- **Level 1-8:** 0 blocked, 1 predefined (Move 4-10)
+- **Level 9-16:** 1 blocked, 1 predefined
+- **Level 17-25:** 2 blocked, 2 predefined (gap >= 3)
+
+### World 4-25 - Dynamic Difficulty
+
+| World | First Predefined | Gap | Blocked | minMoves |
+|-------|-----------------|-----|---------|----------|
+| 4-5 | Move 5 | 3-4 | 0-2 | path-5 |
+| 6-10 | Move 6 | 4-5 | 0-2 | path-5 |
+| 11-15 | Move 7 | 5-7 | 1-3 | path-3 |
+| 16-20 | Move 9 | 6-8 | 2-4 | path-2 |
+| 21-25 | Move 11 | 7-10 | 2-5 | path-1 |
+
+**Balance Rule:** `blocked + predefined <= path_len / 3`
+

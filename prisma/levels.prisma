@@ -39,3 +39,13 @@ model Level {
 
   @@unique([worldId, levelId])
 }
+
+model World {
+  id            Int      @id // We want manual ID control (1-25) or auto, but let's stick to Int for easier mapping
+  name          String   // "World 1"
+  requiredStars Int      // 0, 40, 60...
+  levels        Int      @default(25)
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}

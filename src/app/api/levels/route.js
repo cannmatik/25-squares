@@ -2,6 +2,8 @@
 import { NextResponse } from 'next/server'
 import { prismaLevels } from '@/lib/levels-db'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url)
@@ -41,7 +43,13 @@ export async function GET(request) {
             return acc
         }, {})
 
-        return NextResponse.json(levelsByWorld)
+        return NextResponse.json(levelsByWorld, {
+            headers: {
+                'Cache-Control': 'public, max-age=0, must-revalidate',
+                'CDN-Cache-Control': 'public, max-age=0, must-revalidate',
+                'Vercel-CDN-Cache-Control': 'public, max-age=0, must-revalidate',
+            }
+        })
     } catch (error) {
         console.error('Fetch levels error:', error)
         return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -5,6 +5,7 @@ import LockIcon from '@mui/icons-material/Lock'
 import soundManager from '@/lib/sounds'
 import { WORLDS } from '@/lib/levels'
 import { useColorMode } from '@/app/providers'
+import { useState, useEffect } from 'react'
 
 // Stars Component with MUI icons
 const Stars = ({ count, total = 3, size = 12, passed = false, isDark = true }) => (
@@ -27,6 +28,25 @@ const Stars = ({ count, total = 3, size = 12, passed = false, isDark = true }) =
 export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline }) {
     const { mode } = useColorMode()
     const isDark = mode === 'dark'
+
+    // Load World Config (Unlock Rules)
+    const [worldRules, setWorldRules] = useState({})
+
+    useEffect(() => {
+        try {
+            const cached = localStorage.getItem('cachedWorldsConfig')
+            if (cached) {
+                const rules = JSON.parse(cached)
+                const ruleMap = {}
+                rules.forEach(r => {
+                    ruleMap[r.id] = r.requiredStars
+                })
+                setWorldRules(ruleMap)
+            }
+        } catch (e) {
+            console.error('Failed to parse world config', e)
+        }
+    }, [])
 
     // Create 25 slots for worlds (5x5 grid)
     const worldList = Array.from({ length: 25 }, (_, i) => i + 1)
@@ -56,47 +76,33 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
                 mx: 'auto'
             }}>
                 {worldList.map((worldId) => {
-                    const world = WORLDS.find(w => w.id === worldId)
-                    const exists = !!world
+                    const world = WORLDS.find(w => w.id === worldId) || { id: worldId, levels: 25 } // Fallback if missing in WORLDS
 
-                    if (!exists) {
-                        // Empty slot for future worlds
-                        return (
-                            <Box
-                                key={worldId}
-                                sx={{
-                                    width: '100%',
-                                    aspectRatio: '1 / 1',
-                                    minWidth: 0,
-                                    minHeight: 0,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    bgcolor: 'rgba(128, 128, 128, 0.05)',
-                                    border: '1px solid',
-                                    borderColor: 'divider',
-                                    borderRadius: 1,
-                                    opacity: 0.3
-                                }}
-                            >
-                                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
-                                    {worldId}
-                                </Typography>
-                            </Box>
-                        )
-                    }
-
-                    // Existing world
+                    // Existing world data
                     const totalLevels = world.levels || 25
                     const worldProgress = progress[worldId] || {}
                     const completedLevels = Object.keys(worldProgress).length
                     const totalStars = Object.values(worldProgress).reduce((a, b) => a + (b.stars || 0), 0)
                     const maxStars = totalLevels * 3
 
-                    // World is unlocked if it's World 1, or if previous world has at least 1 completed level
-                    const prevWorldId = worldId - 1
-                    const prevProgress = progress[prevWorldId] || {}
-                    const locked = worldId > 1 && Object.keys(prevProgress).length === 0
+                    // Calculate Grand Total Stars across ALL worlds
+                    const grandTotalStars = Object.values(progress).reduce((acc, worldP) => {
+                        return acc + Object.values(worldP).reduce((a, b) => a + (b.stars || 0), 0)
+                    }, 0)
+
+                    // Unlock Condition
+                    // Default Fallback Logic (if no DB config):
+                    let fallbackRequired = 0
+                    if (worldId > 1) {
+                        let gap = 35
+                        for (let j = 2; j <= worldId; j++) {
+                            fallbackRequired += Math.floor(gap)
+                            gap += 1.5
+                        }
+                    }
+
+                    const requiredStarsToUnlock = worldRules[worldId] !== undefined ? worldRules[worldId] : fallbackRequired
+                    const locked = worldId > 1 && grandTotalStars < requiredStarsToUnlock
                     const hasProgress = completedLevels > 0
 
                     return (
@@ -117,11 +123,11 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
                                 justifyContent: 'center',
                                 gap: { xs: 0.25, sm: 0.5 },
                                 overflow: 'hidden',
-                                opacity: locked ? 0.4 : 1,
+                                opacity: locked ? 0.6 : 1,
                                 borderRadius: 1,
                                 border: hasProgress ? 'none' : '2px solid',
-                                borderColor: 'secondary.main',
-                                bgcolor: hasProgress ? 'primary.main' : 'transparent',
+                                borderColor: locked ? 'text.disabled' : 'secondary.main',
+                                bgcolor: hasProgress ? 'primary.main' : (locked ? 'action.disabledBackground' : 'transparent'),
                                 color: hasProgress ? 'primary.contrastText' : 'text.primary',
                                 '&:hover': {
                                     bgcolor: hasProgress ? 'primary.dark' : 'rgba(0,0,0,0.05)',
@@ -130,7 +136,12 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
                             }}
                         >
                             {locked ? (
-                                <LockIcon sx={{ fontSize: 20, color: 'text.secondary', opacity: 0.5 }} />
+                                <>
+                                    <LockIcon sx={{ fontSize: 20, color: 'text.secondary', opacity: 0.7, mb: 0.5 }} />
+                                    <Typography variant="caption" sx={{ fontSize: '0.65rem', color: 'text.secondary', fontWeight: 'bold', textAlign: 'center', lineHeight: 1.1 }}>
+                                        {requiredStarsToUnlock} <StarIcon sx={{ fontSize: 10, verticalAlign: 'middle', mb: 0.2, color: '#FAEC3B' }} />
+                                    </Typography>
+                                </>
                             ) : (
                                 <>
                                     <Typography variant="body2" sx={{ fontSize: { xs: '0.85rem', sm: '1.2rem' }, fontWeight: 'bold', lineHeight: 1 }}>

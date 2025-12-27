@@ -100,7 +100,7 @@ export default function Home() {
 
                 // Levels (always fetch to update)
                 if (navigator.onLine) {
-                    promises.push(fetch('/api/levels').then(res => res.ok ? res.json() : null))
+                    promises.push(fetch('/api/levels', { cache: 'no-store' }).then(res => res.ok ? res.json() : null))
                 } else {
                     promises.push(Promise.resolve(null))
                 }
@@ -109,17 +109,28 @@ export default function Home() {
                 if (token && navigator.onLine) {
                     promises.push(fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.ok ? res.json() : null))
                     promises.push(fetch('/api/progress', { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.ok ? res.json() : null))
+                    // Fetch Worlds Config
+                    promises.push(fetch('/api/worlds').then(res => res.ok ? res.json() : null))
                 } else {
                     promises.push(Promise.resolve(null))
                     promises.push(Promise.resolve(null))
+                    promises.push(Promise.resolve(null)) // Worlds placeholder
                 }
 
-                const [levelsData, userData, progressData] = await Promise.all(promises)
+                const [levelsData, userData, progressData, worldsData] = await Promise.all(promises)
 
                 // Update Levels
                 if (levelsData) {
                     setLevelsCache(levelsData)
                     localStorage.setItem('cachedLevels', JSON.stringify(levelsData))
+                }
+
+                // Update World Rules (Store in state/localstorage if needed, but for now we just verify it loads)
+                if (worldsData) {
+                    // Ideally we pass this to WorldsScreen or store it globally.
+                    // For now, let's just log to confirm it works
+                    console.log('Loaded Worlds Config:', worldsData)
+                    localStorage.setItem('cachedWorldsConfig', JSON.stringify(worldsData))
                 }
 
                 // Update User

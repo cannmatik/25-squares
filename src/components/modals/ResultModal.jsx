@@ -138,7 +138,7 @@ export default function ResultModal({ stars, score, isNewBest, levelConfig, comp
                                 color: 'text.primary'
                             }}
                         >
-                            LEVEL SELECTION
+                            {levelConfig ? 'LEVEL SELECTION' : 'MAIN MENU'}
                         </Button>
                     </Stack>
                 </Stack>

@@ -333,161 +333,176 @@ def generate_world2(all_paths):
 
 def generate_world3(all_paths):
     """
-    World 3: Hardest. Blocked Squares + Required Moves + Max Mistakes + Time
+    World 3: Introduction to combined mechanics
     
-    RULES:
-    - İlk predefined kare < 10 (moveNumber 2-9 arası)
-    - İki predefined kare arasındaki fark <= 5
-    - Predefined kareler path'ten alınır (garantili valid)
-    - Her level farklı random moveNumber'lar
+    NEW RULES:
+    - İlk predefined kare >= Move 4
+    - Predefined'lar arası gap >= 3
+    - Blocked count: 0-2 (düşük tutulacak)
+    - blocked + predefined <= path_length / 3
     """
     print("Generating World 3...")
     levels = []
     
     for i in range(1, 26):
-        # Calculate difficulty parameters based on level
-        blocked_count = min(1 + (i // 7), 3)  # 1-3 blocked squares
-        required_count = 1 + (i // 10)  # 1-3 required moves
+        path = random.choice(all_paths)
+        
+        # Level'e göre artan zorluk
+        # Blocked: 0-2 (düşük)
+        if i <= 8:
+            blocked_count = 0
+        elif i <= 16:
+            blocked_count = 1
+        else:
+            blocked_count = 2
+            
+        # Predefined count: 1-2
+        if i <= 12:
+            required_count = 1
+        else:
+            required_count = 2
+        
+        # Blocked squares from end of path
+        blocked_squares = []
+        current_path = list(path)
+        if blocked_count > 0:
+            for j in range(blocked_count):
+                sq = current_path[-(j+1)]
+                blocked_squares.append({'x': sq['x'], 'y': sq['y']})
+            current_path = current_path[:25 - blocked_count]
+        
+        path_len = len(current_path)
+        
+        # === NEW PREDEFINED LOGIC ===
+        # World 3: İlk predefined >= Move 4, gap >= 3
+        required_moves = []
+        
+        MIN_FIRST_MOVE = 4  # Move 4+ (0-indexed: 3+)
+        MIN_GAP = 3
+        
+        if required_count == 1 and path_len > MIN_FIRST_MOVE:
+            # Tek predefined: Move 4-10 arası
+            m1 = random.randint(MIN_FIRST_MOVE - 1, min(9, path_len - 2))
+            required_moves.append({
+                "moveNumber": m1 + 1,
+                "x": current_path[m1]['x'],
+                "y": current_path[m1]['y']
+            })
+            
+        elif required_count >= 2 and path_len > MIN_FIRST_MOVE + MIN_GAP:
+            # İki predefined: İlki Move 4-7, ikincisi +3-5 gap
+            m1 = random.randint(MIN_FIRST_MOVE - 1, min(6, path_len - MIN_GAP - 2))
+            gap = random.randint(MIN_GAP, MIN_GAP + 2)  # 3-5 gap
+            m2 = m1 + gap
+            
+            if m2 < path_len - 1:
+                required_moves.append({"moveNumber": m1 + 1, "x": current_path[m1]['x'], "y": current_path[m1]['y']})
+                required_moves.append({"moveNumber": m2 + 1, "x": current_path[m2]['x'], "y": current_path[m2]['y']})
+            else:
+                # Fallback: sadece ilki
+                required_moves.append({"moveNumber": m1 + 1, "x": current_path[m1]['x'], "y": current_path[m1]['y']})
+        
+        # Denge kontrolü: blocked + predefined <= path_len / 3
+        total_constraints = len(blocked_squares) + len(required_moves)
+        max_constraints = path_len // 3
+        if total_constraints > max_constraints:
+            # Reduce predefined if too many constraints
+            required_moves = required_moves[:1] if required_moves else []
+        
+        # Star thresholds
+        stars = [path_len - 6, path_len - 3, path_len]
+        
+        # Time and mistakes based on level
         max_mistakes = 3 if i < 10 else (2 if i < 18 else 1)
         time_limit = 120 if i < 10 else (90 if i < 18 else 60)
         
-        # Pick a random 25-square path
-        path = random.choice(all_paths)
+        # Generate detailed objective
+        objective_parts = []
+        objective_parts.append(f"Visit {path_len} squares")
+        if blocked_count > 0:
+            objective_parts.append(f"Avoid {blocked_count} blocked squares")
+        if len(required_moves) > 0:
+            move_nums = [str(rm['moveNumber']) for rm in required_moves]
+            objective_parts.append(f"Hit checkpoints at moves: {', '.join(move_nums)}")
+        if max_mistakes < 3:
+            objective_parts.append(f"Max {max_mistakes} mistakes allowed")
+        objective = ". ".join(objective_parts) + "."
         
-        # Create blocked squares from the end of the path (remove last N squares)
-        # This ensures the remaining path is still valid
-        blocked_squares = []
-        if blocked_count > 0 and len(path) == 25:
-            # Take last N squares as blocked
-            for j in range(blocked_count):
-                sq = path[-(j+1)]
-                blocked_squares.append({'x': sq['x'], 'y': sq['y']})
-            # Shorten path to exclude blocked squares
-            path = path[:25 - blocked_count]
-        
-        # === DYNAMIC PREDEFINED SQUARES ===
-        # Rules: first < 10 (index 1-8), gap between any two <= 5
-        required_moves = []
-        path_len = len(path)
-        
-        if required_count == 1 and path_len > 8:
-            # Tek predefined kare: Random Move 2-9 (index 1-8)
-            m1 = random.randint(1, min(8, path_len - 1))
-            required_moves.append({
-                "moveNumber": m1 + 1,  # 1-based for UI
-                "x": path[m1]['x'],
-                "y": path[m1]['y']
-            })
-            
-        elif required_count == 2 and path_len > 10:
-            # İki predefined kare:
-            # - İlki: Random Move 2-7 (index 1-6) - sonraki için yer bırak
-            # - İkincisi: İlkinden +2 ile +5 hamle sonra (gap <= 5)
-            m1 = random.randint(1, min(6, path_len - 5))
-            gap = random.randint(2, 5)  # 2-5 hamle fark
-            m2 = m1 + gap
-            
-            # m2 path sınırları içinde mi kontrol et
-            if m2 < path_len:
-                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-                required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
-            else:
-                # Fallback: sadece ilki
-                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-                
-        elif required_count >= 3 and path_len > 12:
-            # Üç predefined kare:
-            # - İlki: Random Move 2-5 (index 1-4)
-            # - İkincisi: +2 ile +4 gap
-            # - Üçüncüsü: +2 ile +4 gap (toplam < 10 olmalı)
-            m1 = random.randint(1, min(4, path_len - 8))
-            gap1 = random.randint(2, 4)
-            gap2 = random.randint(2, 4)
-            m2 = m1 + gap1
-            m3 = m2 + gap2
-            
-            # Hepsi path sınırları içinde mi ve < 10 mu
-            if m3 < path_len and m3 <= 9:  # Son predefined <= Move 10
-                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-                required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
-                required_moves.append({"moveNumber": m3 + 1, "x": path[m3]['x'], "y": path[m3]['y']})
-            elif m2 < path_len:
-                # Fallback: sadece ilk iki
-                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-                required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
-            else:
-                # Fallback: sadece ilki
-                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-        
-        # Star thresholds based on actual path length
-        stars = [path_len - 6, path_len - 3, path_len]
-        
-        # Flexible Completion Logic
-        # Calculate minCheckpoints needed (lenient)
-        min_checkpoints = 1
-        if len(required_moves) >= 3:
-            min_checkpoints = 2
-        
-        # Calculate minMoves needed (must be enough to reach the min checkpoints)
-        # Find the max move number among the first 'min_checkpoints' required moves
-        # But required_moves are sorted by insertion which is roughly sorted by moveNumber
-        
-        # Sort required moves by moveNumber to be sure
-        sorted_req = sorted(required_moves, key=lambda x: x['moveNumber'])
-        
-        target_checkpoint_idx = min_checkpoints - 1
-        if target_checkpoint_idx < len(sorted_req):
-            checkpoint_move_num = sorted_req[target_checkpoint_idx]['moveNumber']
-            # Add some buffer moves
-            min_moves = max(10, checkpoint_move_num + 3)
-        else:
-            min_moves = 10 # Default fallback
-            
         levels.append({
             "id": i,
             "gridSize": 5,
-            "fixedStart": path[0],
+            "fixedStart": current_path[0],
             "blockedSquares": blocked_squares,
             "requiredMoves": required_moves,
+            "objective": objective,
             "stars": stars,
-            "ruleSet": 5,  # Max Mistakes
+            "ruleSet": 5,
             "maxMistakes": max_mistakes,
             "timeLimit": time_limit,
-            "minMoves": min_moves,
-            "minCheckpoints": min_checkpoints,
-            "fullPath": path
+            "fullPath": current_path
         })
         
     return levels
 
 def generate_procedural_world(world_id, all_paths):
+    """
+    World 4-25: Dynamically generated with increasing difficulty
+    
+    NEW RULES:
+    - İlk predefined: World'e göre artan (Move 5 → Move 12)
+    - Gap: World'e göre artan (3 → 10)
+    - blocked + predefined <= path_length / 3 (denge kuralı)
+    - Yüksek blocked = az predefined (veya tam tersi)
+    """
     levels = []
     
-    # World Settings
-    # 4-10: Hard (Combined Blocked + Required)
-    # 11-20: Very Hard (High Blocked, High Required)
-    # 21-25: Extreme / Impossible (Max Blocked, Tight Time, Strict)
+    # === WORLD-BASED DIFFICULTY PARAMETERS ===
     
-    is_extreme = world_id >= 21
+    # İlk predefined hangi move'da başlasın (World'e göre artan)
+    if world_id <= 5:
+        min_first_move = 5   # Move 5
+    elif world_id <= 10:
+        min_first_move = 6   # Move 6
+    elif world_id <= 15:
+        min_first_move = 7   # Move 7-8
+    elif world_id <= 20:
+        min_first_move = 9   # Move 9-10
+    else:
+        min_first_move = 11  # Move 11-12 (Extreme)
+    
+    # Predefined'lar arası minimum gap (World'e göre artan)
+    if world_id <= 5:
+        min_gap = 3
+        max_gap = 4
+    elif world_id <= 10:
+        min_gap = 4
+        max_gap = 5
+    elif world_id <= 15:
+        min_gap = 5
+        max_gap = 7
+    elif world_id <= 20:
+        min_gap = 6
+        max_gap = 8
+    else:
+        min_gap = 7
+        max_gap = 10  # Extreme: gap 7-10
     
     for i in range(1, 26):
         path = random.choice(all_paths)
+        current_path = list(path)
         
-        # 1. BLOCKED SQUARES LOGIC
-        # Aggressive blocking based on user request "3-4-5 blocked and above"
+        # === 1. BLOCKED SQUARES (düşük tutulacak) ===
+        # Denge için blocked sayısı azaltıldı
         if world_id <= 8:
-            blocked_count = random.randint(2, 3)
+            blocked_count = random.randint(0, 2)
         elif world_id <= 15:
-            blocked_count = random.randint(3, 5)
+            blocked_count = random.randint(1, 3)
         elif world_id <= 20:
-            blocked_count = random.randint(4, 6)
+            blocked_count = random.randint(2, 4)
         else:
-            # Extreme Worlds: 6 to 9 blocked squares (Very tight board)
-            blocked_count = random.randint(6, 9)
+            blocked_count = random.randint(2, 5)
             
         blocked_squares = []
-        # Take from end of path to keep it solvable
-        current_path = list(path) # Copy
         if blocked_count > 0:
             for j in range(blocked_count):
                 sq = current_path[-(j+1)]
@@ -495,69 +510,111 @@ def generate_procedural_world(world_id, all_paths):
             current_path = current_path[:25 - blocked_count]
             
         path_len = len(current_path)
-            
-        # 2. REQUIRED MOVES LOGIC (Checkpoints)
-        # "Combined for every move" implied -> Lots of validation checks
+        
+        # === 2. PREDEFINED MOVES (yeni dinamik logic) ===
         required_moves = []
         
-        # How many checkpoints?
+        # Predefined sayısı (world'e göre)
         if world_id <= 8:
-            req_count = random.randint(2, 4)
+            req_count = random.randint(1, 2)
         elif world_id <= 15:
-            req_count = random.randint(4, 7)
+            req_count = random.randint(2, 3)
+        elif world_id <= 20:
+            req_count = random.randint(2, 4)
         else:
-            # High worlds: Almost every few moves is a checkpoint
-            req_count = random.randint(6, 12)
+            req_count = random.randint(3, 5)
+        
+        # === DENGE KONTROLÜ ===
+        # blocked + predefined <= path_len / 3
+        max_constraints = path_len // 3
+        available_for_predefined = max_constraints - len(blocked_squares)
+        req_count = min(req_count, max(1, available_for_predefined))
+        
+        # Predefined pozisyonları hesapla
+        # İlk predefined >= min_first_move, aralarındaki gap >= min_gap
+        
+        if req_count >= 1 and path_len > min_first_move:
+            # İlk predefined pozisyonu
+            first_idx = min_first_move - 1  # 0-indexed
             
-        # Ensure we don't ask for more than available moves
-        req_count = min(req_count, path_len - 2)
+            # Kaç predefined sığar?
+            positions = [first_idx]
+            current_pos = first_idx
+            
+            for _ in range(req_count - 1):
+                gap = random.randint(min_gap, max_gap)
+                next_pos = current_pos + gap
+                if next_pos < path_len - 1:
+                    positions.append(next_pos)
+                    current_pos = next_pos
+                else:
+                    break
+            
+            # Required moves oluştur
+            for idx in positions:
+                if idx < path_len:
+                    required_moves.append({
+                        "moveNumber": idx + 1,
+                        "x": current_path[idx]['x'],
+                        "y": current_path[idx]['y']
+                    })
         
-        if req_count > 0:
-            valid_indices = range(1, path_len - 1)
-            indices = sorted(random.sample(valid_indices, req_count))
-            for idx in indices:
-                required_moves.append({
-                    "moveNumber": idx + 1,
-                    "x": current_path[idx]['x'],
-                    "y": current_path[idx]['y']
-                })
-
-        # 3. GAME CONDITIONS
-        min_checkpoints = None
-        min_moves = None
-        time_limit = 120
-        max_mistakes = 3
-        
-        if is_extreme:
-            # Extreme: strict completion
-            # Must hit almost ALL checkpoints
-            min_checkpoints = len(required_moves) 
-            min_moves = path_len
-            time_limit = 60 # Rush
-            max_mistakes = 1 # Perfectionist
-        elif world_id > 10:
-            # Very Hard
-            min_checkpoints = max(1, len(required_moves) - 1)
-            min_moves = max(5, path_len - 3)
-            time_limit = 90
+        # === 3. GAME CONDITIONS ===
+        # minMoves ve minCheckpoints: Son worldlerde çok strict
+        if world_id >= 21:
+            max_mistakes = 1
+            time_limit = 60
+            # Extreme: path_len - 1 (neredeyse tam)
+            min_moves = path_len - 1
+            min_checkpoints = len(required_moves)  # Hepsini hit etmeli
+        elif world_id >= 16:
             max_mistakes = 2
+            time_limit = 75
+            # Very Hard: path_len - 2
+            min_moves = path_len - 2
+            min_checkpoints = max(1, len(required_moves) - 1)
+        elif world_id >= 11:
+            max_mistakes = 2
+            time_limit = 90
+            # Hard: path_len - 3
+            min_moves = path_len - 3
+            min_checkpoints = max(1, len(required_moves) - 1)
         else:
-            # Hard
-            min_checkpoints = max(1, len(required_moves) - 2)
+            max_mistakes = 3
             time_limit = 120
-             
-        # Stars logic relative to path length
-        # Since path is shorter due to blocking, stars must adjust
-        stars = [max(1, path_len - 4), max(1, path_len - 2), path_len]
+            # Medium: path_len - 5
+            min_moves = max(10, path_len - 5)
+            min_checkpoints = max(1, len(required_moves) - 2)
+        
+        # Star thresholds
+        stars = [max(1, path_len - 5), max(1, path_len - 2), path_len]
+        
+        # Generate detailed objective
+        objective_parts = []
+        objective_parts.append(f"Visit at least {min_moves} of {path_len} squares")
+        if blocked_count > 0:
+            objective_parts.append(f"Avoid {blocked_count} blocked squares")
+        if len(required_moves) > 0:
+            move_nums = [str(rm['moveNumber']) for rm in required_moves]
+            if min_checkpoints == len(required_moves):
+                objective_parts.append(f"Hit ALL checkpoints at moves: {', '.join(move_nums)}")
+            else:
+                objective_parts.append(f"Hit at least {min_checkpoints} checkpoint(s) at moves: {', '.join(move_nums)}")
+        if max_mistakes < 3:
+            objective_parts.append(f"Max {max_mistakes} mistake(s)")
+        if time_limit < 120:
+            objective_parts.append(f"Complete in {time_limit}s")
+        objective = ". ".join(objective_parts) + "."
         
         levels.append({
             "id": i,
             "gridSize": 5,
-            "fixedStart": current_path[0], # Fixed start is essential for specific paths
+            "fixedStart": current_path[0],
             "blockedSquares": blocked_squares,
             "requiredMoves": required_moves,
+            "objective": objective,
             "stars": stars,
-            "ruleSet": 7, # "Hit the required positions!" generalized
+            "ruleSet": 7,
             "maxMistakes": max_mistakes,
             "timeLimit": time_limit,
             "minMoves": min_moves,

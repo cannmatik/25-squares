@@ -982,7 +982,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
             {/* Footer Buttons - Icon with badge style */}
             {
                 levelConfig && (!levelConfig.tutorial || levelConfig.tutorial.length === 0) ? (
-                    <Stack direction="row" spacing={3} sx={{ position: 'absolute', bottom: { xs: 24, sm: 48 }, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+                    <Stack direction="row" spacing={3} sx={{ position: 'absolute', bottom: { xs: 24, sm: 24 }, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
                         <Button
                             variant="contained"
                             disabled={moveHistory.length <= 1 || undosRemaining <= 0 || !isOnline}
@@ -1068,7 +1068,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                         color="secondary"
                         size="small"
                         onClick={() => { soundManager.playClick(); resetLevel() }}
-                        sx={{ position: 'absolute', bottom: { xs: 32, sm: 48 }, left: '50%', transform: 'translateX(-50%)', width: '280px', maxWidth: '400px', zIndex: 10 }}
+                        sx={{ position: 'absolute', bottom: { xs: 32, sm: 32 }, left: '50%', transform: 'translateX(-50%)', width: '280px', maxWidth: '400px', zIndex: 10 }}
                         startIcon={<RefreshIcon />}
                     >
                         RESTART
@@ -1090,7 +1090,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                             setShowResult(false)
                             if (onNextLevel) onNextLevel()
                         }}
-                        onLevels={() => { setShowResult(false); onComplete(0, -1) }}
+                        onLevels={() => { setShowResult(false); onBack() }}
                         hasNext={!!levelConfig && !!onNextLevel}
                         isLastLevel={isLastLevel}
                         onUndo={() => { soundManager.playClick(); undoMove() }}

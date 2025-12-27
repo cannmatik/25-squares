@@ -3,100 +3,113 @@
     "id": 1,
     "gridSize": 5,
     "fixedStart": {
-      "x": 4,
-      "y": 0
+      "x": 1,
+      "y": 1
     },
     "blockedSquares": [
       {
-        "x": 4,
+        "x": 1,
         "y": 2
       },
       {
-        "x": 2,
+        "x": 3,
         "y": 4
       },
       {
         "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 3
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
+        "moveNumber": 9,
         "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 6,
-        "x": 2,
-        "y": 2
-      },
-      {
-        "moveNumber": 7,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 8,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 13,
-        "x": 0,
-        "y": 1
-      },
-      {
-        "moveNumber": 14,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 16,
-        "x": 1,
         "y": 2
       },
       {
         "moveNumber": 17,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 18,
-        "x": 3,
+        "x": 0,
         "y": 3
-      },
-      {
-        "moveNumber": 19,
-        "x": 1,
-        "y": 1
       }
     ],
+    "objective": "Visit at least 20 of 22 squares. Avoid 3 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      16,
-      18,
-      20
+      17,
+      20,
+      22
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 17,
-    "minCheckpoints": 9,
+    "timeLimit": 75,
+    "minMoves": 20,
+    "minCheckpoints": 1,
     "fullPath": [
       {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
         "x": 4,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 2,
         "y": 0
       },
       {
         "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 0,
         "y": 3
       },
       {
@@ -104,32 +117,8 @@
         "y": 1
       },
       {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
         "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 0
+        "y": 3
       },
       {
         "x": 1,
@@ -141,34 +130,6 @@
       },
       {
         "x": 0,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 2
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 1,
-        "y": 1
-      },
-      {
-        "x": 4,
         "y": 1
       }
     ]
@@ -177,163 +138,54 @@
     "id": 2,
     "gridSize": 5,
     "fixedStart": {
-      "x": 2,
-      "y": 1
+      "x": 0,
+      "y": 2
     },
     "blockedSquares": [
       {
         "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
+        "y": 1
       },
       {
         "x": 2,
         "y": 3
-      },
-      {
-        "x": 0,
-        "y": 1
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
-        "x": 1,
+        "moveNumber": 9,
+        "x": 2,
         "y": 2
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 10,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 11,
-        "x": 4,
-        "y": 1
-      },
-      {
-        "moveNumber": 12,
-        "x": 1,
-        "y": 1
-      },
-      {
-        "moveNumber": 13,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 14,
-        "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 15,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 16,
-        "x": 4,
-        "y": 0
       },
       {
         "moveNumber": 17,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 18,
-        "x": 1,
-        "y": 3
-      },
-      {
-        "moveNumber": 19,
         "x": 3,
-        "y": 1
+        "y": 3
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
-      19,
-      21
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 11,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 2
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
         "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
+        "y": 2
       },
       {
         "x": 2,
-        "y": 2
-      },
-      {
-        "x": 4,
         "y": 4
       },
       {
-        "x": 4,
+        "x": 2,
         "y": 1
-      },
-      {
-        "x": 1,
-        "y": 1
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 4,
-        "y": 0
       },
       {
         "x": 4,
@@ -354,6 +206,66 @@
       {
         "x": 0,
         "y": 4
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 2
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
       }
     ]
   },
@@ -361,121 +273,65 @@
     "id": 3,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 2
+      "x": 3,
+      "y": 3
     },
     "blockedSquares": [
       {
-        "x": 3,
-        "y": 1
-      },
-      {
-        "x": 1,
+        "x": 0,
         "y": 3
       },
       {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 4,
+        "x": 0,
         "y": 0
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 5,
-        "x": 2,
+        "moveNumber": 9,
+        "x": 4,
         "y": 1
-      },
-      {
-        "moveNumber": 6,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 0
-      },
-      {
-        "moveNumber": 8,
-        "x": 2,
-        "y": 2
-      },
-      {
-        "moveNumber": 12,
-        "x": 0,
-        "y": 1
-      },
-      {
-        "moveNumber": 13,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 16,
-        "x": 3,
-        "y": 0
       },
       {
         "moveNumber": 17,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 18,
-        "x": 1,
+        "x": 2,
         "y": 1
-      },
-      {
-        "moveNumber": 19,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 20,
-        "x": 3,
-        "y": 2
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
-      19,
-      21
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 10,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 3,
         "y": 2
       },
       {
-        "x": 2,
+        "x": 1,
         "y": 0
       },
       {
         "x": 4,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
         "y": 0
       },
       {
@@ -507,31 +363,43 @@
         "y": 4
       },
       {
-        "x": 1,
-        "y": 2
-      },
-      {
         "x": 3,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 1,
         "y": 1
       },
       {
         "x": 1,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 2,
         "y": 4
       },
       {
-        "x": 3,
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 4,
         "y": 2
       },
       {
         "x": 1,
+        "y": 2
+      },
+      {
+        "x": 3,
         "y": 0
       }
     ]
@@ -540,101 +408,53 @@
     "id": 4,
     "gridSize": 5,
     "fixedStart": {
-      "x": 1,
+      "x": 3,
       "y": 2
     },
     "blockedSquares": [
       {
-        "x": 0,
-        "y": 1
-      },
-      {
         "x": 3,
         "y": 1
       },
       {
-        "x": 3,
-        "y": 4
+        "x": 0,
+        "y": 1
       },
       {
-        "x": 0,
-        "y": 4
+        "x": 2,
+        "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 3,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 4,
-        "x": 2,
-        "y": 3
-      },
-      {
-        "moveNumber": 5,
-        "x": 4,
-        "y": 1
-      },
-      {
-        "moveNumber": 7,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 8,
-        "x": 1,
-        "y": 1
-      },
-      {
         "moveNumber": 9,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 12,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 14,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 15,
-        "x": 0,
-        "y": 2
-      },
-      {
-        "moveNumber": 17,
         "x": 1,
         "y": 0
       },
       {
-        "moveNumber": 18,
-        "x": 1,
-        "y": 3
+        "moveNumber": 16,
+        "x": 0,
+        "y": 0
       }
     ],
+    "objective": "Visit at least 20 of 22 squares. Avoid 3 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
       17,
-      19,
-      21
+      20,
+      22
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 10,
+    "timeLimit": 75,
+    "minMoves": 20,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 1,
+        "x": 3,
         "y": 2
       },
       {
-        "x": 4,
+        "x": 0,
         "y": 2
       },
       {
@@ -642,28 +462,48 @@
         "y": 0
       },
       {
+        "x": 4,
+        "y": 2
+      },
+      {
         "x": 2,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 4,
         "y": 3
       },
       {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
+        "x": 1,
+        "y": 3
       },
       {
         "x": 1,
-        "y": 4
+        "y": 0
       },
       {
-        "x": 1,
-        "y": 1
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 4
       },
       {
         "x": 3,
-        "y": 3
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 2
       },
       {
         "x": 3,
@@ -678,40 +518,24 @@
         "y": 3
       },
       {
-        "x": 2,
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 1,
         "y": 1
       },
       {
-        "x": 2,
+        "x": 1,
         "y": 4
       },
       {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 1,
-        "y": 3
+        "x": 4,
+        "y": 4
       },
       {
         "x": 4,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
+        "y": 1
       }
     ]
   },
@@ -719,94 +543,54 @@
     "id": 5,
     "gridSize": 5,
     "fixedStart": {
-      "x": 2,
-      "y": 0
+      "x": 1,
+      "y": 2
     },
     "blockedSquares": [
       {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
+        "x": 1,
         "y": 4
       },
       {
         "x": 4,
-        "y": 2
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 1
       },
       {
         "x": 1,
-        "y": 2
+        "y": 1
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
-        "x": 1,
-        "y": 1
-      },
-      {
-        "moveNumber": 6,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 10,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 12,
+        "moveNumber": 9,
         "x": 2,
-        "y": 2
-      },
-      {
-        "moveNumber": 14,
-        "x": 1,
         "y": 4
       },
       {
         "moveNumber": 15,
         "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 19,
-        "x": 0,
-        "y": 1
+        "y": 4
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
+      16,
       19,
       21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 6,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
         "x": 1,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 3
+        "y": 2
       },
       {
         "x": 3,
@@ -814,22 +598,6 @@
       },
       {
         "x": 0,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 4,
         "y": 0
       },
       {
@@ -838,39 +606,71 @@
       },
       {
         "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 2
+        "y": 0
       },
       {
         "x": 1,
         "y": 0
       },
       {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
         "x": 1,
         "y": 3
       },
       {
-        "x": 3,
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 2,
         "y": 1
       },
       {
         "x": 0,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 4
+        "y": 3
       },
       {
         "x": 3,
-        "y": 4
+        "y": 3
       }
     ]
   },
@@ -879,129 +679,48 @@
     "gridSize": 5,
     "fixedStart": {
       "x": 3,
-      "y": 0
+      "y": 1
     },
     "blockedSquares": [
       {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 2,
+        "x": 1,
         "y": 4
       },
       {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
         "x": 4,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 2
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 0,
-        "y": 0
-      },
-      {
-        "moveNumber": 3,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 4,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 7,
-        "x": 2,
-        "y": 3
-      },
-      {
         "moveNumber": 9,
-        "x": 3,
-        "y": 1
-      },
-      {
-        "moveNumber": 10,
-        "x": 1,
-        "y": 3
-      },
-      {
-        "moveNumber": 11,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 12,
-        "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 14,
-        "x": 3,
+        "x": 2,
         "y": 2
       },
       {
         "moveNumber": 15,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 16,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 17,
-        "x": 2,
+        "x": 0,
         "y": 2
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 11,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
         "x": 3,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 1,
         "y": 1
       },
       {
-        "x": 4,
+        "x": 0,
         "y": 1
       },
       {
@@ -1009,24 +728,40 @@
         "y": 3
       },
       {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 1
-      },
-      {
-        "x": 1,
-        "y": 3
+        "x": 2,
+        "y": 0
       },
       {
         "x": 4,
-        "y": 3
+        "y": 2
+      },
+      {
+        "x": 1,
+        "y": 2
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 2
       },
       {
         "x": 4,
         "y": 0
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 3
       },
       {
         "x": 1,
@@ -1037,24 +772,40 @@
         "y": 2
       },
       {
-        "x": 1,
-        "y": 4
+        "x": 0,
+        "y": 2
       },
       {
-        "x": 4,
+        "x": 2,
         "y": 4
       },
       {
         "x": 2,
-        "y": 2
+        "y": 1
       },
       {
         "x": 0,
-        "y": 4
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 0
       },
       {
         "x": 3,
-        "y": 4
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 1
       }
     ]
   },
@@ -1062,141 +813,101 @@
     "id": 7,
     "gridSize": 5,
     "fixedStart": {
-      "x": 3,
-      "y": 2
+      "x": 2,
+      "y": 0
     },
     "blockedSquares": [
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
       {
         "x": 4,
         "y": 2
       },
       {
-        "x": 1,
-        "y": 2
+        "x": 2,
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 3,
-        "x": 1,
-        "y": 3
-      },
-      {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 5,
-        "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 6,
-        "x": 2,
-        "y": 2
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 10,
-        "x": 0,
-        "y": 1
-      },
-      {
-        "moveNumber": 11,
-        "x": 2,
-        "y": 3
-      },
-      {
-        "moveNumber": 13,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 14,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 16,
+        "moveNumber": 9,
         "x": 3,
-        "y": 3
+        "y": 0
+      },
+      {
+        "moveNumber": 15,
+        "x": 4,
+        "y": 1
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 10,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
         "x": 3,
         "y": 2
       },
       {
         "x": 1,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 3,
         "y": 0
       },
       {
         "x": 1,
-        "y": 3
+        "y": 2
       },
       {
-        "x": 4,
-        "y": 3
+        "x": 3,
+        "y": 4
       },
       {
-        "x": 4,
-        "y": 0
+        "x": 0,
+        "y": 4
       },
       {
         "x": 2,
         "y": 2
       },
       {
-        "x": 0,
+        "x": 4,
         "y": 4
       },
       {
-        "x": 3,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 1
-      },
-      {
-        "x": 0,
+        "x": 4,
         "y": 1
       },
       {
@@ -1204,36 +915,32 @@
         "y": 3
       },
       {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 1,
+        "x": 0,
         "y": 1
       },
       {
         "x": 3,
+        "y": 1
+      },
+      {
+        "x": 1,
         "y": 3
       },
       {
-        "x": 0,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 4,
         "y": 3
       },
       {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 0
+        "x": 2,
+        "y": 1
       }
     ]
   },
@@ -1250,78 +957,41 @@
         "y": 3
       },
       {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 0
-      },
-      {
         "x": 1,
         "y": 0
       },
       {
-        "x": 3,
-        "y": 2
+        "x": 4,
+        "y": 0
       },
       {
-        "x": 0,
-        "y": 2
+        "x": 4,
+        "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 1
-      },
-      {
-        "moveNumber": 6,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 7,
-        "x": 1,
-        "y": 1
-      },
-      {
         "moveNumber": 9,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 10,
-        "x": 1,
-        "y": 2
-      },
-      {
-        "moveNumber": 11,
-        "x": 3,
-        "y": 4
-      },
-      {
-        "moveNumber": 12,
-        "x": 0,
+        "x": 4,
         "y": 4
       },
       {
         "moveNumber": 16,
         "x": 2,
-        "y": 1
+        "y": 3
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      16,
+      19,
+      21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 7,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
         "x": 3,
@@ -1332,32 +1002,12 @@
         "y": 1
       },
       {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
+        "x": 0,
         "y": 4
       },
       {
-        "x": 1,
+        "x": 3,
         "y": 4
-      },
-      {
-        "x": 1,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 3,
-        "y": 0
       },
       {
         "x": 1,
@@ -1365,27 +1015,31 @@
       },
       {
         "x": 3,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 2,
-        "y": 2
+        "y": 0
       },
       {
         "x": 0,
         "y": 0
       },
       {
-        "x": 0,
-        "y": 3
+        "x": 2,
+        "y": 2
       },
       {
-        "x": 2,
-        "y": 1
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 2
       },
       {
         "x": 2,
@@ -1398,6 +1052,30 @@
       {
         "x": 2,
         "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 1
       }
     ]
   },
@@ -1405,161 +1083,102 @@
     "id": 9,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 2
+      "x": 4,
+      "y": 3
     },
     "blockedSquares": [
       {
-        "x": 4,
+        "x": 3,
         "y": 0
       },
       {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 1,
-        "y": 3
-      },
-      {
-        "x": 1,
+        "x": 0,
         "y": 0
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 3,
-        "x": 2,
-        "y": 3
-      },
-      {
-        "moveNumber": 4,
-        "x": 0,
-        "y": 1
-      },
-      {
-        "moveNumber": 6,
-        "x": 3,
-        "y": 4
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 4
-      },
-      {
         "moveNumber": 9,
-        "x": 0,
-        "y": 0
-      },
-      {
-        "moveNumber": 10,
         "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 12,
-        "x": 4,
-        "y": 2
-      },
-      {
-        "moveNumber": 15,
-        "x": 0,
-        "y": 3
+        "y": 1
       },
       {
         "moveNumber": 17,
-        "x": 1,
-        "y": 1
-      },
-      {
-        "moveNumber": 20,
-        "x": 1,
-        "y": 4
+        "x": 0,
+        "y": 2
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
+      16,
       19,
       21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 9,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 2,
+        "x": 4,
         "y": 3
       },
       {
-        "x": 0,
+        "x": 2,
         "y": 1
-      },
-      {
-        "x": 3,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 4
       },
       {
         "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 1,
-        "y": 2
+        "y": 4
       },
       {
         "x": 4,
         "y": 2
       },
       {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 3
+        "x": 1,
+        "y": 2
       },
       {
         "x": 3,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
+        "x": 1,
         "y": 3
       },
       {
         "x": 1,
-        "y": 1
+        "y": 0
       },
       {
         "x": 4,
-        "y": 1
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 2
       },
       {
         "x": 4,
@@ -1572,6 +1191,26 @@
       {
         "x": 3,
         "y": 2
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
       }
     ]
   },
@@ -1579,133 +1218,86 @@
     "id": 10,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 3
+      "x": 3,
+      "y": 2
     },
     "blockedSquares": [
       {
-        "x": 3,
-        "y": 4
+        "x": 0,
+        "y": 3
       },
       {
         "x": 3,
-        "y": 1
-      },
-      {
-        "x": 1,
         "y": 3
       },
       {
         "x": 1,
-        "y": 0
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 0,
-        "y": 0
-      },
-      {
-        "moveNumber": 10,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 11,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 16,
-        "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 19,
+        "moveNumber": 9,
         "x": 2,
-        "y": 1
+        "y": 0
       },
       {
-        "moveNumber": 20,
-        "x": 4,
-        "y": 3
+        "moveNumber": 15,
+        "x": 3,
+        "y": 1
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
+      16,
       19,
       21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 5,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 4,
+        "x": 3,
         "y": 2
       },
       {
         "x": 1,
+        "y": 0
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 2,
         "y": 2
+      },
+      {
+        "x": 0,
+        "y": 0
       },
       {
         "x": 3,
         "y": 0
       },
       {
-        "x": 3,
-        "y": 3
-      },
-      {
         "x": 1,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 3,
         "y": 2
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
       },
       {
         "x": 0,
@@ -1724,8 +1316,36 @@
         "y": 3
       },
       {
+        "x": 1,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
         "x": 4,
-        "y": 0
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 4
       }
     ]
   },
@@ -1733,142 +1353,58 @@
     "id": 11,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
+      "x": 3,
       "y": 1
     },
     "blockedSquares": [
       {
-        "x": 1,
-        "y": 2
-      },
-      {
         "x": 3,
-        "y": 0
+        "y": 4
       },
       {
         "x": 0,
-        "y": 0
+        "y": 4
       },
       {
         "x": 0,
-        "y": 3
+        "y": 1
       },
       {
-        "x": 3,
+        "x": 2,
         "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 2,
+        "moveNumber": 9,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "moveNumber": 15,
+        "x": 3,
         "y": 3
-      },
-      {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 6,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 7,
-        "x": 3,
-        "y": 4
-      },
-      {
-        "moveNumber": 8,
-        "x": 3,
-        "y": 1
-      },
-      {
-        "moveNumber": 10,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 13,
-        "x": 2,
-        "y": 1
-      },
-      {
-        "moveNumber": 14,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 16,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 18,
-        "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 19,
-        "x": 1,
-        "y": 4
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
       16,
-      18,
-      20
+      19,
+      21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 17,
-    "minCheckpoints": 10,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 4
-      },
-      {
         "x": 3,
         "y": 1
       },
       {
         "x": 1,
         "y": 3
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 4,
-        "y": 0
       },
       {
         "x": 4,
@@ -1879,20 +1415,24 @@
         "y": 1
       },
       {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
+        "x": 0,
+        "y": 3
       },
       {
         "x": 0,
+        "y": 0
+      },
+      {
+        "x": 2,
         "y": 2
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
       },
       {
         "x": 3,
@@ -1903,8 +1443,44 @@
         "y": 4
       },
       {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
         "x": 1,
         "y": 1
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 2
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
       }
     ]
   },
@@ -1912,142 +1488,54 @@
     "id": 12,
     "gridSize": 5,
     "fixedStart": {
-      "x": 2,
-      "y": 4
+      "x": 4,
+      "y": 1
     },
     "blockedSquares": [
       {
-        "x": 1,
-        "y": 3
-      },
-      {
-        "x": 1,
+        "x": 4,
         "y": 0
       },
       {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
+        "x": 1,
         "y": 0
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 2,
-        "y": 1
-      },
-      {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 6,
+        "moveNumber": 9,
         "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 10,
-        "x": 2,
-        "y": 3
-      },
-      {
-        "moveNumber": 13,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 14,
-        "x": 1,
-        "y": 1
+        "y": 2
       },
       {
         "moveNumber": 16,
-        "x": 0,
+        "x": 1,
         "y": 3
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      16,
       18,
-      20
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 17,
-    "minCheckpoints": 6,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 2,
+        "x": 4,
         "y": 1
       },
       {
         "x": 4,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 0
+        "y": 4
       },
       {
         "x": 2,
         "y": 2
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 3
       },
       {
         "x": 0,
@@ -2063,6 +1551,70 @@
       },
       {
         "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 3,
         "y": 2
       }
     ]
@@ -2071,91 +1623,62 @@
     "id": 13,
     "gridSize": 5,
     "fixedStart": {
-      "x": 2,
-      "y": 4
+      "x": 1,
+      "y": 1
     },
     "blockedSquares": [
       {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 1,
+        "x": 2,
         "y": 1
       },
       {
-        "x": 3,
+        "x": 4,
         "y": 3
       },
       {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 0
+        "x": 1,
+        "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 6,
-        "x": 3,
-        "y": 1
-      },
-      {
-        "moveNumber": 10,
-        "x": 1,
-        "y": 2
-      },
-      {
-        "moveNumber": 11,
-        "x": 4,
-        "y": 2
-      },
-      {
-        "moveNumber": 12,
-        "x": 2,
+        "moveNumber": 9,
+        "x": 0,
         "y": 0
       },
       {
         "moveNumber": 16,
-        "x": 2,
+        "x": 0,
         "y": 2
-      },
-      {
-        "moveNumber": 18,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 19,
-        "x": 2,
-        "y": 1
       }
     ],
+    "objective": "Visit at least 20 of 22 squares. Avoid 3 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      16,
-      18,
-      20
+      17,
+      20,
+      22
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 17,
-    "minCheckpoints": 7,
+    "timeLimit": 75,
+    "minMoves": 20,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 2,
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 4,
         "y": 4
       },
       {
-        "x": 0,
-        "y": 2
+        "x": 1,
+        "y": 4
       },
       {
         "x": 3,
@@ -2166,24 +1689,28 @@
         "y": 0
       },
       {
-        "x": 1,
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 0,
         "y": 3
       },
       {
         "x": 3,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 4
+        "y": 3
       },
       {
         "x": 3,
-        "y": 4
+        "y": 0
       },
       {
         "x": 1,
@@ -2191,6 +1718,14 @@
       },
       {
         "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 0,
         "y": 2
       },
       {
@@ -2202,32 +1737,20 @@
         "y": 3
       },
       {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 4,
-        "y": 0
-      },
-      {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 2,
+        "x": 0,
         "y": 1
       },
       {
         "x": 0,
-        "y": 3
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 1
       }
     ]
   },
@@ -2235,149 +1758,62 @@
     "id": 14,
     "gridSize": 5,
     "fixedStart": {
-      "x": 4,
-      "y": 1
+      "x": 3,
+      "y": 3
     },
     "blockedSquares": [
       {
-        "x": 1,
+        "x": 2,
         "y": 1
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 3
       },
       {
         "x": 2,
-        "y": 1
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 2
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 3,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 4,
-        "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 5,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 6,
-        "x": 1,
-        "y": 3
-      },
-      {
-        "moveNumber": 7,
-        "x": 3,
-        "y": 1
-      },
-      {
         "moveNumber": 9,
-        "x": 2,
-        "y": 3
-      },
-      {
-        "moveNumber": 12,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 13,
         "x": 4,
-        "y": 2
+        "y": 4
       },
       {
         "moveNumber": 16,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 17,
-        "x": 2,
-        "y": 2
+        "x": 1,
+        "y": 3
       }
     ],
+    "objective": "Visit at least 20 of 22 squares. Avoid 3 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
       17,
-      19
+      20,
+      22
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 9,
+    "timeLimit": 75,
+    "minMoves": 20,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
         "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 1,
         "y": 3
       },
       {
-        "x": 3,
-        "y": 1
-      },
-      {
         "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
         "y": 3
       },
       {
-        "x": 2,
+        "x": 0,
         "y": 0
       },
       {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
+        "x": 3,
+        "y": 0
       },
       {
         "x": 1,
@@ -2397,11 +1833,59 @@
       },
       {
         "x": 4,
-        "y": 0
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 3
       },
       {
         "x": 4,
         "y": 3
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
       }
     ]
   },
@@ -2409,151 +1893,46 @@
     "id": 15,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 4
+      "x": 1,
+      "y": 0
     },
     "blockedSquares": [
       {
-        "x": 1,
-        "y": 0
-      },
-      {
         "x": 4,
         "y": 0
       },
       {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 1,
-        "y": 3
+        "x": 2,
+        "y": 2
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 0,
-        "y": 1
-      },
-      {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 1
-      },
-      {
-        "moveNumber": 6,
-        "x": 2,
-        "y": 2
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 0
-      },
-      {
-        "moveNumber": 10,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 11,
-        "x": 4,
-        "y": 2
-      },
-      {
-        "moveNumber": 12,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 13,
-        "x": 0,
+        "moveNumber": 9,
+        "x": 1,
         "y": 2
       },
       {
         "moveNumber": 16,
         "x": 1,
-        "y": 1
-      },
-      {
-        "moveNumber": 17,
-        "x": 3,
         "y": 3
-      },
-      {
-        "moveNumber": 18,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 20,
-        "x": 3,
-        "y": 4
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
-      19,
-      21
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 11,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
+        "x": 1,
         "y": 0
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 2
       },
       {
         "x": 3,
@@ -2572,6 +1951,14 @@
         "y": 3
       },
       {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
         "x": 3,
         "y": 0
       },
@@ -2580,12 +1967,60 @@
         "y": 2
       },
       {
-        "x": 3,
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
         "y": 4
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 3
       },
       {
         "x": 3,
         "y": 1
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 4
       }
     ]
   },
@@ -2593,173 +2028,134 @@
     "id": 16,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 1
+      "x": 3,
+      "y": 4
     },
     "blockedSquares": [
       {
-        "x": 0,
-        "y": 4
-      },
-      {
         "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
         "y": 0
       },
       {
+        "x": 0,
+        "y": 2
+      },
+      {
         "x": 3,
+        "y": 2
+      },
+      {
+        "x": 1,
         "y": 0
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 7,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 8,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 10,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 12,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 13,
-        "x": 0,
+        "moveNumber": 9,
+        "x": 1,
         "y": 2
       },
       {
-        "moveNumber": 14,
-        "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 16,
+        "moveNumber": 15,
         "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 17,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 19,
-        "x": 3,
         "y": 1
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
+      16,
       19,
       21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 9,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 1
-      },
-      {
         "x": 3,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 2,
         "y": 4
       },
       {
-        "x": 4,
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 2,
         "y": 2
       },
       {
-        "x": 2,
+        "x": 0,
         "y": 0
       },
       {
         "x": 0,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 1,
         "y": 2
       },
       {
         "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
         "y": 0
       },
       {
-        "x": 4,
-        "y": 0
-      },
-      {
-        "x": 4,
+        "x": 3,
         "y": 3
       },
       {
         "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 2,
         "y": 3
+      },
+      {
+        "x": 0,
+        "y": 1
       },
       {
         "x": 3,
         "y": 1
       },
       {
-        "x": 3,
-        "y": 4
+        "x": 1,
+        "y": 3
       },
       {
-        "x": 1,
-        "y": 2
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 0
       }
     ]
   },
@@ -2767,86 +2163,115 @@
     "id": 17,
     "gridSize": 5,
     "fixedStart": {
-      "x": 3,
-      "y": 3
+      "x": 4,
+      "y": 2
     },
     "blockedSquares": [
       {
-        "x": 4,
-        "y": 4
-      },
-      {
         "x": 1,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 2,
         "y": 0
+      },
+      {
+        "x": 1,
+        "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 3,
-        "x": 1,
-        "y": 2
-      },
-      {
-        "moveNumber": 5,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 8,
-        "x": 1,
-        "y": 3
-      },
-      {
         "moveNumber": 9,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 11,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 13,
-        "x": 2,
+        "x": 3,
         "y": 2
       },
       {
-        "moveNumber": 14,
-        "x": 4,
-        "y": 0
+        "moveNumber": 15,
+        "x": 3,
+        "y": 3
+      },
+      {
+        "moveNumber": 22,
+        "x": 0,
+        "y": 1
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 2 checkpoint(s) at moves: 9, 15, 22. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 6,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 2,
     "fullPath": [
       {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
         "x": 3,
         "y": 3
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 0
       },
       {
         "x": 3,
@@ -2871,54 +2296,6 @@
       {
         "x": 3,
         "y": 1
-      },
-      {
-        "x": 1,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 4,
-        "y": 0
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
       }
     ]
   },
@@ -2926,162 +2303,102 @@
     "id": 18,
     "gridSize": 5,
     "fixedStart": {
-      "x": 1,
+      "x": 0,
       "y": 3
     },
     "blockedSquares": [
       {
-        "x": 1,
+        "x": 2,
         "y": 1
       },
       {
         "x": 4,
-        "y": 1
+        "y": 3
       },
       {
         "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 2
+        "y": 0
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 3,
+        "moveNumber": 9,
         "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 6,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 10,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 13,
-        "x": 2,
         "y": 2
-      },
-      {
-        "moveNumber": 14,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 15,
-        "x": 3,
-        "y": 4
-      },
-      {
-        "moveNumber": 16,
-        "x": 3,
-        "y": 1
       },
       {
         "moveNumber": 17,
         "x": 0,
-        "y": 1
-      },
-      {
-        "moveNumber": 18,
-        "x": 2,
-        "y": 3
+        "y": 4
       }
     ],
+    "objective": "Visit at least 20 of 22 squares. Avoid 3 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
       17,
-      19
+      20,
+      22
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 10,
+    "timeLimit": 75,
+    "minMoves": 20,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 1,
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 3,
         "y": 3
       },
       {
         "x": 1,
-        "y": 0
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
       },
       {
         "x": 4,
-        "y": 0
+        "y": 4
       },
       {
         "x": 4,
-        "y": 3
-      },
-      {
-        "x": 2,
         "y": 1
       },
       {
         "x": 2,
-        "y": 4
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 0
       },
       {
         "x": 4,
         "y": 2
       },
       {
-        "x": 1,
-        "y": 2
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
         "x": 2,
-        "y": 2
+        "y": 4
       },
       {
         "x": 0,
-        "y": 4
+        "y": 2
       },
       {
         "x": 3,
-        "y": 4
+        "y": 2
+      },
+      {
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 1,
+        "y": 3
       },
       {
         "x": 3,
@@ -3092,12 +2409,28 @@
         "y": 1
       },
       {
-        "x": 2,
-        "y": 3
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 2
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
       },
       {
         "x": 2,
-        "y": 0
+        "y": 2
       }
     ]
   },
@@ -3105,135 +2438,62 @@
     "id": 19,
     "gridSize": 5,
     "fixedStart": {
-      "x": 4,
-      "y": 4
+      "x": 0,
+      "y": 0
     },
     "blockedSquares": [
       {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 4
-      },
-      {
-        "x": 3,
+        "x": 4,
         "y": 1
       },
       {
         "x": 1,
-        "y": 3
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
       },
       {
         "x": 4,
-        "y": 3
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 3,
-        "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 4,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 0
-      },
-      {
         "moveNumber": 9,
-        "x": 1,
-        "y": 2
-      },
-      {
-        "moveNumber": 10,
-        "x": 4,
-        "y": 2
-      },
-      {
-        "moveNumber": 11,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 12,
         "x": 0,
-        "y": 2
-      },
-      {
-        "moveNumber": 13,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 14,
-        "x": 2,
-        "y": 3
+        "y": 1
       },
       {
         "moveNumber": 15,
-        "x": 4,
-        "y": 1
-      },
-      {
-        "moveNumber": 16,
-        "x": 1,
-        "y": 1
+        "x": 3,
+        "y": 2
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 15. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      16,
+      19,
+      21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 11,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
+        "x": 0,
         "y": 0
-      },
-      {
-        "x": 4,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
       },
       {
         "x": 0,
-        "y": 0
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 3
       },
       {
         "x": 3,
@@ -3249,14 +2509,6 @@
       },
       {
         "x": 2,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
         "y": 0
       },
       {
@@ -3264,24 +2516,56 @@
         "y": 3
       },
       {
-        "x": 4,
+        "x": 0,
+        "y": 1
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 3,
         "y": 1
       },
       {
         "x": 1,
-        "y": 1
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 0
       },
       {
         "x": 3,
-        "y": 3
+        "y": 2
       },
       {
         "x": 0,
-        "y": 3
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 4
       },
       {
         "x": 2,
         "y": 1
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 2
       }
     ]
   },
@@ -3289,25 +2573,17 @@
     "id": 20,
     "gridSize": 5,
     "fixedStart": {
-      "x": 2,
-      "y": 1
+      "x": 1,
+      "y": 2
     },
     "blockedSquares": [
       {
-        "x": 1,
-        "y": 1
+        "x": 2,
+        "y": 0
       },
       {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 1,
-        "y": 4
+        "x": 0,
+        "y": 2
       },
       {
         "x": 3,
@@ -3320,122 +2596,111 @@
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 4,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 7,
-        "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 8,
-        "x": 0,
+        "moveNumber": 9,
+        "x": 1,
         "y": 1
       },
       {
-        "moveNumber": 11,
-        "x": 0,
-        "y": 2
-      },
-      {
-        "moveNumber": 17,
-        "x": 1,
-        "y": 3
+        "moveNumber": 16,
+        "x": 3,
+        "y": 4
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      16,
+      19,
+      21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 5,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 3,
-        "y": 3
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 4
-      },
-      {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
-      },
-      {
         "x": 1,
         "y": 2
       },
       {
-        "x": 3,
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
         "y": 4
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 1
       },
       {
         "x": 3,
         "y": 1
       },
       {
-        "x": 1,
-        "y": 3
+        "x": 3,
+        "y": 4
       },
       {
-        "x": 4,
-        "y": 3
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 2
       },
       {
         "x": 4,
         "y": 0
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 3
       }
     ]
   },
@@ -3443,100 +2708,73 @@
     "id": 21,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 2
+      "x": 4,
+      "y": 1
     },
     "blockedSquares": [
       {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 3,
+        "x": 4,
         "y": 3
       },
       {
         "x": 1,
+        "y": 3
+      },
+      {
+        "x": 3,
         "y": 1
+      },
+      {
+        "x": 3,
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 3,
-        "x": 2,
-        "y": 3
-      },
-      {
-        "moveNumber": 11,
-        "x": 1,
+        "moveNumber": 9,
+        "x": 4,
         "y": 2
       },
       {
-        "moveNumber": 13,
+        "moveNumber": 17,
         "x": 0,
-        "y": 4
-      },
-      {
-        "moveNumber": 15,
-        "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 16,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 18,
-        "x": 1,
-        "y": 4
+        "y": 2
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
       16,
-      18,
-      20
+      19,
+      21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 17,
-    "minCheckpoints": 5,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
-        "y": 2
+        "x": 4,
+        "y": 1
       },
       {
-        "x": 2,
-        "y": 0
+        "x": 4,
+        "y": 4
       },
       {
-        "x": 2,
-        "y": 3
+        "x": 1,
+        "y": 4
       },
       {
-        "x": 0,
+        "x": 1,
         "y": 1
       },
       {
         "x": 3,
-        "y": 1
-      },
-      {
-        "x": 1,
         "y": 3
       },
       {
-        "x": 4,
+        "x": 0,
         "y": 3
       },
       {
@@ -3557,11 +2795,11 @@
       },
       {
         "x": 3,
-        "y": 4
+        "y": 0
       },
       {
         "x": 0,
-        "y": 4
+        "y": 0
       },
       {
         "x": 2,
@@ -3580,16 +2818,24 @@
         "y": 2
       },
       {
-        "x": 1,
-        "y": 4
+        "x": 0,
+        "y": 2
       },
       {
-        "x": 4,
-        "y": 4
+        "x": 2,
+        "y": 0
       },
       {
-        "x": 4,
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 0,
         "y": 1
+      },
+      {
+        "x": 0,
+        "y": 4
       }
     ]
   },
@@ -3597,112 +2843,90 @@
     "id": 22,
     "gridSize": 5,
     "fixedStart": {
-      "x": 1,
-      "y": 0
+      "x": 2,
+      "y": 2
     },
     "blockedSquares": [
       {
         "x": 0,
-        "y": 1
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
       },
       {
         "x": 0,
-        "y": 4
-      },
-      {
-        "x": 3,
-        "y": 4
-      },
-      {
-        "x": 3,
         "y": 1
-      },
-      {
-        "x": 1,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 3
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
+        "moveNumber": 9,
         "x": 3,
-        "y": 2
-      },
-      {
-        "moveNumber": 3,
-        "x": 0,
-        "y": 2
-      },
-      {
-        "moveNumber": 4,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 6,
-        "x": 4,
-        "y": 1
-      },
-      {
-        "moveNumber": 8,
-        "x": 1,
-        "y": 4
-      },
-      {
-        "moveNumber": 11,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 14,
-        "x": 2,
-        "y": 4
+        "y": 3
       },
       {
         "moveNumber": 16,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 18,
-        "x": 2,
-        "y": 2
+        "x": 4,
+        "y": 0
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      16,
+      19,
+      21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 8,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 3,
+        "x": 2,
         "y": 2
       },
       {
         "x": 0,
-        "y": 2
-      },
-      {
-        "x": 2,
         "y": 0
       },
       {
-        "x": 2,
+        "x": 0,
         "y": 3
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 1,
+        "y": 2
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 1
       },
       {
         "x": 4,
@@ -3717,48 +2941,36 @@
         "y": 4
       },
       {
-        "x": 1,
-        "y": 1
+        "x": 3,
+        "y": 2
       },
       {
-        "x": 3,
+        "x": 1,
+        "y": 0
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 1,
         "y": 3
       },
       {
         "x": 3,
-        "y": 0
+        "y": 1
       },
       {
-        "x": 1,
-        "y": 2
-      },
-      {
-        "x": 4,
-        "y": 2
-      },
-      {
-        "x": 2,
+        "x": 3,
         "y": 4
       },
       {
-        "x": 2,
-        "y": 1
-      },
-      {
         "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 4,
-        "y": 0
+        "y": 4
       }
     ]
   },
@@ -3766,127 +2978,75 @@
     "id": 23,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 4
+      "x": 2,
+      "y": 0
     },
     "blockedSquares": [
       {
-        "x": 1,
-        "y": 3
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
         "x": 4,
-        "y": 0
+        "y": 4
       },
       {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 0,
-        "y": 3
+        "x": 1,
+        "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 3,
-        "x": 3,
-        "y": 1
-      },
-      {
-        "moveNumber": 4,
-        "x": 3,
-        "y": 4
-      },
-      {
-        "moveNumber": 5,
-        "x": 1,
-        "y": 2
-      },
-      {
-        "moveNumber": 6,
-        "x": 3,
-        "y": 0
-      },
-      {
-        "moveNumber": 7,
+        "moveNumber": 9,
         "x": 3,
         "y": 3
-      },
-      {
-        "moveNumber": 8,
-        "x": 1,
-        "y": 1
-      },
-      {
-        "moveNumber": 11,
-        "x": 2,
-        "y": 0
-      },
-      {
-        "moveNumber": 12,
-        "x": 4,
-        "y": 2
-      },
-      {
-        "moveNumber": 13,
-        "x": 2,
-        "y": 4
-      },
-      {
-        "moveNumber": 14,
-        "x": 0,
-        "y": 2
       },
       {
         "moveNumber": 15,
-        "x": 3,
-        "y": 2
+        "x": 1,
+        "y": 0
       },
       {
-        "moveNumber": 18,
-        "x": 2,
-        "y": 2
+        "moveNumber": 22,
+        "x": 4,
+        "y": 1
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 2 checkpoint(s) at moves: 9, 15, 22. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      15,
-      17,
-      19
+      18,
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 16,
-    "minCheckpoints": 11,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 2,
     "fullPath": [
       {
-        "x": 0,
-        "y": 4
+        "x": 2,
+        "y": 0
       },
       {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 1
-      },
-      {
-        "x": 3,
-        "y": 4
+        "x": 4,
+        "y": 2
       },
       {
         "x": 1,
         "y": 2
+      },
+      {
+        "x": 3,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 0
       },
       {
         "x": 3,
@@ -3897,24 +3057,12 @@
         "y": 3
       },
       {
-        "x": 1,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 2,
+        "x": 0,
         "y": 3
       },
       {
         "x": 2,
-        "y": 0
-      },
-      {
-        "x": 4,
-        "y": 2
+        "y": 1
       },
       {
         "x": 2,
@@ -3930,19 +3078,39 @@
       },
       {
         "x": 1,
-        "y": 4
+        "y": 0
       },
       {
         "x": 4,
-        "y": 4
+        "y": 0
       },
       {
-        "x": 2,
-        "y": 2
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 3
+      },
+      {
+        "x": 3,
+        "y": 1
       },
       {
         "x": 0,
-        "y": 0
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 1,
+        "y": 1
       }
     ]
   },
@@ -3950,126 +3118,62 @@
     "id": 24,
     "gridSize": 5,
     "fixedStart": {
-      "x": 2,
-      "y": 0
+      "x": 1,
+      "y": 2
     },
     "blockedSquares": [
       {
         "x": 0,
-        "y": 2
+        "y": 1
       },
       {
-        "x": 2,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 2
-      },
-      {
-        "x": 3,
+        "x": 0,
         "y": 4
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 4,
-        "x": 4,
-        "y": 4
-      },
-      {
-        "moveNumber": 5,
+        "moveNumber": 9,
         "x": 2,
         "y": 2
       },
       {
-        "moveNumber": 7,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 9,
-        "x": 0,
-        "y": 3
-      },
-      {
-        "moveNumber": 10,
-        "x": 0,
-        "y": 0
-      },
-      {
-        "moveNumber": 12,
-        "x": 3,
-        "y": 3
-      },
-      {
-        "moveNumber": 15,
+        "moveNumber": 17,
         "x": 3,
         "y": 2
       }
     ],
+    "objective": "Visit at least 21 of 23 squares. Avoid 2 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 17. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      16,
       18,
-      20
+      21,
+      23
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 17,
-    "minCheckpoints": 6,
+    "timeLimit": 75,
+    "minMoves": 21,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 2,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 2,
+        "x": 1,
         "y": 2
       },
       {
         "x": 4,
-        "y": 0
-      },
-      {
-        "x": 4,
-        "y": 3
+        "y": 2
       },
       {
         "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
         "y": 1
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 0
-      },
-      {
-        "x": 3,
-        "y": 3
       },
       {
         "x": 1,
@@ -4080,12 +3184,56 @@
         "y": 4
       },
       {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 2,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 0,
+        "y": 3
+      },
+      {
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 2,
+        "y": 4
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
         "x": 3,
         "y": 2
       },
       {
         "x": 1,
         "y": 0
+      },
+      {
+        "x": 4,
+        "y": 0
+      },
+      {
+        "x": 4,
+        "y": 3
       },
       {
         "x": 1,
@@ -4096,11 +3244,7 @@
         "y": 1
       },
       {
-        "x": 0,
-        "y": 1
-      },
-      {
-        "x": 0,
+        "x": 3,
         "y": 4
       }
     ]
@@ -4109,92 +3253,70 @@
     "id": 25,
     "gridSize": 5,
     "fixedStart": {
-      "x": 0,
-      "y": 4
+      "x": 4,
+      "y": 2
     },
     "blockedSquares": [
       {
-        "x": 1,
+        "x": 3,
         "y": 4
       },
       {
-        "x": 4,
-        "y": 4
-      },
-      {
-        "x": 4,
-        "y": 1
-      },
-      {
         "x": 1,
-        "y": 1
+        "y": 2
+      },
+      {
+        "x": 3,
+        "y": 0
+      },
+      {
+        "x": 0,
+        "y": 0
       }
     ],
     "requiredMoves": [
       {
-        "moveNumber": 2,
-        "x": 3,
-        "y": 4
-      },
-      {
-        "moveNumber": 3,
-        "x": 3,
-        "y": 1
-      },
-      {
-        "moveNumber": 6,
-        "x": 2,
-        "y": 0
-      },
-      {
         "moveNumber": 9,
-        "x": 1,
-        "y": 0
-      },
-      {
-        "moveNumber": 11,
-        "x": 4,
-        "y": 3
-      },
-      {
-        "moveNumber": 12,
-        "x": 4,
-        "y": 0
-      },
-      {
-        "moveNumber": 13,
         "x": 2,
         "y": 2
       },
       {
         "moveNumber": 16,
-        "x": 2,
+        "x": 4,
         "y": 1
-      },
-      {
-        "moveNumber": 19,
-        "x": 1,
-        "y": 2
       }
     ],
+    "objective": "Visit at least 19 of 21 squares. Avoid 4 blocked squares. Hit at least 1 checkpoint(s) at moves: 9, 16. Max 2 mistake(s). Complete in 75s.",
     "stars": [
-      17,
+      16,
       19,
       21
     ],
     "ruleSet": 7,
     "maxMistakes": 2,
-    "timeLimit": 90,
-    "minMoves": 18,
-    "minCheckpoints": 8,
+    "timeLimit": 75,
+    "minMoves": 19,
+    "minCheckpoints": 1,
     "fullPath": [
       {
-        "x": 0,
+        "x": 4,
+        "y": 2
+      },
+      {
+        "x": 2,
         "y": 4
       },
       {
-        "x": 3,
-        "y": 4
+        "x": 2,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 3
+      },
+      {
+        "x": 1,
+        "y": 3
       },
       {
         "x": 3,
@@ -4205,71 +3327,59 @@
         "y": 1
       },
       {
-        "x": 2,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 0
-      },
-      {
         "x": 0,
-        "y": 2
-      },
-      {
-        "x": 3,
-        "y": 2
-      },
-      {
-        "x": 1,
-        "y": 0
-      },
-      {
-        "x": 1,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 3
-      },
-      {
-        "x": 4,
-        "y": 0
-      },
-      {
-        "x": 2,
-        "y": 2
-      },
-      {
-        "x": 0,
-        "y": 0
-      },
-      {
-        "x": 0,
-        "y": 3
-      },
-      {
-        "x": 2,
-        "y": 1
-      },
-      {
-        "x": 2,
         "y": 4
       },
       {
-        "x": 4,
+        "x": 2,
         "y": 2
+      },
+      {
+        "x": 4,
+        "y": 0
       },
       {
         "x": 1,
-        "y": 2
-      },
-      {
-        "x": 3,
         "y": 0
       },
       {
         "x": 3,
+        "y": 2
+      },
+      {
+        "x": 0,
+        "y": 2
+      },
+      {
+        "x": 2,
+        "y": 0
+      },
+      {
+        "x": 2,
+        "y": 3
+      },
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 4,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 4
+      },
+      {
+        "x": 1,
+        "y": 1
+      },
+      {
+        "x": 3,
+        "y": 3
+      },
+      {
+        "x": 0,
         "y": 3
       }
     ]
