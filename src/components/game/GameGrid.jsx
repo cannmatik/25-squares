@@ -603,7 +603,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         }
 
         setCurrentPos({ x, y })
-        const key = `${x},${y} `
+        const key = `${x},${y}`
         setVisited(prev => new Set([...prev, key]))
         setMoveCount(nextMoveNumber)
         setMoveHistory(prev => [...prev, { x, y }])
@@ -627,7 +627,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         } else {
             const hasMoves = MOVES.some(m => {
                 const nx = x + m.dx, ny = y + m.dy
-                return isValidPos(nx, ny) && !newVisited.has(`${nx},${ny} `)
+                return isValidPos(nx, ny) && !newVisited.has(`${nx},${ny}`)
             })
 
             if (!hasMoves) {
