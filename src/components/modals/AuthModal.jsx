@@ -10,7 +10,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import soundManager from '@/lib/sounds'
 import { useColorMode } from '@/app/providers'
 
-export default function AuthModal({ onClose, onLogin, onLogout, initialMode = 'login', userEmail = '' }) {
+export default function AuthModal({ open, onClose, onLogin, onLogout, initialMode = 'login', userEmail = '' }) {
     const { mode: themeMode } = useColorMode()
     const isDark = themeMode === 'dark'
 
@@ -219,19 +219,31 @@ export default function AuthModal({ onClose, onLogin, onLogout, initialMode = 'l
 
     return (
         <Dialog
-            open={true}
+            open={open}
             onClose={onClose}
             maxWidth="xs"
             fullWidth
+            transitionDuration={{ enter: 100, exit: 100 }}
+            slotProps={{
+                backdrop: {
+                    sx: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                        backdropFilter: 'blur(4px)',
+                        WebkitBackdropFilter: 'blur(4px)',
+                        transition: 'none !important'
+                    }
+                }
+            }}
             PaperProps={{
                 sx: {
-                    bgcolor: isDark ? 'rgba(20, 20, 30, 0.6)' : 'rgba(255, 255, 255, 0.6)',
+                    position: 'relative',
+                    backgroundColor: isDark ? 'rgba(20, 20, 30, 0.5)' : 'rgba(255, 255, 255, 0.5)',
                     backdropFilter: 'blur(20px)',
-                    borderRadius: 4,
-                    border: '1px solid',
-                    borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.4)',
-                    boxShadow: '0 8px 32px rgba(0,0,0,0.2)',
-                    position: 'relative'
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.15)' : 'rgba(255, 255, 255, 0.5)'}`,
+                    borderRadius: '16px',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+                    backgroundImage: 'none'
                 }
             }}
         >

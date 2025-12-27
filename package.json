@@ -20,6 +20,7 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/pg": "^8.16.0",
+    "@vercel/og": "^0.8.6",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "howler": "^2.2.4",

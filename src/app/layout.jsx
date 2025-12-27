@@ -1,5 +1,19 @@
 import './globals.css'
 import Providers from './providers'
+import { Press_Start_2P, Montserrat } from 'next/font/google'
+
+const pressStart2P = Press_Start_2P({
+    weight: '400',
+    subsets: ['latin'],
+    variable: '--font-press-start',
+    display: 'swap',
+})
+
+const montserrat = Montserrat({
+    subsets: ['latin'],
+    variable: '--font-montserrat',
+    display: 'swap',
+})
 
 export const metadata = {
     title: '25 Squares',
@@ -15,7 +29,7 @@ export const viewport = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="en">
+        <html lang="en" className={`${pressStart2P.variable} ${montserrat.variable}`}>
             <body>
                 <Providers>{children}</Providers>
             </body>

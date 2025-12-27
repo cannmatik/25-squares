@@ -29,7 +29,7 @@ const MOVES = [
 
 const GRID_SIZE = 5
 
-export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastLevel, isOnline, user, onUserUpdate, onBack }) {
+export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastLevel, isOnline, user, onUserUpdate, onBack, worldId }) {
     const [cells, setCells] = useState([])
     const [visited, setVisited] = useState(new Set())
     const [currentPos, setCurrentPos] = useState(null)
@@ -376,6 +376,50 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
         setHintsRemaining(prev => prev - 1)
         setLastHintMoveCount(moveCount)
         soundManager.playClick()
+    }
+
+    const handleShare = async () => {
+        const w = worldId || (levelConfig?.worldId || 1)
+        const l = levelConfig?.id || 1
+        const s = result?.stars || 0
+        const sc = moveCount
+
+        const url = `${window.location.origin}/share?world=${w}&level=${l}&score=${sc}&stars=${s}`
+        const shareData = {
+            title: '25 SQUARES',
+            text: `I complated Level ${l} with ${sc} moves!`,
+            url: url
+        }
+
+        setStatus('OPENING SHARE...')
+        setStatusType('loading')
+
+        // Optimistically ping the OG API to warm it up (fire and forget)
+        const ogApiUrl = `/api/og?world=${w}&level=${l}&score=${sc}&stars=${s}`
+        fetch(ogApiUrl, { mode: 'no-cors' }).catch(() => { })
+
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData)
+                setStatus('SHARED!')
+                setStatusType('won')
+            } catch (err) {
+                console.error('Share failed:', err)
+                setStatus('SHARE CANCELLED')
+                setStatusType('info')
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(url)
+                setStatus('LINK COPIED!')
+                setStatusType('won')
+                soundManager.playClick()
+            } catch (err) {
+                console.error('Clipboard failed', err)
+                setStatus('COPY FAILED')
+                setStatusType('lost')
+            }
+        }
     }
 
     const endGame = (won, message, finalMoveCount) => {
@@ -911,6 +955,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                         isLastLevel={isLastLevel}
                         onUndo={() => { soundManager.playClick(); undoMove() }}
                         canUndo={!!levelConfig && moveHistory.length > 1 && undosRemaining > 0}
+                        onShare={handleShare}
                     />
                 )
             }

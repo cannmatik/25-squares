@@ -62,65 +62,81 @@ export default function Home() {
         }
     }, [])
 
-    // Load initial data (Levels & User)
+    // Unified Data Loading
     useEffect(() => {
-        // Load User
-        const token = localStorage.getItem('token')
-        const storedUser = localStorage.getItem('user')
-        if (token && storedUser) {
-            setUser(JSON.parse(storedUser))
-
-            // Validate & Refresh User Data from DB
-            fetch('/api/auth/me', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-                .then(res => {
-                    if (res.ok) return res.json()
-                    throw new Error('Auth failed')
-                })
-                .then(data => {
-                    if (data.user) {
-                        setUser(data.user)
-                        localStorage.setItem('user', JSON.stringify(data.user))
-                    }
-                })
-                .catch(() => {
-                    // If token invalid, logout
-                    // But maybe just offline? Don't clear immediately unless 401
-                })
-        }
-
-        // Load Levels Logic
-        const loadLevels = async () => {
-            // Check offline/online status first
+        const loadData = async () => {
             if (typeof window !== 'undefined') setIsOnline(navigator.onLine)
 
-            // Try to load cached levels first to render immediately
-            const cached = localStorage.getItem('cachedLevels')
-            if (cached) {
-                try {
-                    const parsed = JSON.parse(cached)
-                    setLevelsCache(parsed)
-                } catch (e) { console.error('Cache parse error', e) }
+            // 1. Load Local Cache immediately to show something
+            const cachedLevels = localStorage.getItem('cachedLevels')
+            if (cachedLevels) {
+                try { setLevelsCache(JSON.parse(cachedLevels)) } catch (e) { }
             }
 
-            if (!navigator.onLine) return
-
-            try {
-                const res = await fetch('/api/levels')
-                if (res.ok) {
-                    const data = await res.json()
-                    // API returns already grouped by worldId: { 1: [...], 2: [...] }
-                    setLevelsCache(data)
-                    localStorage.setItem('cachedLevels', JSON.stringify(data))
+            const token = localStorage.getItem('token')
+            const storedUser = localStorage.getItem('user')
+            if (token && storedUser) {
+                setUser(JSON.parse(storedUser))
+                const cachedProgress = localStorage.getItem('cachedProgress')
+                if (cachedProgress) {
+                    try { setProgress(JSON.parse(cachedProgress)) } catch (e) { }
                 }
+            }
+
+            // 2. Fetch fresh data concurrently
+            try {
+                const promises = []
+
+                // Levels (always fetch to update)
+                if (navigator.onLine) {
+                    promises.push(fetch('/api/levels').then(res => res.ok ? res.json() : null))
+                } else {
+                    promises.push(Promise.resolve(null))
+                }
+
+                // User & Progress (if logged in)
+                if (token && navigator.onLine) {
+                    promises.push(fetch('/api/auth/me', { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.ok ? res.json() : null))
+                    promises.push(fetch('/api/progress', { headers: { 'Authorization': `Bearer ${token}` } }).then(res => res.ok ? res.json() : null))
+                } else {
+                    promises.push(Promise.resolve(null))
+                    promises.push(Promise.resolve(null))
+                }
+
+                const [levelsData, userData, progressData] = await Promise.all(promises)
+
+                // Update Levels
+                if (levelsData) {
+                    setLevelsCache(levelsData)
+                    localStorage.setItem('cachedLevels', JSON.stringify(levelsData))
+                }
+
+                // Update User
+                if (userData && userData.user) {
+                    setUser(userData.user)
+                    localStorage.setItem('user', JSON.stringify(userData.user))
+                }
+
+                // Update Progress
+                if (progressData) {
+                    const prog = {}
+                    const pData = Array.isArray(progressData) ? progressData : (progressData.progress || [])
+                    pData.forEach(p => {
+                        if (!prog[p.worldId]) prog[p.worldId] = {}
+                        prog[p.worldId][p.levelId] = { stars: p.stars, score: p.score }
+                    })
+                    setProgress(prog)
+                    localStorage.setItem('cachedProgress', JSON.stringify(prog))
+                }
+
             } catch (err) {
-                console.error('Failed to fetch levels:', err)
+                console.error('Data load error:', err)
             } finally {
                 setIsLoading(false)
             }
         }
-        loadLevels()
+
+        loadData()
     }, [])
 
     // Offline & Sync Logic
@@ -150,15 +166,11 @@ export default function Home() {
                 } else {
                     if (isOnline) {
                         setIsOnline(false)
-                        // User requested to remove "OFFLINE MODE" popup
-                        // showNotification('OFFLINE MODE - SAVING LOCALLY', 'error', null)
                     }
                 }
             } catch (e) {
                 if (isOnline) {
                     setIsOnline(false)
-                    // User requested to remove "OFFLINE MODE" popup
-                    // showNotification('OFFLINE MODE - SAVING LOCALLY', 'error', null)
                 }
             }
         }
@@ -182,41 +194,6 @@ export default function Home() {
             clearInterval(interval)
         }
     }, [isOnline])
-
-    // Load Progress
-    useEffect(() => {
-        if (user) {
-            if (isOnline) {
-                fetch('/api/progress', {
-                    headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-                })
-                    .then(res => res.json())
-                    .then(data => {
-                        const prog = {}
-                        // API returns { progress: [], totalStars: ... }
-                        // Ensure we access the array property
-                        const progressData = Array.isArray(data) ? data : (data.progress || [])
-                        progressData.forEach(p => {
-                            if (!prog[p.worldId]) prog[p.worldId] = {}
-                            prog[p.worldId][p.levelId] = { stars: p.stars, score: p.score }
-                        })
-                        setProgress(prog)
-                        localStorage.setItem('cachedProgress', JSON.stringify(prog))
-                    })
-                    .catch(() => {
-                        // Fallback to cache if fetch fails
-                        const cached = localStorage.getItem('cachedProgress')
-                        if (cached) setProgress(JSON.parse(cached))
-                    })
-            } else {
-                // Offline load
-                const cached = localStorage.getItem('cachedProgress')
-                if (cached) setProgress(JSON.parse(cached))
-            }
-        } else {
-            setProgress({})
-        }
-    }, [user, isOnline])
 
     const syncProgress = async () => {
         const queue = JSON.parse(localStorage.getItem('offlineProgressQueue') || '[]')
@@ -373,19 +350,18 @@ export default function Home() {
 
 
 
-            {showAuth && (
-                <AuthModal
-                    onClose={() => setShowAuth(false)}
-                    onLogin={(u, token) => {
-                        setUser(u);
-                        if (token) localStorage.setItem('token', token)
-                        if (u) localStorage.setItem('user', JSON.stringify(u))
-                        setShowAuth(false);
-                        // Trigger reload of progress
-                        setIsOnline(prev => !prev); setIsOnline(prev => !prev); // Force effect hook re-run hack or just let the user dependency handle it
-                    }}
-                />
-            )}
+            <AuthModal
+                open={showAuth}
+                onClose={() => setShowAuth(false)}
+                onLogin={(u, token) => {
+                    setUser(u);
+                    if (token) localStorage.setItem('token', token)
+                    if (u) localStorage.setItem('user', JSON.stringify(u))
+                    setShowAuth(false);
+                    // Trigger reload of progress
+                    setIsOnline(prev => !prev); setIsOnline(prev => !prev); // Force effect hook re-run hack or just let the user dependency handle it
+                }}
+            />
 
             {screen === 'menu' && (
                 <MenuScreen
@@ -489,6 +465,7 @@ export default function Home() {
                             }
                         }
                     }}
+                    worldId={currentWorld}
                     isLastLevel={(() => {
                         if (currentLevel === 'free') return false
                         const dbWorld = levelsCache[currentWorld]
