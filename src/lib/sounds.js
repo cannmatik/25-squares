@@ -9,11 +9,18 @@ class SoundManager {
         this.muted = false;
         this.hapticEnabled = true;
 
+        this.bgmMuted = true;
+        this.bgmVolume = 0.5;
+        this.bgm = null;
+
         // Load preferences from localStorage
         if (typeof window !== 'undefined') {
             const savedVolume = localStorage.getItem('gameVolume');
             const savedMuted = localStorage.getItem('gameMuted');
             const savedHaptic = localStorage.getItem('gameHaptic');
+
+            const savedBgmMuted = localStorage.getItem('gameBgmMuted');
+            if (savedBgmMuted !== null) this.bgmMuted = savedBgmMuted === 'true';
 
             if (savedVolume !== null) this.volume = parseFloat(savedVolume);
             if (savedMuted !== null) this.muted = savedMuted === 'true';
@@ -25,6 +32,40 @@ class SoundManager {
         if (this.initialized || typeof window === 'undefined') return;
         this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
         this.initialized = true;
+    }
+
+    // Background Music (BGM)
+    initBGM() {
+        if (typeof window === 'undefined' || this.bgm) return;
+        this.bgm = new Audio('/25Squares.mp3');
+        this.bgm.loop = true;
+        this.bgm.volume = this.bgmMuted ? 0 : (this.bgmVolume || 0.3);
+
+        // Auto-play if not muted and initialized
+        if (!this.bgmMuted && this.initialized) {
+            this.bgm.play().catch(e => console.log("Autoplay prevented:", e));
+        }
+    }
+
+    toggleBGM() {
+        this.bgmMuted = !this.bgmMuted;
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('gameBgmMuted', this.bgmMuted.toString());
+        }
+
+        if (this.bgm) {
+            if (this.bgmMuted) {
+                this.bgm.pause();
+            } else {
+                this.bgm.volume = this.bgmVolume || 0.3;
+                this.bgm.play().catch(e => console.log("BGM play failed:", e));
+            }
+        }
+        return this.bgmMuted;
+    }
+
+    isBgmMuted() {
+        return this.bgmMuted;
     }
 
     // Settings management
@@ -139,6 +180,19 @@ class SoundManager {
             { freq: 659, type: 'triangle', duration: 0.15 }
         ], 80);
         this.vibrate(20);
+    }
+
+    // Play special sound for full 25 square completion
+    async playPerfect() {
+        await this.playMelody([
+            { freq: 523, type: 'triangle', duration: 0.1, volume: 0.7 }, // C5
+            { freq: 659, type: 'triangle', duration: 0.1, volume: 0.7 }, // E5
+            { freq: 784, type: 'triangle', duration: 0.1, volume: 0.7 }, // G5
+            { freq: 1047, type: 'triangle', duration: 0.15, volume: 0.8 }, // C6
+            { freq: 1318, type: 'triangle', duration: 0.15, volume: 0.8 }, // E6
+            { freq: 1568, type: 'sine', duration: 0.4, volume: 1.0 }    // G6
+        ], 80);
+        this.vibrate([40, 40, 40, 40, 40, 200]);
     }
 
     // Play invalid move sound

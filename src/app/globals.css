@@ -5,31 +5,81 @@
   --cell-size: min(15vw, 60px);
   --gap-size: 6px;
 
-  /* Strict Color Palette */
+  /* Primitive Colors */
   --red: #D2003A;
   --yellow: #FAEC3B;
   --dark-purple: #3C003C;
   --light-gray: #ECECEC;
   --dark-teal: #001E1E;
 
-  /* Semantic Mappings */
+  /* Light Theme Primitives (Soft Professional) */
+  --blue-primary: #4F46E5;
+  /* Indigo 600 */
+  --blue-dark: #111827;
+  /* Gray 900 */
+  --white: #FFFFFF;
+  --slate-light: #F3F4F6;
+  /* Gray 100 */
+  --slate-500: #6B7280;
+  /* Gray 500 */
+  --red-light: #EF4444;
+
+  /* Semantic Mappings (Default: Dark) */
   --bg-color: var(--dark-purple);
-  --text-color: var(--light-gray);
+  --text-color: var(--yellow);
+  /* Locked to Yellow in dark mode as per request */
   --accent-color: var(--yellow);
 
   --cell-bg: var(--dark-purple);
   --cell-border: var(--light-gray);
-  --cell-text: var(--light-gray);
+  --cell-text: var(--yellow);
 
   --visited-bg: var(--dark-teal);
   --blocked-bg: var(--red);
   --current-bg: #1a3a3a;
+  --possible-bg: var(--yellow);
+  --possible-text: var(--dark-teal);
 
   --btn-primary-bg: var(--yellow);
   --btn-primary-text: var(--dark-teal);
 
   --modal-bg: var(--dark-purple);
   --modal-border: var(--yellow);
+  --shadow-color: var(--dark-teal);
+  --shadow-sm: rgba(0, 0, 0, 0.5);
+
+  --tutorial-highlight: rgba(250, 236, 59, 0.6);
+}
+
+[data-theme='light'] {
+  --bg-color: #F8FAF8;
+  --text-color: #000000;
+  /* Pitch Black for high contrast */
+  --accent-color: #2563EB;
+  /* Strong Royal Blue */
+
+  --cell-bg: #FFFFFF;
+  --cell-border: #000000;
+  --cell-text: #000000;
+
+  --visited-bg: #DBEAFE;
+  /* Blue 100 */
+  --blocked-bg: #EF4444;
+  /* Red 500 */
+  --current-bg: #BFDBFE;
+  /* Blue 200 */
+  --possible-bg: #2563EB;
+  --possible-text: #FFFFFF;
+
+  --btn-primary-bg: #2563EB;
+  --btn-primary-text: #FFFFFF;
+
+  --modal-bg: #FFFFFF;
+  --modal-border: #000000;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-sm: rgba(0, 0, 0, 0.05);
+
+  --tutorial-highlight: rgba(37, 99, 235, 0.3);
 }
 
 * {
@@ -103,7 +153,7 @@ body {
 
 @keyframes tutorialSpotlight {
   0% {
-    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+    box-shadow: 0 0 0 0 var(--tutorial-highlight);
   }
 
   70% {
@@ -158,12 +208,12 @@ body {
   background: var(--btn-primary-bg);
   border-color: var(--dark-teal);
   color: var(--btn-primary-text);
-  box-shadow: 4px 4px 0 var(--dark-teal);
+  box-shadow: 4px 4px 0 var(--shadow-color);
 }
 
 .btn-primary:active {
   transform: translate(2px, 2px);
-  box-shadow: 2px 2px 0 var(--dark-teal);
+  box-shadow: 2px 2px 0 var(--shadow-color);
 }
 
 .btn-secondary {
@@ -210,7 +260,7 @@ body {
   border-radius: 12px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 8px 8px 0 var(--dark-teal);
+  box-shadow: 8px 8px 0 var(--shadow-color);
   text-align: center;
 }
 
@@ -218,7 +268,7 @@ body {
   color: var(--yellow);
   margin-bottom: 20px;
   font-size: 1.2rem;
-  text-shadow: 2px 2px 0 var(--dark-teal);
+  text-shadow: 2px 2px 0 var(--shadow-color);
 }
 
 /* Form Elements */
@@ -304,8 +354,8 @@ body {
 }
 
 .cell.possible-move {
-  background: var(--yellow);
-  color: var(--dark-teal);
+  background: var(--possible-bg);
+  color: var(--possible-text);
   animation: none;
   /* Removed smooth glow */
 }
@@ -331,7 +381,7 @@ body {
 .game-title {
   font-size: clamp(2rem, 8vw, 3rem);
   color: var(--yellow);
-  text-shadow: 4px 4px 0 var(--dark-teal);
+  text-shadow: 4px 4px 0 var(--shadow-color);
   margin-bottom: 8px;
   text-align: center;
   line-height: 1.2;

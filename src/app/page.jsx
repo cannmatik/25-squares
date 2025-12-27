@@ -27,7 +27,8 @@ export default function Home() {
     const [user, setUser] = useState(null)
     const [progress, setProgress] = useState({})
     const [showAuth, setShowAuth] = useState(false)
-    const [muted, setMuted] = useState(false)
+    const [muted, setMuted] = useState(typeof window !== 'undefined' ? soundManager.isMuted() : false)
+    const [bgmMuted, setBgmMuted] = useState(typeof window !== 'undefined' ? soundManager.isBgmMuted() : true)
     const [levelsCache, setLevelsCache] = useState({})
     const [isOnline, setIsOnline] = useState(true)
     const [isLoading, setIsLoading] = useState(true) // Initial loading state
@@ -39,15 +40,26 @@ export default function Home() {
         setNotification({ open: true, message, severity, duration })
     }
 
-    // Initialize Sounds
+    // Initialize Sounds & BGM
     useEffect(() => {
+        // Sync initial state from manager
+        setMuted(soundManager.isMuted())
+        setBgmMuted(soundManager.isBgmMuted())
+
         const handleInteraction = () => {
             if (soundManager.context?.state === 'suspended') {
                 soundManager.context.resume()
             }
+            // Try to init BGM on first interaction
+            soundManager.initBGM()
+            setBgmMuted(soundManager.isBgmMuted())
         }
         window.addEventListener('click', handleInteraction)
-        return () => window.removeEventListener('click', handleInteraction)
+        window.addEventListener('keydown', handleInteraction)
+        return () => {
+            window.removeEventListener('click', handleInteraction)
+            window.removeEventListener('keydown', handleInteraction)
+        }
     }, [])
 
     // Load initial data (Levels & User)
@@ -138,13 +150,15 @@ export default function Home() {
                 } else {
                     if (isOnline) {
                         setIsOnline(false)
-                        showNotification('OFFLINE MODE - SAVING LOCALLY', 'error', null)
+                        // User requested to remove "OFFLINE MODE" popup
+                        // showNotification('OFFLINE MODE - SAVING LOCALLY', 'error', null)
                     }
                 }
             } catch (e) {
                 if (isOnline) {
                     setIsOnline(false)
-                    showNotification('OFFLINE MODE - SAVING LOCALLY', 'error', null)
+                    // User requested to remove "OFFLINE MODE" popup
+                    // showNotification('OFFLINE MODE - SAVING LOCALLY', 'error', null)
                 }
             }
         }
@@ -329,7 +343,7 @@ export default function Home() {
         <>
             {/* Top Bar (hidden on game screen - GameGrid has its own) */}
             {/* Top Bar (hidden on game screen - GameGrid has its own) */}
-            {screen !== 'game' && (
+            {screen !== 'game' && screen !== 'menu' && (
                 <TopBar
                     title={
                         screen === 'worlds' ? 'SELECT WORLD' :
@@ -391,6 +405,11 @@ export default function Home() {
                     }}
                     muted={muted}
                     onToggleSound={() => { setMuted(!muted); soundManager.toggleMute() }}
+                    bgmMuted={bgmMuted}
+                    onToggleBGM={() => {
+                        const isMuted = soundManager.toggleBGM();
+                        setBgmMuted(isMuted);
+                    }}
                     isOnline={isOnline}
                 />
             )}

@@ -12,35 +12,91 @@ export default function ResultModal({ stars, score, isNewBest, onRetry, onNext, 
     }, [stars])
 
     return (
-        <Dialog open={true} maxWidth="xs" fullWidth>
-            <DialogTitle sx={{ textAlign: 'center', color: 'primary.main' }}>
+        <Dialog
+            open={true}
+            maxWidth="xs"
+            fullWidth
+            PaperProps={{
+                sx: {
+                    bgcolor: 'background.paper',
+                    borderRadius: 2,
+                    border: '2px solid',
+                    borderColor: 'text.primary',
+                    backgroundImage: 'none'
+                }
+            }}
+        >
+            <DialogTitle sx={{
+                textAlign: 'center',
+                color: 'primary.main',
+                fontFamily: '"Press Start 2P", cursive',
+                fontSize: '1.2rem',
+                pt: 3
+            }}>
                 {stars > 0 ? 'LEVEL COMPLETE!' : 'TRY AGAIN!'}
             </DialogTitle>
-            <DialogContent>
-                <Stack alignItems="center" spacing={2}>
+            <DialogContent sx={{ pb: 3 }}>
+                <Stack alignItems="center" spacing={3}>
                     <Stars count={stars} total={3} />
-                    <Typography>SQUARES: {score}</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'text.primary' }}>
+                        {score} SQUARES
+                    </Typography>
                     {isNewBest && (
-                        <Typography color="primary" sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                        <Typography color="primary.main" sx={{ display: 'flex', alignItems: 'center', gap: 0.5, fontWeight: 'bold' }}>
                             <EmojiEventsIcon sx={{ fontSize: 20 }} /> NEW BEST!
                         </Typography>
                     )}
-                    <Stack direction="column" spacing={1} width="100%">
+                    <Stack direction="column" spacing={1.5} width="100%">
                         {stars === 0 && canUndo && (
-                            <Button fullWidth variant="contained" color="primary" onClick={() => { soundManager.playClick(); onUndo() }}>
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => { soundManager.playClick(); onUndo() }}
+                                sx={{ height: 48, fontWeight: 'bold' }}
+                            >
                                 UNDO LAST MOVE
                             </Button>
                         )}
-                        <Button fullWidth variant="contained" color="secondary" onClick={() => { soundManager.playClick(); onRetry() }}>
-                            RESTART
-                        </Button>
                         {hasNext && stars > 0 && (
-                            <Button fullWidth variant="contained" color="primary" onClick={() => { soundManager.playClick(); onNext() }}>
-                                NEXT
+                            <Button
+                                fullWidth
+                                variant="contained"
+                                color="primary"
+                                onClick={() => { soundManager.playClick(); onNext() }}
+                                sx={{ height: 48, fontWeight: 'bold' }}
+                            >
+                                NEXT LEVEL
                             </Button>
                         )}
-                        <Button fullWidth variant="outlined" color="secondary" onClick={() => { soundManager.playClick(); onLevels() }}>
-                            LEVELS
+                        <Button
+                            fullWidth
+                            variant="contained"
+                            color="secondary"
+                            onClick={() => { soundManager.playClick(); onRetry() }}
+                            sx={{
+                                height: 48,
+                                fontWeight: 'bold',
+                                bgcolor: 'secondary.main',
+                                color: 'secondary.contrastText',
+                                border: '2px solid',
+                                borderColor: 'text.primary'
+                            }}
+                        >
+                            RESTART
+                        </Button>
+                        <Button
+                            fullWidth
+                            variant="outlined"
+                            onClick={() => { soundManager.playClick(); onLevels() }}
+                            sx={{
+                                height: 48,
+                                fontWeight: 'bold',
+                                borderColor: 'text.primary',
+                                color: 'text.primary'
+                            }}
+                        >
+                            LEVEL SELECTION
                         </Button>
                     </Stack>
                 </Stack>

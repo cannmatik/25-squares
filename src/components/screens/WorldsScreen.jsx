@@ -1,18 +1,35 @@
 import { Box, Typography, Button, Stack } from '@mui/material'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import StarIcon from '@mui/icons-material/Star'
 import StarBorderIcon from '@mui/icons-material/StarBorder'
 import LockIcon from '@mui/icons-material/Lock'
 import soundManager from '@/lib/sounds'
 import { WORLDS } from '@/lib/levels'
+import { useColorMode } from '@/app/providers'
+
+// Stars Component with MUI icons
+const Stars = ({ count, total = 3, size = 12, passed = false, isDark = true }) => (
+    <Box sx={{ display: 'flex', gap: 0.25, justifyContent: 'center' }}>
+        {[...Array(total)].map((_, i) => {
+            const filled = i < count
+            const color = passed
+                ? (filled ? 'var(--btn-primary-text)' : 'rgba(0,0,0,0.2)')
+                : (filled ? '#FAEC3B' : 'var(--text-color)')
+
+            return filled ? (
+                <StarIcon key={i} sx={{ fontSize: size, color }} />
+            ) : (
+                <StarBorderIcon key={i} sx={{ fontSize: size, color, opacity: 0.5 }} />
+            )
+        })}
+    </Box>
+)
 
 export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline }) {
+    const { mode } = useColorMode()
+    const isDark = mode === 'dark'
+
     // Create 25 slots for worlds (5x5 grid)
-    const worldSlots = Array.from({ length: 25 }, (_, i) => {
-        const worldId = i + 1
-        const world = WORLDS.find(w => w.id === worldId)
-        return { id: worldId, exists: !!world, world }
-    })
+    const worldList = Array.from({ length: 25 }, (_, i) => i + 1)
 
     return (
         <Box sx={{
@@ -22,54 +39,57 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
             justifyContent: 'center',
             height: '100dvh',
             width: '100%',
-            p: 2,
+            p: { xs: 2, sm: 3 },
             position: 'relative',
-            overflow: 'hidden'
+            overflow: 'hidden',
+            bgcolor: 'background.default'
         }}>
             {/* Offline Banner */}
             {!isOnline && (
                 <Box sx={{
                     position: 'absolute', top: 0, left: 0, right: 0,
-                    bgcolor: '#FF0000', color: '#FFF',
+                    bgcolor: 'error.main', color: '#FFF',
                     p: 1, textAlign: 'center', zIndex: 9999,
-                    fontWeight: 'bold', fontSize: '0.9rem',
-                    boxShadow: '0 2px 10px rgba(0,0,0,0.5)'
+                    fontWeight: 'bold', fontSize: '0.8rem',
+                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
                 }}>
-                    NO CONNECTION - PLAYING OFFLINE
+                    OFFLINE MODE
                 </Box>
             )}
 
-            {/* Header moved to global Top Bar */}
-
-            {/* 5x5 Grid - 25 world slots */}
             <Box sx={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(5, 1fr)',
-                gap: 1,
+                gap: { xs: 1, sm: 1.5 },
                 width: '100%',
-                maxWidth: { xs: '280px', sm: '400px' }
+                maxWidth: { xs: '320px', sm: '480px' },
+                mx: 'auto'
             }}>
-                {worldSlots.map((slot) => {
-                    const { id: worldId, exists, world } = slot
+                {worldList.map((worldId) => {
+                    const world = WORLDS.find(w => w.id === worldId)
+                    const exists = !!world
 
                     if (!exists) {
-                        // Non-existent world - gray placeholder
+                        // Empty slot for future worlds
                         return (
                             <Box
                                 key={worldId}
                                 sx={{
+                                    width: '100%',
                                     aspectRatio: '1 / 1',
+                                    minWidth: 0,
+                                    minHeight: 0,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    bgcolor: 'rgba(60, 60, 60, 0.3)',
-                                    border: '1px solid rgba(100, 100, 100, 0.3)',
-                                    borderRadius: 0,
-                                    opacity: 0.4,
-                                    minHeight: 0
+                                    bgcolor: 'rgba(128, 128, 128, 0.05)',
+                                    border: '1px solid',
+                                    borderColor: 'divider',
+                                    borderRadius: 1,
+                                    opacity: 0.3
                                 }}
                             >
-                                <Typography sx={{ fontSize: '0.6rem', color: 'rgba(150,150,150,0.5)' }}>
+                                <Typography sx={{ fontSize: '0.8rem', color: 'text.secondary' }}>
                                     {worldId}
                                 </Typography>
                             </Box>
@@ -77,50 +97,60 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
                     }
 
                     // Existing world
-                    const totalLevels = world.levels
-                    const completedLevels = progress[worldId] ? Object.keys(progress[worldId]).length : 0
-                    const totalStars = progress[worldId] ? Object.values(progress[worldId]).reduce((a, b) => a + (b.stars || 0), 0) : 0
+                    const totalLevels = world.levels || 25
+                    const worldProgress = progress[worldId] || {}
+                    const completedLevels = Object.keys(worldProgress).length
+                    const totalStars = Object.values(worldProgress).reduce((a, b) => a + (b.stars || 0), 0)
                     const maxStars = totalLevels * 3
 
                     // World is unlocked if it's World 1, or if previous world has at least 1 completed level
                     const prevWorldId = worldId - 1
-                    const locked = worldId > 1 && (!progress[prevWorldId] || Object.keys(progress[prevWorldId]).length === 0)
+                    const prevProgress = progress[prevWorldId] || {}
+                    const locked = worldId > 1 && Object.keys(prevProgress).length === 0
                     const hasProgress = completedLevels > 0
 
                     return (
                         <Button
                             key={worldId}
                             variant={hasProgress ? 'contained' : 'outlined'}
-                            color={hasProgress ? 'primary' : 'secondary'}
                             disabled={locked}
                             onClick={() => { soundManager.playClick(); onSelectWorld(worldId) }}
                             sx={{
+                                width: '100%',
                                 aspectRatio: '1 / 1',
                                 minWidth: 0,
-                                width: '100%',
-                                p: 0,
+                                minHeight: 0,
+                                p: { xs: 0.5, sm: 1 },
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                gap: 0.25,
-                                opacity: locked ? 0.5 : 1,
-                                borderRadius: 0,
-                                minHeight: 0,
+                                gap: { xs: 0.25, sm: 0.5 },
+                                overflow: 'hidden',
+                                opacity: locked ? 0.4 : 1,
+                                borderRadius: 1,
+                                border: hasProgress ? 'none' : '2px solid',
+                                borderColor: 'secondary.main',
+                                bgcolor: hasProgress ? 'primary.main' : 'transparent',
+                                color: hasProgress ? 'primary.contrastText' : 'text.primary',
+                                '&:hover': {
+                                    bgcolor: hasProgress ? 'primary.dark' : 'rgba(0,0,0,0.05)',
+                                    borderColor: 'secondary.main'
+                                }
                             }}
                         >
                             {locked ? (
-                                <LockIcon sx={{ fontSize: 18, color: '#ECECEC' }} />
+                                <LockIcon sx={{ fontSize: 20, color: 'text.secondary', opacity: 0.5 }} />
                             ) : (
                                 <>
-                                    <Typography variant="body2" sx={{ fontSize: '1rem', fontWeight: 'bold', lineHeight: 1 }}>
+                                    <Typography variant="body2" sx={{ fontSize: { xs: '0.85rem', sm: '1.2rem' }, fontWeight: 'bold', lineHeight: 1 }}>
                                         {worldId}
                                     </Typography>
-                                    <Stack direction="row" alignItems="center" spacing={0.5}>
-                                        <Typography variant="caption" sx={{ fontSize: '0.55rem', fontWeight: 'bold' }}>
+                                    <Stack direction="row" alignItems="center" spacing={0.25}>
+                                        <Typography variant="caption" sx={{ fontSize: { xs: '0.5rem', sm: '0.6rem' }, fontWeight: 'bold' }}>
                                             {totalStars}/{maxStars}
                                         </Typography>
-                                        <StarIcon sx={{ fontSize: 12 }} />
+                                        <StarIcon sx={{ fontSize: { xs: 6, sm: 8 } }} />
                                     </Stack>
                                 </>
                             )}

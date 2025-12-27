@@ -9,7 +9,7 @@ const Stars = ({ count, total = 3, size = 16 }) => (
             return filled ? (
                 <StarIcon key={i} sx={{ fontSize: size, color: '#FAEC3B' }} />
             ) : (
-                <StarBorderIcon key={i} sx={{ fontSize: size, color: 'rgba(236, 236, 236, 0.4)' }} />
+                <StarBorderIcon key={i} sx={{ fontSize: size, color: 'var(--text-color)', opacity: 0.2 }} />
             )
         })}
     </div>

@@ -4,6 +4,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline'
 import PersonIcon from '@mui/icons-material/Person'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import soundManager from '@/lib/sounds'
+import { useColorMode } from '@/app/providers'
 
 export default function TopBar({
     title,
@@ -15,6 +16,9 @@ export default function TopBar({
     customActions,
     children
 }) {
+    const { mode } = useColorMode()
+    const isDark = mode === 'dark'
+
     return (
         <>
             {/* Backdrop for easy closing */}
@@ -35,10 +39,12 @@ export default function TopBar({
                 width: 'calc(100% - 16px)',
                 maxWidth: '500px',
                 zIndex: 99999,
-                bgcolor: 'rgba(0,0,0,0.7)', borderRadius: 2,
+                bgcolor: isDark ? 'rgba(0,0,0,0.7)' : 'rgba(255,255,255,0.85)',
+                borderRadius: 2,
                 backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+                border: '1px solid',
+                borderColor: isDark ? 'rgba(255,255,255,0.1)' : 'text.primary',
+                boxShadow: isDark ? '0 4px 20px rgba(0,0,0,0.3)' : '0 4px 15px rgba(0,0,0,0.05)'
             }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: { xs: 0.75, sm: 2 }, py: { xs: 0.5, sm: 1 }, gap: { xs: 0.5, sm: 1 } }}>
                     {/* Left Side: Back + Title */}
@@ -46,7 +52,7 @@ export default function TopBar({
                         {onBack && (
                             <IconButton
                                 size="small"
-                                sx={{ color: '#FFF', p: { xs: 0.25, sm: 0.5 } }}
+                                sx={{ color: 'text.primary', p: { xs: 0.25, sm: 0.5 } }}
                                 onClick={() => { soundManager.playNav(); onBack(); }}
                             >
                                 <ArrowBackIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
@@ -58,11 +64,11 @@ export default function TopBar({
                             }}
                             sx={{ display: 'flex', alignItems: 'center', cursor: customTitleClick ? 'pointer' : 'default', userSelect: 'none', minWidth: 0 }}
                         >
-                            <Typography variant="body2" sx={{ color: '#FAEC3B', fontWeight: 'bold', fontSize: { xs: '0.65rem', sm: '0.85rem' }, ml: 0.25, whiteSpace: 'nowrap' }}>
+                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 'bold', fontSize: { xs: '0.65rem', sm: '0.85rem' }, ml: 0.25, whiteSpace: 'nowrap' }}>
                                 {title}
                             </Typography>
                             {customTitleClick && (
-                                <ExpandMoreIcon sx={{ fontSize: { xs: 16, sm: 20 }, color: '#FAEC3B', transform: activeSection === 'rules' ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                                <ExpandMoreIcon sx={{ fontSize: { xs: 16, sm: 20 }, color: 'text.primary', transform: activeSection === 'rules' ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
                             )}
                         </Box>
                     </Box>
@@ -74,14 +80,14 @@ export default function TopBar({
                         <IconButton
                             onClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'help' ? null : 'help') }}
                             size="small"
-                            sx={{ color: activeSection === 'help' ? '#FAEC3B' : '#FFF', p: { xs: 0.25, sm: 0.5 } }}
+                            sx={{ color: activeSection === 'help' ? 'primary.main' : 'text.primary', p: { xs: 0.25, sm: 0.5 } }}
                         >
                             <HelpOutlineIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
                         <IconButton
                             onClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'profile' ? null : 'profile') }}
                             size="small"
-                            sx={{ color: activeSection === 'profile' ? '#FAEC3B' : '#FFF', p: { xs: 0.25, sm: 0.5 } }}
+                            sx={{ color: activeSection === 'profile' ? 'primary.main' : 'text.primary', p: { xs: 0.25, sm: 0.5 } }}
                         >
                             <PersonIcon sx={{ fontSize: { xs: 18, sm: 20 } }} />
                         </IconButton>
@@ -90,47 +96,49 @@ export default function TopBar({
 
                 {/* Accordion Content */}
                 <Collapse in={!!activeSection}>
-                    <Box sx={{ px: 2, pb: 2, borderTop: '1px solid rgba(255,255,255,0.1)', maxHeight: '60vh', overflowY: 'auto' }}>
+                    <Box sx={{ px: 2, pb: 2, borderTop: '1px solid', borderColor: 'divider', maxHeight: '60vh', overflowY: 'auto' }}>
 
                         {/* Custom Content (e.g. Rules) */}
-                        {children}
+                        <Box sx={{ color: 'text.primary' }}>
+                            {children}
+                        </Box>
 
                         {/* HELP Section (Unified) */}
                         {activeSection === 'help' && (
-                            <Box sx={{ pt: 1, color: '#DDD', fontSize: '0.8rem' }}>
-                                <Typography variant="subtitle2" sx={{ color: '#FAEC3B', mb: 1, textAlign: 'center', fontWeight: 'bold' }}>HOW TO PLAY</Typography>
+                            <Box sx={{ pt: 1, color: 'text.primary', fontSize: '0.8rem' }}>
+                                <Typography variant="subtitle2" sx={{ color: 'primary.main', mb: 1, textAlign: 'center', fontWeight: 'bold' }}>HOW TO PLAY</Typography>
 
                                 <Box sx={{ mb: 1.5 }}>
-                                    <Typography variant="caption" sx={{ color: '#AAA', fontWeight: 'bold', display: 'block' }}>OBJECTIVE</Typography>
-                                    <Typography variant="caption" sx={{ color: '#FFF' }}>Visit every square on the 5x5 grid exactly once.</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', display: 'block' }}>OBJECTIVE</Typography>
+                                    <Typography variant="caption">Visit every square on the 5x5 grid exactly once.</Typography>
                                 </Box>
 
                                 <Box sx={{ mb: 1.5 }}>
-                                    <Typography variant="caption" sx={{ color: '#AAA', fontWeight: 'bold', display: 'block' }}>MOVES</Typography>
-                                    <Typography variant="caption" display="block" sx={{ color: '#FFF' }}>• <strong>Straight:</strong> 3 squares (skip 2)</Typography>
-                                    <Typography variant="caption" display="block" sx={{ color: '#FFF' }}>• <strong>Diagonal:</strong> 2 squares (skip 1)</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', display: 'block' }}>MOVES</Typography>
+                                    <Typography variant="caption" display="block">• <strong>Straight:</strong> 3 squares (skip 2)</Typography>
+                                    <Typography variant="caption" display="block">• <strong>Diagonal:</strong> 2 squares (skip 1)</Typography>
                                 </Box>
 
                                 <Box>
-                                    <Typography variant="caption" sx={{ color: '#AAA', fontWeight: 'bold', display: 'block' }}>TIPS</Typography>
-                                    <Typography variant="caption" sx={{ color: '#FFF' }}>Green squares are valid moves. Watch out for dead ends!</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 'bold', display: 'block' }}>TIPS</Typography>
+                                    <Typography variant="caption">Colored squares are valid moves. Watch out for dead ends!</Typography>
                                 </Box>
                             </Box>
                         )}
 
                         {/* PROFILE Section (Unified) */}
                         {activeSection === 'profile' && (
-                            <Box sx={{ pt: 1, color: '#DDD', textAlign: 'center' }}>
-                                <Typography variant="subtitle2" sx={{ color: '#FAEC3B', mb: 0.5, fontWeight: 'bold' }}>PROFILE</Typography>
-                                <Typography variant="body2" sx={{ mb: 2, color: '#FFF', fontWeight: 'bold' }}>{user?.username || 'Guest'}</Typography>
+                            <Box sx={{ pt: 1, color: 'text.primary', textAlign: 'center' }}>
+                                <Typography variant="subtitle2" sx={{ color: 'primary.main', mb: 0.5, fontWeight: 'bold' }}>PROFILE</Typography>
+                                <Typography variant="body2" sx={{ mb: 2, fontWeight: 'bold' }}>{user?.username || 'Guest'}</Typography>
                                 <Stack direction="row" spacing={2} justifyContent="center">
-                                    <Box sx={{ p: 1, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 2, minWidth: 80, border: '1px solid rgba(255,255,255,0.1)' }}>
-                                        <Typography variant="caption" display="block" sx={{ color: '#888', fontSize: '0.65rem' }}>HINTS</Typography>
-                                        <Typography variant="h6" sx={{ color: '#FAEC3B', lineHeight: 1, fontWeight: 'bold' }}>{user?.hintCount || 0}</Typography>
+                                    <Box sx={{ p: 1, bgcolor: 'action.hover', borderRadius: 2, minWidth: 80, border: '1px solid', borderColor: 'divider' }}>
+                                        <Typography variant="caption" display="block" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>HINTS</Typography>
+                                        <Typography variant="h6" sx={{ color: 'primary.main', lineHeight: 1, fontWeight: 'bold' }}>{user?.hintCount || 0}</Typography>
                                     </Box>
-                                    <Box sx={{ p: 1, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 2, minWidth: 80, border: '1px solid rgba(255,255,255,0.1)' }}>
-                                        <Typography variant="caption" display="block" sx={{ color: '#888', fontSize: '0.65rem' }}>UNDOS</Typography>
-                                        <Typography variant="h6" sx={{ color: '#FAEC3B', lineHeight: 1, fontWeight: 'bold' }}>{user?.undoCount || 0}</Typography>
+                                    <Box sx={{ p: 1, bgcolor: 'action.hover', borderRadius: 2, minWidth: 80, border: '1px solid', borderColor: 'divider' }}>
+                                        <Typography variant="caption" display="block" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>UNDOS</Typography>
+                                        <Typography variant="h6" sx={{ color: 'primary.main', lineHeight: 1, fontWeight: 'bold' }}>{user?.undoCount || 0}</Typography>
                                     </Box>
                                 </Stack>
                             </Box>
@@ -138,7 +146,7 @@ export default function TopBar({
 
                         {/* Close Indicator */}
                         <Box sx={{ textAlign: 'center', pt: 1, pb: 0.5 }}>
-                            <IconButton size="small" onClick={() => setActiveSection(null)} sx={{ color: 'rgba(255,255,255,0.3)', p: 0 }}>
+                            <IconButton size="small" onClick={() => setActiveSection(null)} sx={{ color: 'text.secondary', opacity: 0.4, p: 0 }}>
                                 <ExpandMoreIcon sx={{ transform: 'rotate(180deg)' }} />
                             </IconButton>
                         </Box>

@@ -2,66 +2,83 @@
 
 import { createTheme } from '@mui/material/styles';
 
-const theme = createTheme({
+const getDesignTokens = (mode) => ({
     palette: {
-        mode: 'dark',
-        primary: {
-            main: '#FAEC3B', // Yellow
-            contrastText: '#001E1E', // Dark Teal
-        },
-        secondary: {
-            main: '#ECECEC', // Light Gray
-            contrastText: '#001E1E',
-        },
-        error: {
-            main: '#D2003A', // Red
-        },
-        background: {
-            default: '#3C003C', // Dark Purple
-            paper: 'rgba(0, 0, 0, 0.3)', // Retro transparent dark
-        },
-        text: {
-            primary: '#ECECEC', // Light Gray
-            secondary: '#FAEC3B', // Yellow
-        },
-        action: {
-            disabledBackground: 'rgba(236, 236, 236, 0.1)',
-            disabled: 'rgba(236, 236, 236, 0.3)',
-        },
+        mode,
+        ...(mode === 'light'
+            ? {
+                // Light Mode (Professional High Contrast)
+                primary: {
+                    main: '#2563EB', // Strong Royal Blue
+                    contrastText: '#FFFFFF',
+                },
+                secondary: {
+                    main: '#4B5563', // Slate Gray
+                    contrastText: '#FFFFFF',
+                },
+                background: {
+                    default: '#F8FAF8', // Clean Soft White
+                    paper: '#FFFFFF',
+                },
+                text: {
+                    primary: '#000000', // Pitch Black for readability
+                    secondary: '#2563EB',
+                },
+                action: {
+                    disabledBackground: 'rgba(0, 0, 0, 0.08)',
+                    disabled: 'rgba(0, 0, 0, 0.26)',
+                },
+            }
+            : {
+                // Dark Mode (Retro Neon)
+                primary: {
+                    main: '#FAEC3B', // Brand Yellow
+                    contrastText: '#001E1E',
+                },
+                secondary: {
+                    main: '#ECECEC', // Light Silver
+                    contrastText: '#001E1E',
+                },
+                background: {
+                    default: '#3C003C', // Deep Purple
+                    paper: 'rgba(0, 0, 0, 0.6)',
+                },
+                text: {
+                    primary: '#FAEC3B', // Locked to Yellow for consistency
+                    secondary: '#FAEC3B',
+                },
+                action: {
+                    disabledBackground: 'rgba(236, 236, 236, 0.1)',
+                    disabled: 'rgba(236, 236, 236, 0.3)',
+                },
+            }),
     },
     typography: {
         fontFamily: '"Montserrat", sans-serif',
-        h1: { fontSize: '2rem', color: '#FAEC3B', fontFamily: '"Press Start 2P", cursive' },
-        h2: { fontSize: '1.5rem', color: '#FAEC3B', fontFamily: '"Press Start 2P", cursive' },
-        h3: { fontSize: '1.2rem', color: '#ECECEC' },
+        h1: { fontSize: '2rem', color: mode === 'light' ? '#000000' : '#FAEC3B', fontFamily: '"Press Start 2P", cursive' },
+        h2: { fontSize: '1.5rem', color: mode === 'light' ? '#000000' : '#FAEC3B', fontFamily: '"Press Start 2P", cursive' },
+        h3: { fontSize: '1.2rem', color: mode === 'light' ? '#000000' : '#FAEC3B' },
         button: { textTransform: 'uppercase', fontWeight: 600 },
     },
     components: {
         MuiButton: {
             styleOverrides: {
                 root: {
-                    borderRadius: 0, // Square retro buttons
+                    borderRadius: 0,
                     borderWidth: 2,
                     borderStyle: 'solid',
-                    boxShadow: '4px 4px 0px rgba(0,0,0,0.5)',
+                    boxShadow: mode === 'light' ? '4px 4px 0px rgba(0,0,0,0.1)' : '4px 4px 0px rgba(0,0,0,0.5)',
                     '&:active': {
                         transform: 'translate(2px, 2px)',
-                        boxShadow: '2px 2px 0px rgba(0,0,0,0.5)',
+                        boxShadow: mode === 'light' ? '2px 2px 0px rgba(0,0,0,0.1)' : '2px 2px 0px rgba(0,0,0,0.5)',
                     },
                 },
                 containedPrimary: {
-                    borderColor: '#FAEC3B', // Yellow border
-                    color: '#001E1E',
+                    borderColor: mode === 'light' ? '#2563EB' : '#FAEC3B',
+                    color: mode === 'light' ? '#FFFFFF' : '#001E1E',
+                    backgroundColor: mode === 'light' ? '#2563EB' : '#FAEC3B',
                     '&:hover': {
-                        backgroundColor: '#dico3b', // Slightly darker yellow
-                    },
-                },
-                containedSecondary: {
-                    borderColor: '#ECECEC', // Gray border
-                    backgroundColor: 'transparent',
-                    color: '#ECECEC',
-                    '&:hover': {
-                        backgroundColor: 'rgba(236, 236, 236, 0.1)',
+                        backgroundColor: mode === 'light' ? '#1d4ed8' : '#e6d52b',
                     },
                 },
             },
@@ -69,45 +86,15 @@ const theme = createTheme({
         MuiDialog: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#3C003C',
-                    border: '4px solid #ECECEC',
+                    backgroundColor: mode === 'light' ? '#FFFFFF' : '#3C003C',
+                    border: `4px solid ${mode === 'light' ? '#000000' : '#FAEC3B'}`,
                     borderRadius: 0,
                     boxShadow: '10px 10px 0px rgba(0,0,0,0.5)',
-                },
-            },
-        },
-        MuiTextField: {
-            styleOverrides: {
-                root: {
-                    '& .MuiOutlinedInput-root': {
-                        borderRadius: 0,
-                        backgroundColor: 'rgba(0,0,0,0.2)',
-                        '& fieldset': {
-                            borderColor: '#ECECEC',
-                            borderWidth: 2,
-                        },
-                        '&:hover fieldset': {
-                            borderColor: '#FAEC3B',
-                        },
-                        '&.Mui-focused fieldset': {
-                            borderColor: '#FAEC3B',
-                        },
-                        '& input': {
-                            color: '#ECECEC',
-                        }
-                    },
-                    '& .MuiInputLabel-root': {
-                        color: '#ECECEC',
-                        fontFamily: '"Press Start 2P", cursive', // Ensure label uses retro font
-                        fontSize: '0.7rem',
-                    },
-                    '& .MuiInputLabel-root.Mui-focused': {
-                        color: '#FAEC3B',
-                    }
                 },
             },
         },
     },
 });
 
-export default theme;
+export const getTheme = (mode) => createTheme(getDesignTokens(mode));
+export default getTheme('dark'); // Default export for backwards compat if needed

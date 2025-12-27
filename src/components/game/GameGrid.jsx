@@ -233,12 +233,13 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
         }
 
         // CASE 2: During game - find path using backtracking
+        // This now returns the longest possible path, not requiring exactly 25 squares
         const findPath = (pos, occupiedSet, moveNum, requiredMoves, depth = 0) => {
-            if (depth > 30) return null  // Prevent infinite recursion
+            if (depth > 30) return []  // Prevent infinite recursion, return empty path
             if (occupiedSet.size + blockedSet.size === 25) return []  // All squares covered
 
             const validMoves = getValidMoves(pos, occupiedSet)
-            if (validMoves.length === 0) return null  // Dead end
+            if (validMoves.length === 0) return []  // Dead end - return empty (current state is best)
 
             // Check for required move
             const nextMoveNum = moveNum + 1
@@ -246,21 +247,24 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
 
             if (reqMove) {
                 const reqPos = validMoves.find(p => p.x === reqMove.x && p.y === reqMove.y)
-                if (!reqPos) return null  // Required move not reachable
+                if (!reqPos) return []  // Required move not reachable - return current best
                 const newOccupied = new Set([...occupiedSet, `${reqPos.x},${reqPos.y}`])
                 const subPath = findPath(reqPos, newOccupied, nextMoveNum, requiredMoves, depth + 1)
-                if (subPath !== null) return [reqPos, ...subPath]
-                return null
+                return [reqPos, ...subPath]
             }
 
-            // Try each valid move
+            // Try each valid move and find the LONGEST path
+            let bestPath = []
             for (const nextPos of validMoves) {
                 const newOccupied = new Set([...occupiedSet, `${nextPos.x},${nextPos.y}`])
                 const subPath = findPath(nextPos, newOccupied, nextMoveNum, requiredMoves, depth + 1)
-                if (subPath !== null) return [nextPos, ...subPath]
+                const fullPath = [nextPos, ...subPath]
+                if (fullPath.length > bestPath.length) {
+                    bestPath = fullPath
+                }
             }
 
-            return null
+            return bestPath
         }
 
         // Build occupied set (visited minus blocked - they're separate concerns)
@@ -269,7 +273,8 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
 
         const path = findPath(currentPos, occupiedSet, moveCount, levelConfig?.requiredMoves || [])
 
-        if (path && path.length > 0) {
+        // findPath now returns the longest possible path (may be partial, not reaching 25)
+        if (path.length > 0) {
             // VALIDATE PATH: ensure each step is reachable from previous
             const isValidStep = (from, to) =>
                 MOVES.some(m => from.x + m.dx === to.x && from.y + m.dy === to.y)
@@ -288,46 +293,28 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
 
             if (validatedPath.length > 0) {
                 setHintCells(validatedPath)
+                // Calculate how far this path can go
+                const totalPossible = moveCount + path.length
+                if (totalPossible < 25) {
+                    // Partial path - inform user of max potential
+                    setStatus(`MAX: ${totalPossible} SQUARES`)
+                    setStatusType('neutral')
+                }
             } else {
                 // Path completely invalid, show direct reachable moves
                 const validNow = getValidMoves(currentPos, occupiedSet)
                 setHintCells(validNow)
             }
         } else {
-            // NO COMPLETE PATH FOUND - Calculate how many undos needed
+            // NO MOVES AVAILABLE at all - dead end
             const validNow = getValidMoves(currentPos, occupiedSet)
-
-            // Try to find how many moves back we need to go for a valid path
-            let undosNeeded = 0
-            for (let i = moveHistory.length - 2; i >= 0; i--) {
-                const tryPos = moveHistory[i]
-                const tryOccupied = new Set(moveHistory.slice(0, i + 1).map(p => `${p.x},${p.y}`))
-                const tryPath = findPath(tryPos, tryOccupied, i + 1, levelConfig?.requiredMoves || [])
-                if (tryPath && tryPath.length > 0) {
-                    undosNeeded = moveHistory.length - 1 - i
-                    break
-                }
-            }
-
-            // Check if there are required moves ahead that can't be reached
-            const futureReqs = levelConfig?.requiredMoves?.filter(r => r.moveNumber > moveCount) || []
-
-            if (undosNeeded > 0) {
-                setStatus(`NO PATH! UNDO ${undosNeeded} MOVE${undosNeeded > 1 ? 'S' : ''}`)
-                setStatusType('lost')
-                soundManager.playInvalid()
-            } else if (futureReqs.length > 0) {
-                // Need to restart entirely
-                setStatus('IMPOSSIBLE FROM START! RESTART')
+            if (validNow.length === 0) {
+                setStatus('DEAD END! TRY UNDO')
                 setStatusType('lost')
                 soundManager.playInvalid()
             } else {
-                // No required moves, but still can't complete
-                setStatus('NO WINNING PATH! TRY UNDO')
-                setStatusType('lost')
+                setHintCells(validNow)
             }
-
-            setHintCells(validNow)
         }
 
         // Consume hint resource
@@ -378,7 +365,12 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
         if (finalStars > 0) {
             setStatus(`LEVEL COMPLETE! ${activeMoveCount} MOVES`)
             setStatusType('won')
-            soundManager.playWin()
+            // Special sound for full completion (accounting for blocked squares)
+            if (won) {
+                soundManager.playPerfect()
+            } else {
+                soundManager.playWin()
+            }
         } else {
             setStatus(message || `GAME OVER! ${activeMoveCount} MOVES`)
             setStatusType('lost')
@@ -520,22 +512,25 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                 customTitleClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'rules' ? null : 'rules') }}
                 customActions={
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, mr: { xs: 0, sm: 0.5 } }}>
-                        {/* Stars (Moved back to Top Bar per request) */}
+                        {/* Stars */}
                         {levelConfig?.stars && (
                             <Box display="flex" alignItems="center" gap={0.25}>
                                 {[0, 1, 2].map((i) => {
                                     const isFilled = moveCount >= levelConfig.stars[i]
-                                    return isFilled ? <StarIcon key={i} sx={{ fontSize: { xs: 14, sm: 16 }, color: '#FAEC3B' }} /> : <StarBorderIcon key={i} sx={{ fontSize: { xs: 14, sm: 16 }, color: 'rgba(255,255,255,0.3)' }} />
+                                    return isFilled ? <StarIcon key={i} sx={{ fontSize: { xs: 14, sm: 16 }, color: '#FAEC3B' }} /> : <StarBorderIcon key={i} sx={{ fontSize: { xs: 14, sm: 16 }, color: 'text.secondary', opacity: 0.3 }} />
                                 })}
                             </Box>
                         )}
                         {/* Timer */}
                         {timeRemaining !== null && (
                             <Box sx={{
-                                bgcolor: timeRemaining <= 10 ? 'error.main' : 'rgba(255,255,255,0.1)',
+                                bgcolor: timeRemaining <= 10 ? 'error.main' : 'action.hover',
                                 borderRadius: 1, px: { xs: 0.25, sm: 0.5 }, py: 0.25,
                                 display: 'flex', alignItems: 'center', gap: 0.25,
-                                color: 'white', fontSize: { xs: '0.55rem', sm: '0.7rem' }
+                                color: timeRemaining <= 10 ? '#FFF' : 'text.primary',
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                fontSize: { xs: '0.55rem', sm: '0.7rem' }
                             }}>
                                 <AccessTimeIcon sx={{ fontSize: { xs: 10, sm: 12 } }} />
                                 {String(Math.floor(timeRemaining / 60)).padStart(2, '0')}:{String(timeRemaining % 60).padStart(2, '0')}
@@ -547,7 +542,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                 {/* RULES SECTION */}
                 {activeSection === 'rules' && (
                     <Box sx={{ textAlign: 'center', pt: 1 }}>
-                        <Typography variant="subtitle2" sx={{ color: '#FAEC3B', mb: 1.5, fontWeight: 'bold', letterSpacing: 1 }}>
+                        <Typography variant="subtitle2" sx={{ color: 'primary.main', mb: 1.5, fontWeight: 'bold', letterSpacing: 1 }}>
                             LEVEL OBJECTIVES
                         </Typography>
                         <Stack direction="row" spacing={2} justifyContent="center" alignItems="center" flexWrap="wrap" sx={{ mb: 1 }}>
@@ -556,21 +551,21 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                                     {levelConfig.stars.map((threshold, i) => (
                                         <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 0.25 }}>
                                             <StarIcon sx={{ fontSize: 12, color: '#FAEC3B' }} />
-                                            <Typography variant="caption" sx={{ color: '#CCC', fontSize: '0.65rem' }}>{threshold}+</Typography>
+                                            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>{threshold}+</Typography>
                                         </Box>
                                     ))}
                                 </Box>
                             )}
                             {levelConfig?.timeLimit && (
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                                    <AccessTimeIcon sx={{ fontSize: 12, color: '#FAEC3B' }} />
-                                    <Typography variant="caption" sx={{ color: '#CCC', fontSize: '0.65rem' }}>
+                                    <AccessTimeIcon sx={{ fontSize: 12, color: 'text.primary' }} />
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem' }}>
                                         {Math.floor(levelConfig.timeLimit / 60)}:{String(levelConfig.timeLimit % 60).padStart(2, '0')} Limit
                                     </Typography>
                                 </Box>
                             )}
                         </Stack>
-                        <Typography variant="caption" sx={{ display: 'block', color: '#AAA', fontSize: '0.75rem', fontStyle: 'italic' }}>
+                        <Typography variant="caption" sx={{ display: 'block', color: 'text.secondary', fontSize: '0.75rem', fontStyle: 'italic' }}>
                             {RULE_DESCRIPTIONS[levelConfig?.ruleSet] || 'Visit all 25 squares!'}
                         </Typography>
                     </Box>
@@ -584,7 +579,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                     return (
                         <Box sx={{
                             position: 'fixed',
-                            top: { xs: 52, sm: 72 },
+                            top: { xs: 60, sm: 80 }, // Adjusted for TopBar spacing
                             left: '50%',
                             transform: 'translateX(-50%)',
                             width: 'calc(100% - 24px)',
@@ -593,11 +588,11 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                             animation: 'fadeInDown 0.3s ease-out'
                         }}>
                             <Box sx={{
-                                bgcolor: 'rgba(250, 236, 59, 0.95)',
+                                bgcolor: 'primary.main', // Follow theme brand color
                                 borderRadius: 1.5,
                                 px: { xs: 1.5, sm: 2 },
                                 py: { xs: 0.75, sm: 1 },
-                                boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.2)',
                                 position: 'relative',
                                 '&::before': {
                                     content: '""',
@@ -607,12 +602,13 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                                     transform: 'translateX(-50%)',
                                     borderLeft: '6px solid transparent',
                                     borderRight: '6px solid transparent',
-                                    borderBottom: '6px solid rgba(250, 236, 59, 0.95)'
+                                    borderBottom: '6px solid',
+                                    borderBottomColor: 'primary.main'
                                 }
                             }}>
                                 <Typography sx={{
-                                    color: '#001E1E',
-                                    fontWeight: 500,
+                                    color: 'primary.contrastText',
+                                    fontWeight: 700,
                                     fontSize: { xs: '0.7rem', sm: '0.8rem' },
                                     lineHeight: 1.3,
                                     textAlign: 'center'
@@ -645,18 +641,18 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                     const isVisited = visited.has(cell.key), isCurrent = currentPos && currentPos.x === cell.x && currentPos.y === cell.y
                     const isBlocked = blockedSet.has(cell.key), isPossible = possibleSet.has(cell.key)
 
-                    let bg = 'rgba(236,236,236,0.1)'
+                    let bg = 'var(--cell-bg)'
                     const reqMove = levelConfig?.requiredMoves?.find(r => r.x === cell.x && r.y === cell.y)
 
-                    if (isBlocked) bg = '#D2003A'
-                    else if (isCurrent) bg = 'rgba(236,236,236,0.2)'
-                    else if (isVisited) bg = '#111111'
-                    else if (isPossible) bg = '#FAEC3B'
-                    else if (reqMove) bg = 'rgba(17, 17, 17, 0.5)'
+                    if (isBlocked) bg = 'var(--blocked-bg)'
+                    else if (isCurrent) bg = 'var(--current-bg)'
+                    else if (isVisited) bg = 'var(--visited-bg)'
+                    else if (isPossible) bg = 'var(--possible-bg)'
+                    else if (reqMove) bg = 'rgba(128, 128, 128, 0.1)' // Soft indicator
 
-                    let border = '1px solid #FAEC3B' // Thinner border on mobile
-                    if (isCurrent) border = '3px solid #FAEC3B'
-                    if (reqMove && !isVisited) border = '1px dashed #FAEC3B'
+                    let border = '1px solid var(--cell-border)'
+                    if (isCurrent) border = '3px solid #FAEC3B' // current always accented
+                    if (reqMove && !isVisited) border = '1px dashed var(--accent-color)'
 
                     return (
                         <Box key={cell.key}
@@ -668,10 +664,11 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                                 border: border,
                                 borderRadius: 0,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: { xs: '0.7rem', sm: '1rem' }, // Smaller font
-                                color: isPossible ? '#001E1E' : '#ECECEC',
+                                fontSize: { xs: '0.7rem', sm: '1rem' },
+                                color: isPossible ? 'var(--possible-text)' : 'var(--text-color)',
                                 cursor: (isBlocked || (!isPossible && moveCount > 0)) ? 'default' : 'pointer',
                                 touchAction: 'manipulation',
+                                transition: 'all 0.2s ease',
                                 '&:active': (!isVisited && !isBlocked) ? { transform: 'scale(0.95)' } : {},
                                 ...(levelConfig?.tutorial?.find(t => t.move === moveCount)?.highlight?.x === cell.x && levelConfig?.tutorial?.find(t => t.move === moveCount)?.highlight?.y === cell.y && {
                                     animation: 'tutorialSpotlight 1.5s ease-out infinite',
@@ -696,7 +693,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                             }}
                         >
                             {isBlocked ? <LockIcon sx={{ fontSize: 14 }} /> : isVisited ?
-                                <Typography sx={{ color: isCurrent ? '#ECECEC' : '#ECECEC', fontWeight: 'bold', fontSize: 'inherit' }}>
+                                <Typography sx={{ color: 'var(--text-color)', fontWeight: 'bold', fontSize: 'inherit' }}>
                                     {[...visited].indexOf(cell.key) >= blockedSet.size ? ([...visited].indexOf(cell.key) - blockedSet.size + 1) : ''}
                                 </Typography>
                                 :
@@ -706,8 +703,8 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                                         return <Typography sx={{ color: '#FAEC3B', fontWeight: '900', fontSize: 'inherit', textShadow: '1px 1px 0 #000' }}>{moveCount + hintIndex + 1}</Typography>
                                     }
                                     if (reqMove) {
-                                        // Use dark text on yellow possible cells, white on others
-                                        const textColor = isPossible ? '#001E1E' : '#FAEC3B'
+                                        // Use dark text on yellow possible cells, accented on others
+                                        const textColor = isPossible ? 'var(--possible-text)' : 'var(--accent-color)'
                                         return <Typography sx={{ color: textColor, fontWeight: '900', fontSize: 'inherit', textShadow: isPossible ? 'none' : '1px 1px 0 #000' }}>{reqMove.moveNumber}</Typography>
                                     }
                                     return ''
@@ -754,30 +751,34 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
             {/* Footer Buttons - Icon with badge style */}
             {
                 levelConfig ? (
-                    <Stack direction="row" spacing={2} sx={{ position: 'absolute', bottom: { xs: 32, sm: 48 }, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
+                    <Stack direction="row" spacing={3} sx={{ position: 'absolute', bottom: { xs: 24, sm: 48 }, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
                         <Button
                             variant="contained"
-                            color="secondary"
-                            size="small"
                             disabled={moveHistory.length <= 1 || undosRemaining <= 0}
                             onClick={undoMove}
-                            sx={{ minWidth: 44, width: 44, height: 44, p: 0, position: 'relative' }}
+                            sx={{
+                                minWidth: 50, width: 50, height: 50, p: 0, position: 'relative',
+                                bgcolor: 'secondary.main', color: 'secondary.contrastText',
+                                border: '2px solid',
+                                borderColor: 'text.primary',
+                                borderRadius: 0
+                            }}
                         >
-                            <UndoIcon sx={{ fontSize: 22 }} />
+                            <UndoIcon sx={{ fontSize: 24 }} />
                             <Box sx={{
-                                position: 'absolute', top: -6, right: -6,
-                                bgcolor: '#FAEC3B', color: '#001E1E',
-                                borderRadius: '50%', width: 18, height: 18,
+                                position: 'absolute', top: -8, right: -8,
+                                bgcolor: 'primary.main', color: 'primary.contrastText',
+                                borderRadius: 0, width: 22, height: 22,
+                                border: '1px solid', borderColor: 'text.primary',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '0.65rem', fontWeight: 'bold'
+                                fontSize: '0.7rem', fontWeight: 'bold'
                             }}>
                                 {String(undosRemaining || 0)}
                             </Box>
                         </Button>
+
                         <Button
                             variant="contained"
-                            color="secondary"
-                            size="small"
                             onClick={() => {
                                 const hintsUsed = 3 - hintsRemaining
                                 const undosUsed = 5 - undosRemaining
@@ -787,31 +788,47 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isOnlin
                                 soundManager.playClick()
                                 resetLevel()
                             }}
-                            sx={{ minWidth: 44, width: 44, height: 44, p: 0 }}
+                            sx={{
+                                minWidth: 50, width: 50, height: 50, p: 0,
+                                bgcolor: 'secondary.main', color: 'secondary.contrastText',
+                                border: '2px solid',
+                                borderColor: 'text.primary',
+                                borderRadius: 0
+                            }}
                         >
-                            <RefreshIcon sx={{ fontSize: 22 }} />
+                            <RefreshIcon sx={{ fontSize: 24 }} />
                         </Button>
+
                         <Button
                             variant="contained"
-                            color="secondary"
-                            size="small"
                             disabled={hintsRemaining <= 0}
                             onClick={showHint}
-                            sx={{ minWidth: 44, width: 44, height: 44, p: 0, position: 'relative' }}
+                            sx={{
+                                minWidth: 50, width: 50, height: 50, p: 0, position: 'relative',
+                                bgcolor: 'secondary.main', color: 'secondary.contrastText',
+                                border: '2px solid',
+                                borderColor: 'text.primary',
+                                borderRadius: 0
+                            }}
                         >
-                            <LightbulbIcon sx={{ fontSize: 22 }} />
+                            <LightbulbIcon sx={{ fontSize: 24 }} />
                             <Box sx={{
-                                position: 'absolute', top: -6, right: -6,
-                                bgcolor: '#FAEC3B', color: '#001E1E',
-                                borderRadius: '50%', width: 18, height: 18,
+                                position: 'absolute', top: -8, right: -8,
+                                bgcolor: 'primary.main', color: 'primary.contrastText',
+                                borderRadius: 0, width: 22, height: 22,
+                                border: '1px solid', borderColor: 'text.primary',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                fontSize: '0.65rem', fontWeight: 'bold'
+                                fontSize: '0.7rem', fontWeight: 'bold'
                             }}>
                                 {String(hintsRemaining || 0)}
                             </Box>
                         </Button>
                     </Stack>
-                ) : (
+                ) : null
+            }
+            {/* This button is now always present, outside the levelConfig conditional */}
+            {
+                !levelConfig && (
                     <Button
                         fullWidth
                         variant="contained"
