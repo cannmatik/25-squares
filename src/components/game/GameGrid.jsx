@@ -567,28 +567,18 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
     return (
         <Box sx={{
             width: '100%',
-            maxWidth: '100vw', // Ensure it doesn't overflow horizontal
+            maxWidth: '100vw',
             height: '100dvh',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            p: 2, // Consistent with other screens for perfect alignment
+            justifyContent: { xs: 'center', sm: 'flex-start' }, // Start from top on desktop
+            p: 2,
+            pt: { xs: 14, sm: 16 }, // Adjusted top padding for both mobile and desktop to clear TopBar
             position: 'relative',
-            overflow: 'hidden' // Force no scroll
+            overflow: 'hidden'
         }}>
-            {/* Offline Banner */}
-            {!isOnline && (
-                <Box sx={{
-                    position: 'absolute', top: 0, left: 0, right: 0,
-                    bgcolor: '#FF0000', color: '#FFF',
-                    p: 0.5, textAlign: 'center', zIndex: 9999,
-                    fontWeight: 'bold', fontSize: '0.75rem',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.5)'
-                }}>
-                    NO CONNECTION
-                </Box>
-            )}
+
 
             {/* Unified Top Bar */}
             <TopBar
@@ -684,7 +674,8 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                         <Box sx={{
                             width: '100%',
                             maxWidth: { xs: '280px', sm: '400px' },
-                            mb: 1,
+                            mb: { xs: 1, sm: 4 }, // Add more margin on desktop to separate from grid
+                            mt: { xs: 0, sm: 2 }, // Add top margin to separate from top bar
                             animation: 'fadeInDown 0.3s ease-out'
                         }}>
                             <Box sx={{
@@ -845,18 +836,19 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
 
             {/* Footer Buttons - Icon with badge style */}
             {
-                levelConfig ? (
+                levelConfig && (!levelConfig.tutorial || levelConfig.tutorial.length === 0) ? (
                     <Stack direction="row" spacing={3} sx={{ position: 'absolute', bottom: { xs: 24, sm: 48 }, left: '50%', transform: 'translateX(-50%)', zIndex: 10 }}>
                         <Button
                             variant="contained"
-                            disabled={moveHistory.length <= 1 || undosRemaining <= 0}
+                            disabled={moveHistory.length <= 1 || undosRemaining <= 0 || !isOnline}
                             onClick={undoMove}
                             sx={{
                                 minWidth: 50, width: 50, height: 50, p: 0, position: 'relative',
                                 bgcolor: 'secondary.main', color: 'secondary.contrastText',
                                 border: '2px solid',
                                 borderColor: 'text.primary',
-                                borderRadius: 0
+                                borderRadius: 0,
+                                opacity: (!isOnline || moveHistory.length <= 1 || undosRemaining <= 0) ? 0.5 : 1
                             }}
                         >
                             <UndoIcon sx={{ fontSize: 24 }} />
@@ -896,14 +888,15 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
 
                         <Button
                             variant="contained"
-                            disabled={hintsRemaining <= 0}
+                            disabled={hintsRemaining <= 0 || !isOnline}
                             onClick={showHint}
                             sx={{
                                 minWidth: 50, width: 50, height: 50, p: 0, position: 'relative',
                                 bgcolor: 'secondary.main', color: 'secondary.contrastText',
                                 border: '2px solid',
                                 borderColor: 'text.primary',
-                                borderRadius: 0
+                                borderRadius: 0,
+                                opacity: (!isOnline || hintsRemaining <= 0) ? 0.5 : 1
                             }}
                         >
                             <LightbulbIcon sx={{ fontSize: 24 }} />

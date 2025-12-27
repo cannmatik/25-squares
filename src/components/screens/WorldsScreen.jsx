@@ -36,26 +36,16 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: { xs: 'center', sm: 'flex-start' },
             height: '100dvh',
             width: '100%',
             p: { xs: 2, sm: 3 },
             position: 'relative',
             overflow: 'hidden',
-            bgcolor: 'background.default'
+            bgcolor: 'background.default',
+            pt: { xs: 2, sm: 16 } // Add padding for desktop TopBar
         }}>
-            {/* Offline Banner */}
-            {!isOnline && (
-                <Box sx={{
-                    position: 'absolute', top: 0, left: 0, right: 0,
-                    bgcolor: 'error.main', color: '#FFF',
-                    p: 1, textAlign: 'center', zIndex: 9999,
-                    fontWeight: 'bold', fontSize: '0.8rem',
-                    boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-                }}>
-                    OFFLINE MODE
-                </Box>
-            )}
+
 
             <Box sx={{
                 display: 'grid',

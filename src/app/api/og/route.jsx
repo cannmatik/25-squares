@@ -5,16 +5,14 @@ export const runtime = 'edge'
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url)
-        const title = searchParams.get('title') || '25 SQUARES'
-        const score = searchParams.get('score')
-        const world = searchParams.get('world')
-        const level = searchParams.get('level')
-        const stars = searchParams.get('stars')
+        const score = searchParams.get('score') || '0'
+        const world = searchParams.get('world') || '1'
+        const level = searchParams.get('level') || '1'
+        const stars = parseInt(searchParams.get('stars') || '0')
 
-        // Fetch Font
-        const fontData = await fetch(
-            new URL('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff')
-        ).then((res) => res.arrayBuffer())
+        // Fetch Font & Logo
+        // We use a backup font or load generic if fetch fails, but 'Press Start 2P' is iconic for this app.
+        const fontData = await fetch(new URL('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff')).then((res) => res.arrayBuffer())
 
         return new ImageResponse(
             (
@@ -26,77 +24,94 @@ export async function GET(request) {
                         flexDirection: 'column',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        backgroundColor: '#14141E', // Dark background
+                        backgroundColor: '#1a1a2e', // Deep Navy
                         backgroundImage: 'radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.05) 2%, transparent 0%), radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.05) 2%, transparent 0%)',
                         backgroundSize: '100px 100px',
                         fontFamily: '"Press Start 2P"',
-                        border: '20px solid #FAEC3B', // Yellow border
+                        border: '24px solid #FAEC3B', // Thicker Yellow border
+                        position: 'relative',
                     }}
                 >
-                    {/* Logo / Title */}
-                    <div
-                        style={{
-                            display: 'flex',
-                            fontSize: 60,
-                            color: '#FAEC3B', // Yellow text
-                            marginBottom: 40,
-                            textShadow: '4px 4px 0px #000',
-                        }}
-                    >
-                        25 SQUARES
-                    </div>
+                    {/* Decorative Background Elements */}
+                    <div style={{ position: 'absolute', top: -100, right: -100, width: 300, height: 300, background: '#FAEC3B', opacity: 0.1, borderRadius: '50%', filter: 'blur(80px)' }} />
+                    <div style={{ position: 'absolute', bottom: -100, left: -100, width: 300, height: 300, background: '#FAEC3B', opacity: 0.1, borderRadius: '50%', filter: 'blur(80px)' }} />
 
-                    {/* Level Info */}
-                    {world && level && (
+                    {/* Main Container */}
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '40px',
+                        background: 'rgba(255,255,255,0.03)',
+                        borderRadius: '30px',
+                        border: '2px solid rgba(255,255,255,0.1)',
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
+                        width: '900px',
+                    }}>
+                        {/* Title */}
+                        <div
+                            style={{
+                                fontSize: 70,
+                                color: '#FAEC3B',
+                                textShadow: '4px 4px 0px #000',
+                                marginBottom: 40,
+                                letterSpacing: '-2px'
+                            }}
+                        >
+                            25 SQUARES
+                        </div>
+
+                        {/* Completion Badge */}
                         <div
                             style={{
                                 display: 'flex',
-                                fontSize: 30,
-                                color: '#fff',
-                                marginBottom: 20,
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#4CAF50',
+                                color: '#FFF',
+                                padding: '10px 30px',
+                                borderRadius: '15px',
+                                fontSize: 32,
+                                marginBottom: 40,
+                                boxShadow: '0 5px 15px rgba(76, 175, 80, 0.4)',
+                                transform: 'rotate(-2deg)'
                             }}
                         >
-                            WORLD {world} • LEVEL {level}
+                            LEVEL COMPLETED!
                         </div>
-                    )}
 
-                    {/* Completion Status */}
-                    <div
-                        style={{
-                            display: 'flex',
-                            fontSize: 40,
-                            color: '#4CAF50', // Green for success
-                            marginBottom: 20,
-                            textShadow: '2px 2px 0px #000',
-                        }}
-                    >
-                        LEVEL COMPLETED!
-                    </div>
-
-                    {/* Score & Stars */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-                        {score && (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginRight: 30 }}>
-                                <span style={{ fontSize: 20, color: '#aaa' }}>SCORE</span>
-                                <span style={{ fontSize: 40, color: '#fff' }}>{score}</span>
+                        {/* Info Row */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '60px', marginBottom: 20 }}>
+                            {/* World/Level Info */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ fontSize: 24, color: '#aaa', marginBottom: 10 }}>LOCATION</div>
+                                <div style={{ fontSize: 40, color: '#fff' }}>W{world} • L{level}</div>
                             </div>
-                        )}
 
-                        {stars && (
-                            <div style={{ display: 'flex', gap: '10px' }}>
-                                {/* Render Stars */}
-                                {[...Array(3)].map((_, i) => (
-                                    <div key={i} style={{
-                                        fontSize: 50,
-                                        color: i < parseInt(stars) ? '#FAEC3B' : '#333'
-                                    }}>
-                                        ★
-                                    </div>
-                                ))}
+                            <div style={{ width: 2, height: 80, background: 'rgba(255,255,255,0.2)' }} />
+
+                            {/* Score Info */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <div style={{ fontSize: 24, color: '#aaa', marginBottom: 10 }}>SCORE</div>
+                                <div style={{ fontSize: 50, color: '#FAEC3B', textShadow: '2px 2px 0 #000' }}>{score}</div>
                             </div>
-                        )}
-                    </div>
+                        </div>
 
+                        {/* Stars */}
+                        <div style={{ display: 'flex', gap: '20px', marginTop: 30 }}>
+                            {[...Array(3)].map((_, i) => (
+                                <div key={i} style={{
+                                    fontSize: 60,
+                                    color: i < stars ? '#FAEC3B' : 'rgba(255,255,255,0.1)',
+                                    transform: i === 1 ? 'translateY(-10px)' : 'none', // Middle star slightly higher
+                                    filter: i < stars ? 'drop-shadow(0 0 10px rgba(250, 236, 59, 0.5))' : 'none'
+                                }}>
+                                    ★
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             ),
             {
@@ -118,3 +133,4 @@ export async function GET(request) {
         })
     }
 }
+

@@ -1,5 +1,16 @@
 {
     "framework": "nextjs",
     "buildCommand": "npx prisma generate && next build",
-    "installCommand": "npm install"
+    "installCommand": "npm install",
+    "headers": [
+        {
+            "source": "/api/og",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=3600, s-maxage=3600"
+                }
+            ]
+        }
+    ]
 }

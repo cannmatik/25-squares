@@ -22,10 +22,11 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: { xs: 'flex-start', sm: 'center' },
             height: '100dvh',
             width: '100%',
             p: { xs: 2, sm: 4 },
+            pt: { xs: 18, sm: 4 }, // Add top padding for mobile to clear TopBar
             bgcolor: 'background.default',
             fontFamily: '"Press Start 2P", cursive',
             overflow: 'hidden',
@@ -61,7 +62,7 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
             }}>
                 <Typography variant="h1" sx={{
                     color: 'text.primary',
-                    textShadow: isDark ? '3px 4px 0 #000' : '2px 2px 0 rgba(0,0,0,0.1)',
+                    textShadow: isDark ? '3px 4px 0 #d2003a' : '2px 2px 0 rgba(0,0,0,0.1)',
                     fontSize: { xs: '2.1rem', sm: '3.6rem' },
                     fontWeight: 900,
                     lineHeight: 1,
@@ -71,7 +72,7 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
                 </Typography>
                 <Typography variant="h1" sx={{
                     color: 'text.primary',
-                    textShadow: isDark ? '3px 4px 0 #000' : '2px 2px 0 rgba(0,0,0,0.1)',
+                    textShadow: isDark ? '3px 4px 0 #d2003a' : '2px 2px 0 rgba(0,0,0,0.1)',
                     fontSize: { xs: '2.1rem', sm: '3.6rem' },
                     fontWeight: 900,
                     lineHeight: 1,

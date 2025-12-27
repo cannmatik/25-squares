@@ -116,11 +116,11 @@ export default function TopBar({
             }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', px: { xs: 1.5, sm: 2 }, py: { xs: 1, sm: 1.5 }, gap: { xs: 1, sm: 1.5 } }}>
                     {/* Left Side: Back + Title */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0, flex: '0 1 auto' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, minWidth: 0, flex: '1 1 auto', overflow: 'hidden' }}>
                         {onBack && (
                             <IconButton
                                 size="small"
-                                sx={{ color: 'text.primary', p: { xs: 0.75, sm: 1 }, minWidth: 40, minHeight: 40 }}
+                                sx={{ color: 'text.primary', p: { xs: 0.75, sm: 1 }, minWidth: 40, minHeight: 40, flexShrink: 0 }}
                                 onClick={() => { soundManager.playNav(); onBack(); }}
                             >
                                 <ArrowBackIcon sx={{ fontSize: { xs: 22, sm: 24 } }} />
@@ -130,41 +130,49 @@ export default function TopBar({
                             onClick={() => {
                                 if (customTitleClick) customTitleClick()
                             }}
-                            sx={{ display: 'flex', alignItems: 'center', cursor: customTitleClick ? 'pointer' : 'default', userSelect: 'none', minWidth: 0 }}
+                            sx={{ display: 'flex', alignItems: 'center', cursor: customTitleClick ? 'pointer' : 'default', userSelect: 'none', minWidth: 0, overflow: 'hidden', flex: 1 }}
                         >
-                            <Typography variant="body2" sx={{ color: 'text.primary', fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.95rem' }, ml: 0.5, whiteSpace: 'nowrap' }}>
+                            <Typography variant="body2" sx={{
+                                color: 'text.primary',
+                                fontWeight: 'bold',
+                                fontSize: { xs: '0.8rem', sm: '0.95rem' },
+                                ml: 0.5,
+                                whiteSpace: 'nowrap',
+                                overflow: 'hidden',
+                                textOverflow: 'ellipsis'
+                            }}>
                                 {title}
                             </Typography>
                             {customTitleClick && (
-                                <ExpandMoreIcon sx={{ fontSize: { xs: 20, sm: 22 }, color: 'text.primary', transform: activeSection === 'rules' ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s' }} />
+                                <ExpandMoreIcon sx={{ fontSize: { xs: 20, sm: 22 }, color: 'text.primary', transform: activeSection === 'rules' ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 0.2s', flexShrink: 0 }} />
                             )}
                         </Box>
                     </Box>
 
                     {/* Right Side: Actions */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.5, sm: 1 }, flex: '0 0 auto' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: { xs: 0.25, sm: 1 }, flex: '0 0 auto' }}>
                         {customActions}
 
                         <IconButton
                             onClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'settings' ? null : 'settings') }}
                             size="small"
-                            sx={{ color: activeSection === 'settings' ? 'primary.main' : 'text.primary', p: { xs: 0.75, sm: 1 }, minWidth: 40, minHeight: 40 }}
+                            sx={{ color: activeSection === 'settings' ? 'primary.main' : 'text.primary', p: { xs: 0.5, sm: 1 }, minWidth: { xs: 34, sm: 40 }, minHeight: 40 }}
                         >
-                            <SettingsIcon sx={{ fontSize: { xs: 22, sm: 24 } }} />
+                            <SettingsIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                         </IconButton>
                         <IconButton
                             onClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'help' ? null : 'help') }}
                             size="small"
-                            sx={{ color: activeSection === 'help' ? 'primary.main' : 'text.primary', p: { xs: 0.75, sm: 1 }, minWidth: 40, minHeight: 40 }}
+                            sx={{ color: activeSection === 'help' ? 'primary.main' : 'text.primary', p: { xs: 0.5, sm: 1 }, minWidth: { xs: 34, sm: 40 }, minHeight: 40 }}
                         >
-                            <HelpOutlineIcon sx={{ fontSize: { xs: 22, sm: 24 } }} />
+                            <HelpOutlineIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                         </IconButton>
                         <IconButton
                             onClick={() => { soundManager.playClick(); setActiveSection(prev => prev === 'profile' ? null : 'profile') }}
                             size="small"
-                            sx={{ color: activeSection === 'profile' ? 'primary.main' : 'text.primary', p: { xs: 0.75, sm: 1 }, minWidth: 40, minHeight: 40 }}
+                            sx={{ color: activeSection === 'profile' ? 'primary.main' : 'text.primary', p: { xs: 0.5, sm: 1 }, minWidth: { xs: 34, sm: 40 }, minHeight: 40 }}
                         >
-                            <PersonIcon sx={{ fontSize: { xs: 22, sm: 24 } }} />
+                            <PersonIcon sx={{ fontSize: { xs: 20, sm: 24 } }} />
                         </IconButton>
                     </Box>
                 </Box>

@@ -16,8 +16,24 @@ const montserrat = Montserrat({
 })
 
 export const metadata = {
+    metadataBase: new URL('https://25-squares.com'),
     title: '25 Squares',
     description: 'A Classic Puzzle Challenge',
+    icons: {
+        icon: '/favicon.ico',
+        shortcut: '/favicon.ico',
+        apple: '/apple-touch-icon.png',
+        other: {
+            rel: 'apple-touch-icon-precomposed',
+            url: '/apple-touch-icon.png',
+        },
+    },
+    manifest: '/site.webmanifest',
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: 'black-translucent',
+        title: '25 Squares',
+    },
 }
 
 export const viewport = {
@@ -25,6 +41,7 @@ export const viewport = {
     initialScale: 1,
     maximumScale: 1,
     userScalable: false,
+    themeColor: '#14141E',
 }
 
 export default function RootLayout({ children }) {

@@ -1,7 +1,8 @@
 import { useEffect } from 'react'
 import { Dialog, DialogTitle, DialogContent, Stack, Typography, Button } from '@mui/material'
+import RefreshIcon from '@mui/icons-material/Refresh'
+import IosShareIcon from '@mui/icons-material/IosShare'
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents'
-import ShareIcon from '@mui/icons-material/Share'
 import soundManager from '@/lib/sounds'
 import Stars from '../ui/Stars'
 
@@ -63,10 +64,16 @@ export default function ResultModal({ stars, score, isNewBest, onRetry, onNext, 
                         <Button
                             fullWidth
                             variant="contained"
-                            color="warning"
                             onClick={() => { soundManager.playClick(); if (onShare) onShare() }}
-                            sx={{ height: { xs: 40, sm: 48 }, fontWeight: 'bold', fontSize: { xs: '0.8rem', sm: '0.9rem' } }}
-                            startIcon={<ShareIcon />}
+                            sx={{
+                                height: { xs: 40, sm: 48 },
+                                fontWeight: 'bold',
+                                fontSize: { xs: '0.8rem', sm: '0.9rem' },
+                                bgcolor: '#D32F2F', // Red brand color
+                                color: '#FFF',
+                                '&:hover': { bgcolor: '#B71C1C' }
+                            }}
+                            startIcon={<IosShareIcon />}
                         >
                             SHARE RESULT
                         </Button>
@@ -95,6 +102,7 @@ export default function ResultModal({ stars, score, isNewBest, onRetry, onNext, 
                                 border: '2px solid',
                                 borderColor: 'text.primary'
                             }}
+                            startIcon={<RefreshIcon />}
                         >
                             RESTART
                         </Button>

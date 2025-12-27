@@ -36,15 +36,30 @@ class SoundManager {
 
     // Background Music (BGM)
     initBGM() {
-        if (typeof window === 'undefined' || this.bgm) return;
+        if (typeof window === 'undefined') return;
+
+        // Don't recreate if already exists and playing
+        if (this.bgm) {
+            if (this.bgm.paused && !this.bgmMuted && this.initialized) {
+                this.bgm.play().catch(e => console.log("Resume BGM prevented:", e));
+            }
+            return;
+        }
+
         this.bgm = new Audio('/25Squares.mp3');
-        this.bgm.loop = true;
+        this.bgm.loop = true; // IMPORTANT: Set loop to true
         this.bgm.volume = this.bgmMuted ? 0 : (this.bgmVolume || 0.3);
 
         // Auto-play if not muted and initialized
         if (!this.bgmMuted && this.initialized) {
             this.bgm.play().catch(e => console.log("Autoplay prevented:", e));
         }
+
+        // Failsafe for loop if browser ignores property (rare but possible)
+        this.bgm.addEventListener('ended', () => {
+            this.bgm.currentTime = 0;
+            this.bgm.play().catch(() => { });
+        });
     }
 
     toggleBGM() {

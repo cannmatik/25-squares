@@ -56,6 +56,8 @@ export default function AuthModal({ open, onClose, onLogin, onLogout, initialMod
             // Determine endpoint based on mode
             const endpoint = mode === 'delete_verify' ? '/api/auth/req-delete-otp' : '/api/auth/resend-otp'
 
+            if (!navigator.onLine) throw new Error('You are offline. Please check your connection.')
+
             const res = await fetch(endpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,6 +80,11 @@ export default function AuthModal({ open, onClose, onLogin, onLogout, initialMod
     const handleDeleteRequest = async () => {
         setLoading(true)
         setError('')
+        if (!navigator.onLine) {
+            setError('You are offline.')
+            setLoading(false)
+            return
+        }
         try {
             const res = await fetch('/api/auth/req-delete-otp', {
                 method: 'POST',
@@ -130,6 +137,8 @@ export default function AuthModal({ open, onClose, onLogin, onLogout, initialMod
                 endpoint = '/api/auth/delete-account'
                 body = { email, otp }
             }
+
+            if (!navigator.onLine) throw new Error('You are offline. Functionality limited.')
 
             const res = await fetch(endpoint, {
                 method: 'POST',

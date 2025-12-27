@@ -139,39 +139,29 @@ export default function Home() {
         loadData()
     }, [])
 
+    // Reset active section (menu) when screen changes
+    useEffect(() => {
+        setActiveSection(null)
+    }, [screen])
+
     // Offline & Sync Logic
     useEffect(() => {
         const checkConnection = async () => {
+            // Simple beacon check
             try {
-                const controller = new AbortController()
-                const timeoutId = setTimeout(() => controller.abort(), 5000)
-
-                const res = await fetch('/api/health', {
-                    method: 'GET',
-                    cache: 'no-store',
-                    signal: controller.signal
-                })
-                clearTimeout(timeoutId)
-
+                const res = await fetch('/api/health', { method: 'HEAD', cache: 'no-store' })
                 if (res.ok) {
                     if (!isOnline) {
                         setIsOnline(true)
-                        // Force close any open offline notification immediately
-                        setNotification({ open: false, message: '', severity: 'info', duration: 6000 })
-                        setTimeout(() => {
-                            showNotification('CONNECTION RESTORED. SYNCING...', 'success', 3000)
-                        }, 200)
+                        setNotification({ open: false, message: '', severity: 'info', duration: 1 }) // Clear old
+                        setTimeout(() => showNotification('ONLINE AGAIN', 'success', 2500), 200)
                         syncProgress()
                     }
                 } else {
-                    if (isOnline) {
-                        setIsOnline(false)
-                    }
+                    if (isOnline) setIsOnline(false)
                 }
             } catch (e) {
-                if (isOnline) {
-                    setIsOnline(false)
-                }
+                if (isOnline) setIsOnline(false)
             }
         }
 
@@ -323,7 +313,7 @@ export default function Home() {
             {screen !== 'game' && screen !== 'menu' && (
                 <TopBar
                     title={
-                        screen === 'worlds' ? 'SELECT WORLD' :
+                        screen === 'worlds' ? 'WORLDS' :
                             screen === 'levels' ? `WORLD ${currentWorld}` :
                                 '25 SQUARES'
                     }
@@ -408,12 +398,12 @@ export default function Home() {
                 <GameGrid
                     levelConfig={activeLevelConfig}
                     user={user}
+                    isOnline={isOnline}
                     onUserUpdate={(updates) => {
                         const newUser = { ...user, ...updates }
                         setUser(newUser)
                         localStorage.setItem('user', JSON.stringify(newUser))
                     }}
-                    isOnline={isOnline}
                     onComplete={handleLevelComplete}
                     onBack={() => {
                         soundManager.playClick()
