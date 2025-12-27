@@ -21,7 +21,7 @@ export default function ShareContent({ world, level, score, stars }) {
                 fontFamily: '"Press Start 2P"',
                 color: '#FAEC3B',
                 mb: 4,
-                textShadow: '4px 4px 0px #000',
+                textShadow: '4px 5px 0 #d2003a',
                 fontSize: { xs: '1.5rem', sm: '3rem' }
             }}>
                 25 SQUARES
@@ -37,7 +37,7 @@ export default function ShareContent({ world, level, score, stars }) {
                 maxWidth: 500,
                 width: '100%'
             }}>
-                <Typography variant="subtitle1" color="#4CAF50" sx={{ fontFamily: '"Press Start 2P"', mb: 2, fontSize: { xs: '0.8rem', sm: '1rem' } }}>
+                <Typography variant="subtitle1" color="#E53935" sx={{ fontFamily: '"Press Start 2P"', mb: 2, fontSize: { xs: '0.8rem', sm: '1rem' } }}>
                     LEVEL COMPLETED!
                 </Typography>
 
