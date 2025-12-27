@@ -1,27 +1,43 @@
-
 const fs = require('fs');
 const path = require('path');
 
-// Load all world levels
-const world1 = require('../world1_levels.json');
-const world2 = require('../world2_levels.json');
-const world3 = require('../world3_levels.json');
 const outputPath = path.join(__dirname, '../src/lib/levels.js');
+const scriptDir = __dirname; // scripts folder
 
-const fileContent = `// Game levels data - Generated via Backtracking
-// Guaranteed Solvable Paths
+// Find all world level files
+const allFiles = fs.readdirSync(scriptDir).filter(f => f.match(/^world\d+_levels\.json$/));
 
-export const WORLDS = [
-    { id: 1, name: "World 1", requiredStars: 0, levels: 25 },
-    { id: 2, name: "World 2", requiredStars: 30, levels: 25 },
-    { id: 3, name: "World 3", requiredStars: 60, levels: 25 }
-];
+// Sort them numerically by world ID
+allFiles.sort((a, b) => {
+    const numA = parseInt(a.match(/(\d+)/)[0]);
+    const numB = parseInt(b.match(/(\d+)/)[0]);
+    return numA - numB;
+});
 
-export const LEVELS = {
-    1: ${JSON.stringify(world1, null, 4)},
-    2: ${JSON.stringify(world2, null, 4)},
-    3: ${JSON.stringify(world3, null, 4)}
-};
+const WORLDS = [];
+const LEVELS = {};
+
+allFiles.forEach(file => {
+    const worldId = parseInt(file.match(/(\d+)/)[0]);
+    const levels = require(path.join(scriptDir, file));
+
+    LEVELS[worldId] = levels;
+
+    // Config World Metadata
+    WORLDS.push({
+        id: worldId,
+        name: `World ${worldId}`,
+        requiredStars: Math.max(0, (worldId - 1) * 30), // 0, 30, 60, 90...
+        levels: levels.length
+    });
+});
+
+const fileContent = `// Game levels data - Generated Dynamically
+// Worlds: ${WORLDS.length}
+
+export const WORLDS = ${JSON.stringify(WORLDS, null, 4)};
+
+export const LEVELS = ${JSON.stringify(LEVELS, null, 4)};
 
 export const RULE_DESCRIPTIONS = {
     1: "Visit as many squares as possible!",
@@ -45,4 +61,4 @@ export function getWorldConfig(worldId) {
 `;
 
 fs.writeFileSync(outputPath, fileContent);
-console.log('Updated src/lib/levels.js with World 1, 2, and 3 levels.');
+console.log(`Updated src/lib/levels.js with ${WORLDS.length} worlds.`);

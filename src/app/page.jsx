@@ -20,6 +20,9 @@ import GameGrid from '@/components/game/GameGrid'
 import AuthModal from '@/components/modals/AuthModal'
 import TopBar from '@/components/TopBar'
 
+// Update this version to force-clear cache on client side
+const APP_VERSION = 'v2'
+
 export default function Home() {
     const [screen, setScreen] = useState('menu')
     const [currentWorld, setCurrentWorld] = useState(1)
@@ -66,6 +69,14 @@ export default function Home() {
     useEffect(() => {
         const loadData = async () => {
             if (typeof window !== 'undefined') setIsOnline(navigator.onLine)
+
+            // 0. Check Data Version & Invalidate Cache if needed
+            const storedVersion = localStorage.getItem('dataVersion')
+            if (storedVersion !== APP_VERSION) {
+                console.log('New version detected! Clearing cache...')
+                localStorage.removeItem('cachedLevels')
+                localStorage.setItem('dataVersion', APP_VERSION)
+            }
 
             // 1. Load Local Cache immediately to show something
             const cachedLevels = localStorage.getItem('cachedLevels')

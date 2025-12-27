@@ -27,6 +27,9 @@ model Level {
   fullPath       Json?    // Store the solution path for potential hints/verification
   tutorial       Json?    // [{move: 0, text: "...", highlight: {x,y}}]
   maxMistakes    Int?     // Rule 5: Limit bad moves
+  minMoves       Int?     // Flexible completion: Minimum moves required
+  minCheckpoints Int?     // Flexible completion: Minimum requiredMoves to hit
+  
   
   starCriteria   String?  // 'moves' (default) or 'time'
   starThresholds Json?    // [120, 90, 60] for time-based stars

@@ -44,7 +44,9 @@ async function main() {
                 tutorial,
                 maxMistakes,
                 starCriteria,
-                starThresholds
+                starThresholds,
+                minMoves,
+                minCheckpoints
             } = level
 
             const levelData = {
@@ -59,7 +61,9 @@ async function main() {
                 tutorial: tutorial || null,
                 maxMistakes: maxMistakes || null,
                 starCriteria: starCriteria || null,
-                starThresholds: starThresholds || null
+                starThresholds: starThresholds || null,
+                minMoves: minMoves || null,
+                minCheckpoints: minCheckpoints || null
             }
 
             await prisma.level.upsert({

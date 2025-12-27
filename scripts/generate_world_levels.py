@@ -2,6 +2,7 @@
 import json
 import random
 import time
+import os
 
 # Constants
 GRID_SIZE = 5
@@ -331,7 +332,15 @@ def generate_world2(all_paths):
     return levels
 
 def generate_world3(all_paths):
-    # World 3: Hardest. Blocked Squares + Required Moves + Max Mistakes + Time
+    """
+    World 3: Hardest. Blocked Squares + Required Moves + Max Mistakes + Time
+    
+    RULES:
+    - İlk predefined kare < 10 (moveNumber 2-9 arası)
+    - İki predefined kare arasındaki fark <= 5
+    - Predefined kareler path'ten alınır (garantili valid)
+    - Her level farklı random moveNumber'lar
+    """
     print("Generating World 3...")
     levels = []
     
@@ -356,23 +365,84 @@ def generate_world3(all_paths):
             # Shorten path to exclude blocked squares
             path = path[:25 - blocked_count]
         
-        # Add required moves at strategic positions
+        # === DYNAMIC PREDEFINED SQUARES ===
+        # Rules: first < 10 (index 1-8), gap between any two <= 5
         required_moves = []
         path_len = len(path)
         
-        if required_count >= 1 and path_len > 5:
-            m1 = 4  # Move 5
-            required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
-        if required_count >= 2 and path_len > 10:
-            m2 = 9  # Move 10
-            required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
-        if required_count >= 3 and path_len > 15:
-            m3 = 14  # Move 15
-            required_moves.append({"moveNumber": m3 + 1, "x": path[m3]['x'], "y": path[m3]['y']})
+        if required_count == 1 and path_len > 8:
+            # Tek predefined kare: Random Move 2-9 (index 1-8)
+            m1 = random.randint(1, min(8, path_len - 1))
+            required_moves.append({
+                "moveNumber": m1 + 1,  # 1-based for UI
+                "x": path[m1]['x'],
+                "y": path[m1]['y']
+            })
+            
+        elif required_count == 2 and path_len > 10:
+            # İki predefined kare:
+            # - İlki: Random Move 2-7 (index 1-6) - sonraki için yer bırak
+            # - İkincisi: İlkinden +2 ile +5 hamle sonra (gap <= 5)
+            m1 = random.randint(1, min(6, path_len - 5))
+            gap = random.randint(2, 5)  # 2-5 hamle fark
+            m2 = m1 + gap
+            
+            # m2 path sınırları içinde mi kontrol et
+            if m2 < path_len:
+                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+                required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
+            else:
+                # Fallback: sadece ilki
+                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+                
+        elif required_count >= 3 and path_len > 12:
+            # Üç predefined kare:
+            # - İlki: Random Move 2-5 (index 1-4)
+            # - İkincisi: +2 ile +4 gap
+            # - Üçüncüsü: +2 ile +4 gap (toplam < 10 olmalı)
+            m1 = random.randint(1, min(4, path_len - 8))
+            gap1 = random.randint(2, 4)
+            gap2 = random.randint(2, 4)
+            m2 = m1 + gap1
+            m3 = m2 + gap2
+            
+            # Hepsi path sınırları içinde mi ve < 10 mu
+            if m3 < path_len and m3 <= 9:  # Son predefined <= Move 10
+                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+                required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
+                required_moves.append({"moveNumber": m3 + 1, "x": path[m3]['x'], "y": path[m3]['y']})
+            elif m2 < path_len:
+                # Fallback: sadece ilk iki
+                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
+                required_moves.append({"moveNumber": m2 + 1, "x": path[m2]['x'], "y": path[m2]['y']})
+            else:
+                # Fallback: sadece ilki
+                required_moves.append({"moveNumber": m1 + 1, "x": path[m1]['x'], "y": path[m1]['y']})
         
         # Star thresholds based on actual path length
         stars = [path_len - 6, path_len - 3, path_len]
         
+        # Flexible Completion Logic
+        # Calculate minCheckpoints needed (lenient)
+        min_checkpoints = 1
+        if len(required_moves) >= 3:
+            min_checkpoints = 2
+        
+        # Calculate minMoves needed (must be enough to reach the min checkpoints)
+        # Find the max move number among the first 'min_checkpoints' required moves
+        # But required_moves are sorted by insertion which is roughly sorted by moveNumber
+        
+        # Sort required moves by moveNumber to be sure
+        sorted_req = sorted(required_moves, key=lambda x: x['moveNumber'])
+        
+        target_checkpoint_idx = min_checkpoints - 1
+        if target_checkpoint_idx < len(sorted_req):
+            checkpoint_move_num = sorted_req[target_checkpoint_idx]['moveNumber']
+            # Add some buffer moves
+            min_moves = max(10, checkpoint_move_num + 3)
+        else:
+            min_moves = 10 # Default fallback
+            
         levels.append({
             "id": i,
             "gridSize": 5,
@@ -383,29 +453,151 @@ def generate_world3(all_paths):
             "ruleSet": 5,  # Max Mistakes
             "maxMistakes": max_mistakes,
             "timeLimit": time_limit,
+            "minMoves": min_moves,
+            "minCheckpoints": min_checkpoints,
             "fullPath": path
         })
         
     return levels
 
+def generate_procedural_world(world_id, all_paths):
+    levels = []
+    
+    # World Settings
+    # 4-10: Hard (Combined Blocked + Required)
+    # 11-20: Very Hard (High Blocked, High Required)
+    # 21-25: Extreme / Impossible (Max Blocked, Tight Time, Strict)
+    
+    is_extreme = world_id >= 21
+    
+    for i in range(1, 26):
+        path = random.choice(all_paths)
+        
+        # 1. BLOCKED SQUARES LOGIC
+        # Aggressive blocking based on user request "3-4-5 blocked and above"
+        if world_id <= 8:
+            blocked_count = random.randint(2, 3)
+        elif world_id <= 15:
+            blocked_count = random.randint(3, 5)
+        elif world_id <= 20:
+            blocked_count = random.randint(4, 6)
+        else:
+            # Extreme Worlds: 6 to 9 blocked squares (Very tight board)
+            blocked_count = random.randint(6, 9)
+            
+        blocked_squares = []
+        # Take from end of path to keep it solvable
+        current_path = list(path) # Copy
+        if blocked_count > 0:
+            for j in range(blocked_count):
+                sq = current_path[-(j+1)]
+                blocked_squares.append({'x': sq['x'], 'y': sq['y']})
+            current_path = current_path[:25 - blocked_count]
+            
+        path_len = len(current_path)
+            
+        # 2. REQUIRED MOVES LOGIC (Checkpoints)
+        # "Combined for every move" implied -> Lots of validation checks
+        required_moves = []
+        
+        # How many checkpoints?
+        if world_id <= 8:
+            req_count = random.randint(2, 4)
+        elif world_id <= 15:
+            req_count = random.randint(4, 7)
+        else:
+            # High worlds: Almost every few moves is a checkpoint
+            req_count = random.randint(6, 12)
+            
+        # Ensure we don't ask for more than available moves
+        req_count = min(req_count, path_len - 2)
+        
+        if req_count > 0:
+            valid_indices = range(1, path_len - 1)
+            indices = sorted(random.sample(valid_indices, req_count))
+            for idx in indices:
+                required_moves.append({
+                    "moveNumber": idx + 1,
+                    "x": current_path[idx]['x'],
+                    "y": current_path[idx]['y']
+                })
+
+        # 3. GAME CONDITIONS
+        min_checkpoints = None
+        min_moves = None
+        time_limit = 120
+        max_mistakes = 3
+        
+        if is_extreme:
+            # Extreme: strict completion
+            # Must hit almost ALL checkpoints
+            min_checkpoints = len(required_moves) 
+            min_moves = path_len
+            time_limit = 60 # Rush
+            max_mistakes = 1 # Perfectionist
+        elif world_id > 10:
+            # Very Hard
+            min_checkpoints = max(1, len(required_moves) - 1)
+            min_moves = max(5, path_len - 3)
+            time_limit = 90
+            max_mistakes = 2
+        else:
+            # Hard
+            min_checkpoints = max(1, len(required_moves) - 2)
+            time_limit = 120
+             
+        # Stars logic relative to path length
+        # Since path is shorter due to blocking, stars must adjust
+        stars = [max(1, path_len - 4), max(1, path_len - 2), path_len]
+        
+        levels.append({
+            "id": i,
+            "gridSize": 5,
+            "fixedStart": current_path[0], # Fixed start is essential for specific paths
+            "blockedSquares": blocked_squares,
+            "requiredMoves": required_moves,
+            "stars": stars,
+            "ruleSet": 7, # "Hit the required positions!" generalized
+            "maxMistakes": max_mistakes,
+            "timeLimit": time_limit,
+            "minMoves": min_moves,
+            "minCheckpoints": min_checkpoints,
+            "fullPath": current_path
+        })
+        
+    return levels
+
 def main():
+    # Ensure correct paths relative to this script file
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    # Change CWD to script dir so load_valid_paths finds its file (if needed)
+    # But load_valid_paths implementation might depend on CWD.
+    # Let's just fix the OUTPUT paths.
+    
     all_paths = load_valid_paths()
     if not all_paths: return
 
+    # W1-3 Existing
     w1 = generate_world1(all_paths)
-    with open('world1_levels.json', 'w') as f:
-        json.dump(w1, f, indent=2)
+    with open(os.path.join(script_dir, 'world1_levels.json'), 'w') as f: json.dump(w1, f, indent=2)
     print(f"Generated World 1: {len(w1)} levels")
-
+    
     w2 = generate_world2(all_paths)
-    with open('world2_levels.json', 'w') as f:
-        json.dump(w2, f, indent=2)
+    with open(os.path.join(script_dir, 'world2_levels.json'), 'w') as f: json.dump(w2, f, indent=2)
     print(f"Generated World 2: {len(w2)} levels")
 
     w3 = generate_world3(all_paths)
-    with open('world3_levels.json', 'w') as f:
-        json.dump(w3, f, indent=2)
+    with open(os.path.join(script_dir, 'world3_levels.json'), 'w') as f: json.dump(w3, f, indent=2)
     print(f"Generated World 3: {len(w3)} levels")
+    
+    # W4-25 Procedural
+    for w in range(4, 26):
+        levels = generate_procedural_world(w, all_paths)
+        with open(os.path.join(script_dir, f'world{w}_levels.json'), 'w') as f:
+            json.dump(levels, f, indent=2)
+        print(f"Generated World {w}: {len(levels)} levels")
+
 
 if __name__ == "__main__":
     main()
