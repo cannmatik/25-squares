@@ -8,9 +8,11 @@ import { useColorMode } from '@/app/providers'
 import { useState, useEffect } from 'react'
 import soundManager from '@/lib/sounds'
 import TopBar from '@/components/TopBar'
+import AuthModal from '@/components/modals/AuthModal'
 
 export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline }) {
     const [showCredits, setShowCredits] = useState(false)
+    const [showDeleteModal, setShowDeleteModal] = useState(false)
     const [activeSection, setActiveSection] = useState(null)
     const { mode } = useColorMode()
     const isDark = mode === 'dark'
@@ -38,6 +40,7 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
                 user={user}
                 activeSection={activeSection}
                 setActiveSection={setActiveSection}
+                onDeleteAccount={() => setShowDeleteModal(true)}
             />
 
             {/* Title Section */}
@@ -123,27 +126,29 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
                 </Button>
 
                 {user ? (
-                    <Button
-                        variant="contained"
-                        fullWidth
-                        onClick={() => { soundManager.playClick(); onLogout() }}
-                        startIcon={<LogoutIcon />}
-                        sx={{
-                            height: { xs: 52, sm: 60 },
-                            fontSize: { xs: '0.9rem', sm: '1rem' },
-                            bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#eee',
-                            color: 'text.primary',
-                            borderRadius: 0,
-                            border: '1px solid',
-                            borderColor: 'divider',
-                            boxShadow: '4px 4px 0 #000',
-                            fontWeight: 'bold',
-                            '&:active': { transform: 'translate(2px, 2px)', boxShadow: '2px 2px 0 #000' },
-                            '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.1)' : '#ddd' }
-                        }}
-                    >
-                        LOGOUT: {user.username}
-                    </Button>
+                    <>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            onClick={() => { soundManager.playClick(); onLogout() }}
+                            startIcon={<LogoutIcon />}
+                            sx={{
+                                height: { xs: 52, sm: 60 },
+                                fontSize: { xs: '0.9rem', sm: '1rem' },
+                                bgcolor: isDark ? 'rgba(255,255,255,0.05)' : '#eee',
+                                color: 'text.primary',
+                                borderRadius: 0,
+                                border: '1px solid',
+                                borderColor: 'divider',
+                                boxShadow: '4px 4px 0 #000',
+                                fontWeight: 'bold',
+                                '&:active': { transform: 'translate(2px, 2px)', boxShadow: '2px 2px 0 #000' },
+                                '&:hover': { bgcolor: isDark ? 'rgba(255,255,255,0.1)' : '#ddd' }
+                            }}
+                        >
+                            LOGOUT: {user.username}
+                        </Button>
+                    </>
                 ) : (
                     <Button
                         variant="contained"
@@ -165,6 +170,16 @@ export default function MenuScreen({ user, onPlay, onAuth, onLogout, isOnline })
                     </Button>
                 )}
             </Box>
+
+            {/* Delete Account Modal (Reusing AuthModal) */}
+            {showDeleteModal && user && (
+                <AuthModal
+                    onClose={() => setShowDeleteModal(false)}
+                    onLogout={onLogout}
+                    initialMode="delete_confirm"
+                    userEmail={user.email}
+                />
+            )}
 
             {/* Tiny Credits */}
             <Box

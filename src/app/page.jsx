@@ -376,8 +376,10 @@ export default function Home() {
             {showAuth && (
                 <AuthModal
                     onClose={() => setShowAuth(false)}
-                    onLogin={(u) => {
+                    onLogin={(u, token) => {
                         setUser(u);
+                        if (token) localStorage.setItem('token', token)
+                        if (u) localStorage.setItem('user', JSON.stringify(u))
                         setShowAuth(false);
                         // Trigger reload of progress
                         setIsOnline(prev => !prev); setIsOnline(prev => !prev); // Force effect hook re-run hack or just let the user dependency handle it

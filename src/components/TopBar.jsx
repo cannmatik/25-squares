@@ -29,6 +29,7 @@ export default function TopBar({
     customTitleClick,
     customActions,
     secondaryInfo,
+    onDeleteAccount,
     children
 }) {
     const { mode, toggleColorMode } = useColorMode()
@@ -374,6 +375,29 @@ export default function TopBar({
                                             <CheckCircleIcon sx={{ fontSize: 14, mr: 0.5 }} /> Running in app mode
                                         </Typography>
                                     ) : null}
+                                    {/* Delete Account (Only for logged in users) */}
+                                    {user && onDeleteAccount && (
+                                        <Box sx={{ mt: 2, pt: 1.5, borderTop: '1px solid', borderColor: 'divider' }}>
+                                            <Button
+                                                fullWidth
+                                                variant="text"
+                                                color="warning"
+                                                size="small"
+                                                onClick={() => {
+                                                    soundManager.playClick()
+                                                    setActiveSection(null) // Close menu
+                                                    onDeleteAccount()     // Trigger modal
+                                                }}
+                                                sx={{
+                                                    fontSize: '0.65rem',
+                                                    opacity: 0.8,
+                                                    '&:hover': { opacity: 1, bgcolor: 'warning.main', color: 'warning.contrastText' }
+                                                }}
+                                            >
+                                                DELETE ACCOUNT
+                                            </Button>
+                                        </Box>
+                                    )}
                                 </Box>
                             </Box>
                         )}
