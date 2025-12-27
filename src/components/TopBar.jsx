@@ -101,7 +101,7 @@ export default function TopBar({
             <Box sx={{
                 userSelect: 'none',
                 position: 'fixed',
-                top: { xs: 'max(48px, calc(env(safe-area-inset-top, 0px) + 48px))', sm: 16 },
+                top: isFullscreen ? 16 : { xs: 'max(48px, calc(env(safe-area-inset-top, 0px) + 48px))', sm: 16 },
                 left: '50%',
                 transform: 'translateX(-50%)',
                 width: 'calc(100% - 16px)',

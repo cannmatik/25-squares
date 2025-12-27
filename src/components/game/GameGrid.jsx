@@ -666,30 +666,39 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                 )}
             </TopBar>
 
-            {/* Tutorial Narrator Message - Positioned above grid, doesn't block */}
+            {/* Tutorial Narrator Message - Absolute Positioned to prevent layout shift */}
             {(() => {
                 const step = levelConfig?.tutorial?.find(t => t.move === moveCount)
                 if (step) {
                     return (
                         <Box sx={{
-                            width: '100%',
-                            maxWidth: { xs: '280px', sm: '400px' },
-                            mb: { xs: 1, sm: 4 }, // Add more margin on desktop to separate from grid
-                            mt: { xs: 0, sm: 2 }, // Add top margin to separate from top bar
-                            animation: 'fadeInDown 0.3s ease-out'
+                            position: 'absolute',
+                            top: 'auto',
+                            bottom: { xs: '60px', sm: '100px' }, // Positioned below grid where controls would be
+                            left: 0,
+                            right: 0,
+                            zIndex: 10,
+                            display: 'flex',
+                            justifyContent: 'center',
+                            pointerEvents: 'none', // Allow clicking through if needed
+                            px: 2,
+                            animation: 'fadeIn 0.3s ease-out'
                         }}>
                             <Box sx={{
                                 bgcolor: 'primary.main',
                                 borderRadius: 1.5,
-                                px: { xs: 1, sm: 1.5 },
-                                py: { xs: 0.5, sm: 0.75 },
-                                boxShadow: '0 2px 10px rgba(0,0,0,0.15)'
+                                px: { xs: 1.5, sm: 2 },
+                                py: { xs: 0.75, sm: 1 },
+                                boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
+                                maxWidth: { xs: '280px', sm: '400px' },
+                                width: '100%',
+                                pointerEvents: 'auto'
                             }}>
                                 <Typography sx={{
                                     color: 'primary.contrastText',
                                     fontWeight: 700,
-                                    fontSize: { xs: '0.65rem', sm: '0.75rem' },
-                                    lineHeight: 1.2,
+                                    fontSize: { xs: '0.75rem', sm: '0.85rem' },
+                                    lineHeight: 1.3,
                                     textAlign: 'center'
                                 }}>
                                     {step.text}
@@ -708,7 +717,7 @@ export default function GameGrid({ levelConfig, onComplete, onNextLevel, isLastL
                 gridTemplateColumns: `repeat(${GRID_SIZE}, 1fr)`,
                 gap: 1,
                 width: '100%',
-                maxWidth: { xs: '280px', sm: '400px' },
+                maxWidth: { xs: '320px', sm: '400px' },
                 aspectRatio: '1/1',
                 bgcolor: 'transparent',
                 p: 0,

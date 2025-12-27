@@ -43,16 +43,16 @@ export default function WorldsScreen({ progress, onSelectWorld, onBack, isOnline
             position: 'relative',
             overflow: 'hidden',
             bgcolor: 'background.default',
-            pt: { xs: 2, sm: 16 } // Add padding for desktop TopBar
+            pt: { xs: 14, sm: 16 } // Standardized padding for TopBar clearance
         }}>
 
 
             <Box sx={{
                 display: 'grid',
                 gridTemplateColumns: 'repeat(5, 1fr)',
-                gap: { xs: 1, sm: 1.5 },
+                gap: 1,
                 width: '100%',
-                maxWidth: { xs: '320px', sm: '480px' },
+                maxWidth: { xs: '320px', sm: '400px' },
                 mx: 'auto'
             }}>
                 {worldList.map((worldId) => {

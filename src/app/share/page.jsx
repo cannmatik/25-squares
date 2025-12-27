@@ -4,18 +4,19 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow'
 import Link from 'next/link'
 
 export async function generateMetadata({ searchParams }) {
-    const { world, level, score, stars } = searchParams
+    const params = await searchParams
+    const { world, level, score, stars } = params
 
     // Construct the OG Image URL
-    const params = new URLSearchParams()
-    if (world) params.set('world', world)
-    if (level) params.set('level', level)
-    if (score) params.set('score', score)
-    if (stars) params.set('stars', stars)
+    const ogParams = new URLSearchParams()
+    if (world) ogParams.set('world', world)
+    if (level) ogParams.set('level', level)
+    if (score) ogParams.set('score', score)
+    if (stars) ogParams.set('stars', stars)
 
-    // Use the deployed URL for production, or relative for now (Next.js handles absolute URL resolution in metadata usually, but OG often needs absolute)
-    // For now we rely on Next.js resolving it relative to base URL
-    const ogUrl = `/api/og?${params.toString()}`
+    // Use absolute URL for OG images - required by social platforms
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://25-squares.com'
+    const ogUrl = `${baseUrl}/api/og?${ogParams.toString()}`
 
     return {
         title: '25 SQUARES - Can you beat my score?',
@@ -42,8 +43,9 @@ export async function generateMetadata({ searchParams }) {
     }
 }
 
-export default function SharePage({ searchParams }) {
-    const { world, level, score, stars } = searchParams
+export default async function SharePage({ searchParams }) {
+    const params = await searchParams
+    const { world, level, score, stars } = params
 
     return (
         <Box sx={{
@@ -100,24 +102,25 @@ export default function SharePage({ searchParams }) {
                 </Typography>
             </Box>
 
-            <Link href="/" passHref style={{ textDecoration: 'none' }}>
-                <Button
-                    variant="contained"
-                    size="large"
-                    startIcon={<PlayArrowIcon />}
-                    sx={{
-                        fontFamily: '"Press Start 2P"',
-                        bgcolor: '#FAEC3B',
-                        color: '#000',
-                        fontSize: { xs: '0.8rem', sm: '1rem' },
-                        py: { xs: 1.5, sm: 2 },
-                        px: { xs: 3, sm: 4 },
-                        '&:hover': { bgcolor: '#fff' }
-                    }}
-                >
-                    PLAY NOW
-                </Button>
-            </Link>
+            <Button
+                component={Link}
+                href="/"
+                variant="contained"
+                size="large"
+                startIcon={<PlayArrowIcon />}
+                sx={{
+                    fontFamily: '"Press Start 2P"',
+                    bgcolor: '#FAEC3B',
+                    color: '#000',
+                    fontSize: { xs: '0.8rem', sm: '1rem' },
+                    py: { xs: 1.5, sm: 2 },
+                    px: { xs: 3, sm: 4 },
+                    '&:hover': { bgcolor: '#fff' },
+                    textDecoration: 'none'
+                }}
+            >
+                PLAY NOW
+            </Button>
         </Box>
     )
 }

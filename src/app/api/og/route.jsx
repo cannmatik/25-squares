@@ -5,14 +5,14 @@ export const runtime = 'edge'
 export async function GET(request) {
     try {
         const { searchParams } = new URL(request.url)
-        const score = searchParams.get('score') || '0'
-        const world = searchParams.get('world') || '1'
-        const level = searchParams.get('level') || '1'
-        const stars = parseInt(searchParams.get('stars') || '0')
+        const score = searchParams.get('score') ?? '0'
+        const world = searchParams.get('world') ?? '1'
+        const level = searchParams.get('level') ?? '1'
+        const stars = parseInt(searchParams.get('stars') ?? '0')
 
         // Fetch Font & Logo
         // We use a backup font or load generic if fetch fails, but 'Press Start 2P' is iconic for this app.
-        const fontData = await fetch(new URL('https://fonts.gstatic.com/s/pressstart2p/v15/e3t4euO8T-267oIAQAu6jDQyK3nVivM.woff')).then((res) => res.arrayBuffer())
+        const fontData = await fetch(new URL('https://raw.githubusercontent.com/google/fonts/main/ofl/pressstart2p/PressStart2P-Regular.ttf')).then((res) => res.arrayBuffer())
 
         return new ImageResponse(
             (

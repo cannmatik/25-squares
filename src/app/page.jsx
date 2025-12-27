@@ -343,13 +343,33 @@ export default function Home() {
             <AuthModal
                 open={showAuth}
                 onClose={() => setShowAuth(false)}
-                onLogin={(u, token) => {
+                onLogin={async (u, token) => {
                     setUser(u);
                     if (token) localStorage.setItem('token', token)
                     if (u) localStorage.setItem('user', JSON.stringify(u))
                     setShowAuth(false);
-                    // Trigger reload of progress
-                    setIsOnline(prev => !prev); setIsOnline(prev => !prev); // Force effect hook re-run hack or just let the user dependency handle it
+
+                    // Properly fetch fresh progress data after login
+                    if (token && navigator.onLine) {
+                        try {
+                            const res = await fetch('/api/progress', {
+                                headers: { 'Authorization': `Bearer ${token}` }
+                            })
+                            if (res.ok) {
+                                const data = await res.json()
+                                const prog = {}
+                                const progressData = Array.isArray(data) ? data : (data.progress || [])
+                                progressData.forEach(p => {
+                                    if (!prog[p.worldId]) prog[p.worldId] = {}
+                                    prog[p.worldId][p.levelId] = { stars: p.stars, score: p.score }
+                                })
+                                setProgress(prog)
+                                localStorage.setItem('cachedProgress', JSON.stringify(prog))
+                            }
+                        } catch (err) {
+                            console.error('Failed to fetch progress after login:', err)
+                        }
+                    }
                 }}
             />
 
